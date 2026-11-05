@@ -1,0 +1,48 @@
+/* Dependency-free regression checks for shared state and business invariants. */
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const cache = new Map();
+let blocked = false;
+const localStorage = {getItem:k => cache.get(k) || null, setItem:(k,v) => {if (blocked) throw new Error('Quota'); cache.set(k,v);}};
+const context = vm.createContext({window:{NK:{}}, localStorage, Date, Math, JSON, Intl});
+for (const file of ['data.js','storage.js','marketplace.js']) vm.runInContext(fs.readFileSync(`js/${file}`,'utf8'),context,{filename:file});
+const N = context.window.NK;
+let checks = 0;
+function check(fn) {fn(); checks++;}
+const owner = () => N.setRole('owner');
+const tenant = (id='t1') => N.setRole('tenant',id);
+
+check(() => {assert.equal(N.state().properties.length,8); assert.equal(N.state().tenants.length,5); assert.equal(N.state().invoices.length,30);});
+check(() => {for (const t of N.state().tenants) {assert.ok(N.property(t.propertyId)); assert.ok(N.room(t.propertyId,t.roomId));} assert.equal(new Set(N.state().tenants.map(t=>t.roomId)).size,5);});
+check(() => assert.throws(() => N.payInvoice('inv-0-0','QRIS',true),/Ganti peran/));
+tenant();
+check(() => {assert.ok(N.reminders().some(i=>i.id==='inv-0-0')); assert.equal(N.daysUntil(N.offsetDate(3)),3); assert.equal(N.daysUntil(N.offsetDate(-2)),-2);});
+check(() => assert.throws(() => N.payInvoice('inv-0-1','QRIS',true),/tidak tersedia/));
+check(() => assert.throws(() => N.payInvoice('inv-0-0','Metode palsu',true),/metode/));
+check(() => {const tx = N.payInvoice('inv-0-0','QRIS',false); assert.equal(tx.status,'Gagal'); assert.equal(tx.fee,2000); assert.equal(N.state().invoices.find(i=>i.id==='inv-0-0').status,'Belum lunas');});
+check(() => {const tx = N.payInvoice('inv-0-0','QRIS',true); assert.equal(tx.amount+tx.fee,1852000); assert.equal(N.state().invoices.find(i=>i.id==='inv-0-0').status,'Lunas'); assert.equal(N.reminders().length,0);});
+check(() => {assert.throws(() => N.payInvoice('inv-0-0','QRIS',true),/sudah lunas/); assert.equal(N.state().transactions.filter(t=>t.invoiceId==='inv-0-0'&&t.status==='Berhasil').length,1);});
+check(() => assert.throws(() => N.saveInvoice({}),/Ganti peran/));
+owner();
+check(() => assert.throws(() => N.saveInvoice({tenantId:'t1',amount:0,dueDate:N.dateKey(),period:'Uji'}),/Lengkapi/));
+check(() => assert.throws(() => N.saveInvoice({tenantId:'t1',amount:1e6,dueDate:N.dateKey(),period:N.state().invoices.find(i=>i.id==='inv-0-0').period}),/sudah ada/));
+check(() => {N.saveInvoice({tenantId:'t1',amount:1600000,dueDate:N.offsetDate(3),period:'Uji domain'}); assert.equal(N.state().invoices[0].propertyId,'p1'); tenant(); assert.ok(N.reminders().some(i=>i.period==='Uji domain'));});
+owner();
+check(() => assert.throws(() => N.toggleRoom('p1','p1-r1'),/masih ditempati/));
+check(() => {const before=N.availableRooms(N.property('p1')).length; N.toggleRoom('p1','p1-r5'); assert.equal(N.availableRooms(N.property('p1')).length,before-1); N.toggleRoom('p1','p1-r5'); assert.equal(N.availableRooms(N.property('p1')).length,before);});
+check(() => assert.throws(() => N.saveTenant({name:'Uji',email:'uji@example.com',phone:'081234567890',propertyId:'p1',roomId:'p1-r1'}),/tidak tersedia/));
+check(() => assert.throws(() => N.deleteProperty('p1'),/riwayat/));
+check(() => assert.throws(() => N.deleteTenant('t1'),/riwayat/));
+check(() => assert.throws(() => N.saveProperty({...N.property('p1'),total:2},'p1'),/masih ditempati/));
+check(() => {const before=N.state().transactions.length; N.boost('p2',false); assert.equal(N.isBoosted(N.property('p2')),false); assert.equal(N.state().transactions.length,before+1); N.boost('p2',true); assert.equal(N.isBoosted(N.property('p2')),true); assert.equal(N.state().transactions[0].amount,30000); assert.throws(() => N.boost('p2',true),/masih aktif/);});
+check(() => {assert.equal(N.isBoosted({boostUntil:N.offsetDate(-1)}),false); assert.equal(N.isBoosted({boostUntil:N.dateKey()}),true);});
+check(() => {const filter={query:'',min:'',max:'',facility:'',availability:'all',type:'all',sort:'low'}; const list=N.filteredProperties(filter); assert.equal(list.slice(0,2).every(p=>N.isBoosted(p)),true); const rest=list.slice(2).map(p=>p.price); assert.deepEqual([...rest],[...rest].sort((a,b)=>a-b)); assert.equal(N.filteredProperties({...filter,query:'tidak ada lokasi ini'}).length,0);});
+tenant();
+check(() => assert.throws(() => N.addComplaint({title:'AC',description:'Rusak'}),/minimal/));
+check(() => assert.throws(() => N.addComplaint({title:'Kendala fasilitas',description:'Deskripsi cukup panjang',photo:'data:image/svg+xml;base64,aaaa'}),/Foto harus/));
+check(() => {N.addComplaint({title:'Lemari perlu diperbaiki',description:'Engsel lemari kamar longgar.',category:'Furnitur',photo:''}); const c=N.state().complaints[0]; assert.equal(c.tenantId,'t1'); assert.equal(c.status,'Menunggu'); assert.throws(() => N.confirmComplaint(c.id),/belum diselesaikan/); owner(); N.updateComplaint(c.id,'Diproses'); N.updateComplaint(c.id,'Selesai'); tenant('t2'); assert.throws(() => N.confirmComplaint(c.id),/belum diselesaikan/); tenant(); N.confirmComplaint(c.id); assert.equal(N.state().complaints.find(x=>x.id===c.id).confirmed,true);});
+check(() => {const cid=N.contact('p1'); N.sendMessage(cid,'Pesan dari penghuni'); tenant('t2'); assert.throws(() => N.sendMessage(cid,'Pesan lintas penghuni'),/tidak tersedia/); owner(); N.sendMessage(cid,'Balasan pemilik'); const c=N.state().conversations.find(c=>c.id===cid); assert.equal(c.messages.at(-1).sender,'owner');});
+check(() => {blocked=true; const count=N.state().invoices.length; assert.throws(() => N.saveInvoice({tenantId:'t1',amount:1200000,dueDate:N.offsetDate(3),period:'Quota test'}),/Penyimpanan penuh/); assert.equal(N.state().invoices.length,count); blocked=false;});
+check(() => {const snapshot=JSON.parse(localStorage.getItem('ngekosaja.demo.v1')); assert.equal(snapshot.transactions.length,N.state().transactions.length); N.reset(); assert.equal(N.state().role,'guest'); assert.equal(N.state().properties.length,8); assert.equal(N.state().complaints.length,3);});
+console.log(`${checks} pemeriksaan aturan bisnis lolos.`);
