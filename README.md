@@ -1,139 +1,141 @@
-# NgekosAja.com
+# NgekosAja.com 2.0
 
 **Cari Kos, Bayar Sewa, Kelola Semua dalam Satu Tempat.**
 
-Prototype Business Model Lean Canvas (BMLC), Milestone 2 mata kuliah Technopreneurship. Seluruh konten dan identitas merupakan data demo.
+Upgrade prototype PropTech Business Model Lean Canvas (BMLC), Milestone 2 Technopreneurship. Dibangun dengan HTML5, CSS, JavaScript ES6+, navigasi hash, dan LocalStorage. Tidak memerlukan build, database, API key, atau instalasi npm.
 
-## Menjalankan website
-
-Tidak perlu instalasi npm, build, API key, backend, atau database.
+## Jalankan
 
 1. Buka folder project ini di VS Code.
 2. Klik kanan `index.html` → **Open with Live Server**.
-3. Alternatif: klik dua kali `index.html` untuk membukanya langsung di Chrome/Edge/Firefox. Aplikasi memakai script klasik dan navigasi hash sehingga mendukung `file://`.
-4. Alternatif terminal jika Python tersedia: `python -m http.server 5500`, lalu buka `http://localhost:5500`.
+3. Alternatif: buka `index.html` langsung di Chrome/Edge/Firefox.
+4. Alternatif terminal: `python -m http.server 5500`, lalu buka `http://localhost:5500`.
 
-Foto dan ikon tersimpan lokal; aplikasi tidak perlu internet. Font memakai Plus Jakarta Sans/Inter jika sudah terpasang, lalu Segoe UI/Arial sebagai fallback. Tidak ada font dari CDN.
+Gunakan origin yang sama selama presentasi. `file://`, `localhost`, `127.0.0.1`, dan port berbeda mempunyai penyimpanan terpisah. Seluruh foto, font, dan ikon tersedia lokal sehingga website tidak membutuhkan koneksi internet.
 
-**Live Server direkomendasikan untuk presentasi** agar alamat asal LocalStorage konsisten. Data pada `file://`, `localhost`, `127.0.0.1`, dan port yang berbeda berada di ruang penyimpanan browser yang berbeda.
+## Apa yang berubah
 
-## Fitur yang diimplementasikan
+- Redesign menyeluruh: deep forest green, warm cream, heading editorial Cormorant Garamond, body Plus Jakarta Sans, fotografi besar, komposisi bento, status yang konsisten, modal, toast, drawer, dan motion singkat dengan dukungan reduced motion.
+- Homepage baru: pencarian lokasi/budget/tipe, rekomendasi, delapan area populer, pencarian berdasarkan kebutuhan, pembayaran transparan, pratinjau workspace dari state, alur penggunaan, FAQ interaktif, serta CTA pemilik.
+- Marketplace **16 listing ilustrasi**: pencarian/saran lokasi dan nama, recent searches, rentang harga, tipe, beberapa fasilitas sekaligus, ketersediaan, chips, reset, grid/list, wishlist per identitas, dan perbandingan maksimal tiga kos.
+- Detail kos: galeri/thumbnail/fullscreen viewer, fasilitas, tipe kamar, peraturan, area sekitar berlabel ilustrasi, pengelola terkait, rekomendasi serupa, favorit, copy link, dan percakapan yang tepat.
+- Akun: halaman Masuk, Daftar, pilihan peran, pemulihan akses demo, pengaturan profil, logout, dan Quick Demo Access. Tidak meminta atau menyimpan kata sandi.
+- **Multi-owner**: tiga pemilik awal, dengan pembatasan pada query dan fungsi bisnis untuk properti, kamar, penghuni, tagihan, transaksi, keluhan, chat, promosi, aktivitas, dan laporan. Marketplace tetap menampilkan seluruh listing publik.
+- Workspace pemilik: sidebar berkelompok dan dapat diringkas, grafik pendapatan interaktif, occupancy donut, distribusi pembayaran, transaksi, jatuh tempo, aktivitas, quick actions, serta filter properti/periode.
+- Properti: tambah/edit foto lokal atau unggahan, deskripsi, alamat, harga, fasilitas, aturan, kapasitas, preview, arsip/publikasi, dan hapus tanpa riwayat.
+- Kamar: halaman grid khusus, filter properti/status, status Tersedia/Terisi/Dalam perbaikan/Tidak aktif, tipe, harga, fasilitas, dan pengamanan penempatan ganda.
+- Penghuni: pencarian/filter, profil, masa sewa, harga dan jadwal pembayaran, pindah kamar pada properti pemilik aktif, riwayat tagihan/keluhan, check-in dan check-out dengan histori yang dipertahankan. Profil pendaftar dapat dihubungkan saat check-in sehingga favorit dan percakapan tetap memakai identitas yang sama.
+- Keuangan: tagihan individual/massal, catatan, edit/pembatalan sebelum ada transaksi, jadwal bulanan lokal, simulasi periode berikutnya, reminder, serta status Belum lunas/Lunas/Terlambat/Dibatalkan.
+- **Checkout sewa**: VA, QRIS, E-Wallet, transfer bank; rincian sewa + admin Rp2.000; konfirmasi; skenario berhasil/gagal; pencegahan pembayaran ganda; hasil transaksi; bukti print-friendly dan simpan PDF melalui dialog cetak browser.
+- Laporan keuangan: filter properti/tanggal yang juga diterapkan pada grafik, pendapatan sewa, outstanding, overdue, collection rate, transaksi, serta export CSV. Admin platform dipisahkan dari pendapatan pemilik.
+- Notifikasi: H-3, hari H, keterlambatan, reminder manual, pesan dan perkembangan laporan, indikator unread, tandai dibaca, tandai semua, riwayat, serta deduplikasi berdasarkan tagihan/tahap.
+- Keluhan: kategori/urgensi/foto, search/filter, tabel dan kanban pemilik, detail tiket, catatan, estimasi, timeline, Menunggu → Diproses → Menunggu Konfirmasi → Selesai, konfirmasi penghuni, serta reopen.
+- **Analisis keluhan lokal**: kategori/prioritas berdasarkan kata kunci input, ringkasan, saran aman, pengelompokan kategori, dan arahan segera menghubungi pihak terkait bila terdeteksi keadaan darurat. Rekomendasi harus diterima/disimpan pengguna, bukan keputusan otomatis.
+- Chat: konteks properti/peserta, pencarian, unread lokal, tanggal, pesan dua arah, quick reply, lampiran gambar, auto-scroll, dan tampilan percakapan mobile. Tidak ada indikator online/typing/read receipt palsu.
+- Boost: Rp30.000/30 hari, preview, checkout gagal/berhasil, kampanye/mulai/berakhir/sisa hari, riwayat, serta analytics dari tampilan listing, detail, dan klik hubungi yang benar-benar dicatat lokal.
+- Platform admin demo: akun, pemilik, listing, transaksi, keluhan, promosi, GMV, occupancy, serta admin fee/boost revenue yang dipisahkan.
 
-- Homepage lengkap: pencarian, rekomendasi, keunggulan, cara kerja, CTA pemilik, halaman Fitur dan Tentang, footer.
-- Marketplace: delapan listing di Tanjung Duren, Grogol, Tomang, Kebon Jeruk, dan Palmerah; pencarian nama/lokasi, rentang harga, fasilitas, tipe kos, ketersediaan, sorting, prioritas promosi, dan empty state.
-- Detail kos: galeri, alamat, harga, fasilitas, ukuran, deskripsi, ketersediaan kamar, profil pengelola, dan pembuka percakapan. Foto galeri pendukung diberi label ilustrasi.
-- Dashboard pemilik: statistik dari state, grafik pendapatan enam bulan dari transaksi berhasil, aktivitas, transaksi terbaru, dan tagihan tertunda.
-- Properti: tambah, edit, hapus, serta aktif/nonaktif kamar kosong. Perubahan terlihat pada marketplace.
-- Penghuni: tambah, edit kontak, pindah kamar, dan hapus data tanpa riwayat. Penempatan kamar langsung mengubah ketersediaan.
-- Tagihan: dibuat pemilik untuk penghuni tertentu, nominal, periode, dan tanggal jatuh tempo; pencegahan periode ganda.
-- Pembayaran: rincian sewa + admin Rp2.000, pilihan VA BCA/QRIS/Bank Mandiri, simulasi gagal/berhasil, bukti, riwayat, dan status Lunas yang sama pada kedua dashboard.
-- Reminder: pemeriksaan tagihan belum lunas dengan jatuh tempo H-3 sampai hari H; tagihan terlambat mendapat peringatan tersendiri. Bell notifikasi, pengingat manual dari pemilik, dan tombol Simulasikan Reminder tersedia. Simulasi reminder hanya membuat notifikasi contoh, tanpa mengubah tagihan.
-- Keluhan: tiga contoh awal, formulir, unggah foto JPG/PNG/WebP maksimal 1 MB, status Menunggu/Diproses/Selesai, progres, filter, dan konfirmasi penyelesaian oleh penghuni.
-- Pesan: percakapan per properti/pengguna, kirim dari penghuni/calon penghuni dan balas dari pemilik, timestamp, serta persistensi lokal.
-- Boost: simulasi gagal/berhasil Rp30.000 per properti untuk 30 hari, riwayat transaksi, badge Promosi, kedaluwarsa berdasarkan tanggal, dan prioritas marketplace.
-- Pergantian peran, pemilihan lima penghuni demo, indikator peran, pembatasan route/tindakan sesuai peran, dan Reset Data Demo dengan konfirmasi.
-- Layout responsif, modal dengan fokus keyboard dan Escape, toast, validasi form, status, dan empty state.
+**Sorting penting:** promosi didahulukan hanya pada Rekomendasi. Harga terendah/tertinggi mengikuti nominal secara global, sambil mempertahankan badge Promosi.
 
-## Skenario demo utama
+## Mulai presentasi
 
-### Pembayaran sewa
+Klik **Mode Demo** di navbar atau identitas workspace. Pilih pemilik atau penghuni yang diinginkan. Tombol **Panduan Demo** berisi langkah yang dapat langsung membuka peran/halaman terkait.
 
-1. Klik **Coba Demo → Penghuni → Andi Pratama**. Data awal Andi memiliki tagihan jatuh tempo dua hari setelah data demo dibuat.
-2. Lihat reminder dan klik **Bayar Sekarang** atau buka **Tagihan Sewa**.
-3. Periksa nominal dan admin Rp2.000, lalu pilih metode.
-4. Klik **Simulasikan Gagal**: tagihan tetap belum lunas; percobaan tercatat sebagai Gagal.
-5. Klik **Coba Lagi → Simulasikan Berhasil**: tagihan menjadi Lunas, riwayat dan bukti tersedia.
-6. Klik **Ganti Peran Demo → Pemilik Kos → Pembayaran**. Tagihan Andi sudah Lunas dan transaksi muncul di dashboard/grafik.
-7. Untuk membuat tagihan sendiri, klik **Buat Tagihan** dari peran pemilik. Pilih penghuni dan gunakan periode berbeda dari yang sudah ada, misalnya `Sewa tambahan November 2026`. Kembali ke penghuni yang dipilih untuk membayarnya.
-
-### Keluhan dan chat
-
-1. Sebagai penghuni, buka **Laporan Keluhan → Buat Laporan**. Tambahkan foto bila diperlukan.
-2. Ganti ke pemilik, buka **Keluhan**, ubah status menjadi Diproses lalu Selesai.
-3. Kembali ke penghuni dan klik **Konfirmasi Selesai** pada laporan tersebut.
-4. Buka **Pesan**, kirim pesan, lalu ganti peran untuk membalas. Tidak ada balasan otomatis yang menyamar sebagai pemilik.
-5. Calon penghuni dapat memulai chat melalui **Cari Kos → Lihat Detail → Hubungi Pemilik**.
-
-### Promosi dan ketersediaan
-
-1. Pemilik → **Boost Listing** → pilih listing tanpa promosi.
-2. Simulasikan pembayaran berhasil Rp30.000. Listing kini mendapat badge dan prioritas hasil pencarian.
-3. Saat sorting harga, listing promosi tetap berada pada kelompok pertama; harga diurutkan dalam masing-masing kelompok promosi/nonpromosi.
-4. Pemilik → **Kelola Properti → Atur Kamar**. Klik kamar kosong untuk menonaktifkan/mengaktifkan penawaran; periksa jumlah kamar di marketplace.
-
-## Data dan konsistensi
-
-State tunggal berada pada key **`ngekosaja.demo.v1`** di LocalStorage:
-
-| Data | Hubungan |
+| Akun contoh | Untuk mencoba |
 | --- | --- |
-| Properti dan kamar | Kamar memiliki ID unik; ketersediaan dihitung dari status aktif dan penempatan penghuni |
-| Penghuni | Mengacu pada ID properti dan kamar |
-| Tagihan | Mengacu pada penghuni dan properti pada saat tagihan dibuat |
-| Transaksi sewa | Mengacu pada tagihan; pembayaran berhasil hanya boleh terjadi sekali per tagihan |
-| Keluhan | Mengacu pada penghuni dan properti pada saat dilaporkan |
-| Percakapan | Mengacu pada properti dan identitas peserta demo |
-| Promosi | Tanggal aktif pada properti dan transaksi promosi pada riwayat |
+| Sari Wulandari / `o1` | Pemilik Kos Senja, Ruang Teduh, dan portofolio terkait |
+| Arif Rahman / `o2` | Memeriksa pembatasan portofolio pemilik kedua |
+| Dewi Anggraini / `o3` | Portofolio pemilik ketiga |
+| Andi Pratama / `t1` | Pembayaran, reminder H-3, keluhan, dan chat utama |
+| Nadia Putri / `t2` | Contoh tagihan terlambat |
+| Platform Admin | Monitoring GMV, pendapatan platform, pengguna, dan operasional |
 
-Data awal: 8 properti, 53 kamar, 5 penghuni, 30 tagihan selama 6 bulan, transaksi berhasil historis, 3 keluhan, satu percakapan, dan satu promosi aktif. Enam kamar properti Tomang Urban Stay dinonaktifkan sementara untuk mendemonstrasikan listing tanpa kamar tersedia; kamar tersebut tidak dihitung sebagai kamar terisi. Data awal diberi tanggal relatif saat pertama dibuat/reset. Data tersimpan tidak diubah otomatis saat dibuka esok hari; reminder, keterlambatan, dan berakhirnya promosi tetap dihitung berdasarkan tanggal saat itu.
+Untuk demo pembayaran: Penghuni Andi → Tagihan Sewa → Bayar → pilih metode → konfirmasi → Simulasikan Gagal → Coba Lagi → Simulasikan Berhasil. Ganti ke Sari → Tagihan/Laporan untuk melihat hasil yang sama. Bukti tersedia pada tagihan Lunas.
 
-Properti/penghuni yang memiliki riwayat relevan tidak dapat dihapus agar referensi transaksi/laporan tetap utuh. Untuk memperagakan hapus, tambahkan properti atau penghuni baru tanpa riwayat, kemudian hapus. Kamar terisi tidak dapat dinonaktifkan; pindahkan/edit penghuni terlebih dahulu. Pengurangan kapasitas properti tidak boleh menghapus kamar yang masih ditempati.
+Untuk demo keluhan: Andi → Buat Laporan → Analisis Keluhan → tentukan kategori/urgensi → kirim; Sari → Keluhan → detail tiket → catatan/estimasi/status Menunggu Konfirmasi; Andi → Konfirmasi Selesai atau buka kembali.
 
-Klik **Reset Data Demo** pada footer atau sidebar untuk memulai presentasi dari data awal dan tanggal terbaru. Reset menghapus semua perubahan lokal setelah dikonfirmasi. Penyimpanan penuh menampilkan pesan kegagalan dan mempertahankan state sebelumnya. Jika LocalStorage tidak tersedia sejak awal, aplikasi menampilkan peringatan dan berjalan dengan state sementara.
+Untuk alur pendaftar: Daftar sebagai calon penghuni → favorit/chat → Sari → Tambah Penghuni → pilih profil pada **Hubungkan profil yang sudah terdaftar** → tentukan kamar/kontak contoh → simpan. Identitas tersebut kini tersedia sebagai Penghuni; favorit dan percakapannya tetap sama.
+
+Panduan lebih rinci: [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md).
+
+## State, migrasi, dan konsistensi
+
+- Key aktif: **`ngekosaja.demo.v2`**.
+- Data `ngekosaja.demo.v1` dimigrasikan secara aditif, dengan ID, edit properti, foto, pembayaran, percakapan, dan riwayat lama dipertahankan.
+- Key versi 1 **tidak dihapus atau ditimpa**. Reset mengembalikan versi 2; cadangan versi 1 tetap ada.
+- Properti lama tanpa pemilik diatribusikan ke Sari (`o1`) agar portofolio lama tidak terpecah. Data baru menyediakan portofolio pemilik lain. Instalasi baru membagi portofolio contoh sejak awal.
+- State mempunyai owners, users, properties/rooms, tenants, agreements, invoices, transactions, complaints/history/notes, conversations/messages/readBy, notifications, favorites, recentSearches, recurring, campaigns, analytics, settings, dan activities.
+- Setiap perubahan dikloning lalu ditulis ke LocalStorage sebelum mengganti state aktif. Gagal quota tidak meninggalkan separuh operasi; batch tagihan divalidasi penuh sebelum disimpan.
+- Penghuni checkout tidak dihapus; invoice dan agreement lama tetap terhubung ke properti/pemilik pada saat dibuat.
+- Kamar terisi tidak boleh dinonaktifkan; kamar dengan riwayat agreement tidak boleh dihapus saat kapasitas dikurangi.
+- Arsip menyembunyikan listing dari publik tanpa menghapus data pengelolaan. Data dengan riwayat tidak dapat dihapus permanen lewat aksi hapus.
+- Pengingat dan jadwal bulanan diperiksa saat aplikasi dibuka. Reminder juga diperiksa saat halaman dirender. Tidak ada scheduler yang berjalan di latar belakang ketika browser ditutup.
+
+Detail relasi dan definisi metrik: [docs/DATA_MODEL.md](docs/DATA_MODEL.md).
+
+## Struktur
+
+```text
+index.html
+css/
+  style.css          # Tokens, typography, komponen publik, marketplace/detail
+  components.css     # Dashboard, management, checkout, tiket, chat, akun
+  responsive.css     # 320–1920px, motion, print
+js/
+  data.js            # Basis data awal versi 1 dan utilitas tanggal/ID
+  schema.js          # Seed versi 2 dan migrasi aditif
+  storage.js         # State, pembatasan bisnis, finance/rooms/identity/chat
+  ui.js              # Ikon SVG, formatter, modal, toast
+  shell.js           # Navbar, sidebar, tabel, notifikasi, panduan
+  finance.js         # Metrik, grafik, laporan, CSV, admin
+  accounts.js        # Login, register, pemulihan, settings, FAQ
+  analysis.js        # Analisis berbasis aturan dan siklus tiket
+  marketplace.js     # Homepage, pencarian, detail, wishlist, compare
+  owner.js           # Workspace pemilik dan formulir pengelolaan
+  tenant.js          # Dashboard penghuni, tagihan, tempat tinggal
+  payments.js        # Checkout, konfirmasi, hasil, invoice dan bukti
+  complaints.js      # Kanban/tabel, formulir, detail tiket
+  chat.js            # Antarmuka percakapan dan lampiran
+  app.js             # Router, events, rendering, inisialisasi
+assets/
+  images/            # Foto ilustrasi lokal
+  fonts/             # Font lokal dan lisensi OFL
+  icons/logo.svg
+  CREDITS.md
+docs/                # Panduan demo dan model data
+tests/               # Regresi domain, browser, visual, dan laporan aktual
+screenshots/         # Screenshot versi 2 aktual + contoh PDF simulasi
+```
+
+## Pemeriksaan
+
+Website tidak memerlukan tooling berikut untuk digunakan. Pengujian pengembangan memakai Node, Python, dan Playwright/Chromium yang tersedia pada lingkungan pengerjaan.
+
+```powershell
+# Aturan bisnis tanpa dependensi npm
+Get-Content -Raw tests/domain.cjs | node --input-type=commonjs
+
+# Terminal terpisah, server QA lokal
+python tests/serve.py
+
+# Regresi UI lengkap dan screenshot/responsive
+python tests/browser_check.py --url http://127.0.0.1:5500
+python tests/visual_check.py --url http://127.0.0.1:5500
+
+# Identitas pendaftar -> check-in, grafik tanggal, HTTP dan file://
+python tests/upgrade_check.py
+```
+
+Hasil aktual: [tests/VERIFICATION.md](tests/VERIFICATION.md). Output mesin berada pada `tests/browser-results.json`, `tests/visual-results.json`, dan `tests/upgrade-results.json`. Screenshot versi 2 berada di `screenshots/`; gambar lama di `tests/*.png` merupakan dokumentasi versi 1.
 
 ## Batas simulasi
 
-- Masuk/Daftar membuka pemilih peran demo; tidak ada akun, kata sandi, atau autentikasi sungguhan. Pembatasan peran hanya untuk demonstrasi UI, bukan keamanan produksi.
-- Pembayaran sewa dan boost tidak memindahkan uang atau menghubungi bank/QRIS. Riwayat gagal menampilkan nominal percobaan, bukan biaya yang ditarik.
-- Reminder ditampilkan di dalam aplikasi; tidak ada scheduler server, WhatsApp, push notification, atau email.
-- Chat bukan realtime lintas perangkat. Pergantian peran pada browser yang sama menggunakan percakapan yang sama; tab dengan origin sama memuat ulang ketika LocalStorage berubah.
-- Data tidak dikirim ke server. Jangan memasukkan informasi sensitif; ini merupakan prototype pembelajaran.
-- Tidak ada pemesanan otomatis, peta eksternal, atau payment gateway.
-
-## Struktur project
-
-```text
-NgekosAja/
-├── index.html
-├── css/
-│   ├── style.css          # Design system dan halaman publik
-│   ├── components.css     # Dashboard, form, tabel, modal, chat
-│   └── responsive.css     # Desktop, tablet, smartphone
-├── js/
-│   ├── data.js            # Seed dan utilitas tanggal
-│   ├── storage.js         # State tunggal dan aturan bisnis
-│   ├── ui.js              # Ikon SVG dan komponen bersama
-│   ├── marketplace.js     # Homepage, pencarian, detail, informasi
-│   ├── owner.js           # Workspace pemilik dan formulir pengelolaan
-│   ├── tenant.js          # Dashboard penghuni dan notifikasi
-│   ├── payments.js        # Modal pembayaran, hasil, bukti
-│   ├── complaints.js      # Laporan dan pelacakan
-│   ├── chat.js            # Percakapan dua arah
-│   └── app.js             # Router, event, dan inisialisasi
-├── assets/
-│   ├── images/           # 8 foto interior lokal
-│   ├── icons/logo.svg
-│   └── CREDITS.md
-├── tests/                # Skrip pengujian dan hasil screenshot
-└── README.md
-```
-
-## Pengujian
-
-Website tidak membutuhkan tooling test untuk digunakan. Untuk menjalankan ulang pengujian pengembangan, gunakan Python dengan Playwright dan Chromium yang terpasang:
-
-```powershell
-python tests/browser_check.py --url http://127.0.0.1:5500
-# Atau periksa pembukaan file secara langsung:
-python tests/browser_check.py
-```
-
-Skrip menggunakan browser context baru dan membersihkan LocalStorage miliknya sendiri. Mencakup pencarian/filter, dua arah chat, pembayaran gagal/berhasil/admin/bukti/reload, tagihan pemilik ke penghuni, foto keluhan dan status, CRUD properti/penghuni, ketersediaan kamar, boost, proteksi peran, reset, dan pengecekan overflow halaman publik/dashboard pada lebar 360–1440 px. Screenshot otomatis ditulis ke `tests/`.
-
-Untuk pemeriksaan aturan bisnis dengan Node tanpa dependensi:
-
-```powershell
-Get-Content -Raw tests/domain.cjs | node --input-type=commonjs
-```
-
-Hasil pemeriksaan aktual dicatat dalam `tests/VERIFICATION.md`.
+- Seluruh akun, properti, identitas, harga, foto, jarak area, dan transaksi adalah data ilustrasi.
+- Autentikasi dan pemisahan peran hanya simulasi frontend; LocalStorage dapat diperiksa/diubah dari browser dan bukan sistem keamanan produksi.
+- Pembayaran sewa/boost tidak menghubungi bank, QRIS, e-wallet, atau memindahkan uang. Tidak meminta rekening, PIN, OTP, atau kartu.
+- Analisis keluhan hanya membaca kata kunci teks, bukan foto, model AI, diagnosis teknis, atau pengganti penanganan darurat.
+- Chat/notification tersimpan lokal, tidak realtime lintas perangkat, tanpa WhatsApp/email/SMS/push eksternal.
+- Lampiran/properti menerima JPG/PNG/WebP maksimal 1 MB. Quota LocalStorage bergantung browser. Gunakan foto kecil untuk presentasi panjang.
+- Simpan PDF menggunakan dialog Cetak browser. Tautan berbagi hanya berguna jika penerima mempunyai alamat project/server yang sama.
+- Tampilan terang tersedia menyeluruh. Dark mode tidak ditambahkan agar kualitas tema utama tetap konsisten.
+- Tidak ada booking otomatis, backend, analytics eksternal, atau scheduler server.

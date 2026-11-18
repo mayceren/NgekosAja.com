@@ -1,135 +1,54 @@
-(function (N) {
-  'use strict';
-  const KEY = 'ngekosaja.demo.v1';
-  let state;
-  N.storageWarning = '';
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-    state = saved && saved.version === N.VERSION && ['properties','tenants','invoices','transactions','complaints','conversations','activities'].every(k => Array.isArray(saved[k])) ? saved : N.seed();
-    localStorage.setItem(KEY, JSON.stringify(state));
-  } catch (_) { state = N.seed(); N.storageWarning = 'Penyimpanan browser tidak tersedia. Data hanya tersimpan selama halaman ini terbuka.'; }
-  N.state = () => state;
-  N.update = function (mutation) {
-    const next = JSON.parse(JSON.stringify(state));
-    const result = mutation(next);
-    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (_) {
-      if (!N.storageWarning) throw new Error('Penyimpanan penuh. Hapus foto besar atau reset data demo, lalu coba lagi.');
-    }
-    state = next;
-    return result;
-  };
-  N.reset = () => { const next = N.seed(); try {localStorage.setItem(KEY, JSON.stringify(next));} catch (_) {} state = next; };
-  N.activeTenant = () => state.tenants.find(t => t.id === state.activeTenantId);
-  N.property = id => state.properties.find(p => p.id === id);
-  N.tenant = id => state.tenants.find(t => t.id === id);
-  N.room = (propertyId, roomId) => N.property(propertyId)?.rooms.find(r => r.id === roomId);
-  N.occupants = propertyId => state.tenants.filter(t => t.propertyId === propertyId);
-  N.availableRooms = p => p.rooms.filter(r => r.available && !state.tenants.some(t => t.roomId === r.id));
-  N.isBoosted = p => !!p.boostUntil && p.boostUntil >= N.dateKey();
-  N.requireRole = role => { if (state.role !== role) throw new Error('Ganti peran demo untuk menggunakan fitur ini.'); };
-  N.log = (s, text) => { s.activities.unshift({id:N.id('act'), text, date:new Date().toISOString()}); s.activities = s.activities.slice(0, 40); };
-  N.setRole = (role, tenantId) => {
-    if (!['guest','tenant','owner'].includes(role)) throw new Error('Peran tidak valid.');
-    if (role === 'tenant' && !state.tenants.some(t => t.id === tenantId)) throw new Error('Pilih penghuni yang tersedia.');
-    N.update(s => {s.role = role; if (tenantId) s.activeTenantId = tenantId; s.demoReminder = false;});
-  };
-  N.daysUntil = date => Math.round((new Date(date + 'T00:00:00') - new Date(N.dateKey() + 'T00:00:00')) / 86400000);
-  N.reminders = () => state.invoices.filter(i => i.tenantId === state.activeTenantId && i.status !== 'Lunas' && (N.daysUntil(i.dueDate) <= 3 || (state.manualReminders || []).includes(i.id)));
-  N.payInvoice = (invoiceId, method, success) => {
-    N.requireRole('tenant');
-    const inv = state.invoices.find(i => i.id === invoiceId && i.tenantId === state.activeTenantId);
-    if (!inv || inv.status === 'Lunas') throw new Error('Tagihan tidak tersedia atau sudah lunas.');
-    if (!['Virtual Account BCA','QRIS','Transfer Bank Mandiri'].includes(method)) throw new Error('Pilih metode pembayaran.');
-    return N.update(s => {
-      const tx = {id:N.id('trx'), kind:'rent', invoiceId:inv.id, tenantId:inv.tenantId, propertyId:inv.propertyId, amount:inv.amount, fee:2000, method, status:success ? 'Berhasil' : 'Gagal', date:new Date().toISOString()};
-      s.transactions.unshift(tx);
-      if (success) {s.invoices.find(i => i.id === inv.id).status = 'Lunas'; s.demoReminder = false; N.log(s, `${N.tenant(inv.tenantId).name} membayar sewa ${inv.period}.`);}
-      return tx;
-    });
-  };
-  N.saveInvoice = form => {
-    N.requireRole('owner');
-    const tenant = N.tenant(form.tenantId), amount = Number(form.amount);
-    if (!tenant || !Number.isFinite(amount) || amount < 10000 || amount > 100000000 || !/^\d{4}-\d{2}-\d{2}$/.test(form.dueDate) || !form.period.trim()) throw new Error('Lengkapi data tagihan dengan benar.');
-    if (state.invoices.some(i => i.tenantId === tenant.id && i.period.toLowerCase() === form.period.trim().toLowerCase())) throw new Error('Tagihan periode ini untuk penghuni tersebut sudah ada.');
-    N.update(s => {s.invoices.unshift({id:N.id('inv'), tenantId:tenant.id, propertyId:tenant.propertyId, amount, dueDate:form.dueDate, period:form.period.trim(), status:'Belum lunas', createdAt:N.dateKey()}); N.log(s, `Tagihan baru untuk ${tenant.name} dibuat.`);});
-  };
-  N.saveProperty = (form, id) => {
-    N.requireRole('owner');
-    const price = Number(form.price), total = Number(form.total);
-    if (!form.name.trim() || !form.location.trim() || !form.address.trim() || !form.description.trim() || !Number.isFinite(price) || price < 100000 || price > 100000000 || !Number.isInteger(total) || total < 1 || total > 100) throw new Error('Periksa isian properti, harga, dan jumlah kamar.');
-    const old = id && N.property(id);
-    if (id && !old) throw new Error('Properti tidak ditemukan.');
-    if (old && old.rooms.slice(total).some(r => state.tenants.some(t => t.roomId === r.id))) throw new Error('Kamar yang akan dihapus masih ditempati. Pindahkan penghuni terlebih dahulu.');
-    N.update(s => {
-      const pid = id || N.id('prop');
-      const rooms = Array.from({length:total}, (_, i) => old?.rooms[i] || {id:`${pid}-r${i + 1}`, number:`K${String(i + 1).padStart(2,'0')}`, available:true});
-      const data = {id:pid, name:form.name.trim(), location:form.location.trim(), address:form.address.trim(), description:form.description.trim(), type:form.type, price, size:form.size.trim() || '3 × 4 m', facilities:form.facilities.filter(f => N.facilities.includes(f)), image:old?.image || 'assets/images/room-4.jpg', rooms, boostUntil:old?.boostUntil || null, createdAt:old?.createdAt || N.dateKey()};
-      if (old) s.properties[s.properties.findIndex(p => p.id === id)] = data; else s.properties.push(data);
-      N.log(s, `Properti ${data.name} ${old ? 'diperbarui' : 'ditambahkan'}.`);
-    });
-  };
-  N.deleteProperty = id => {
-    N.requireRole('owner');
-    if (!N.property(id)) throw new Error('Properti tidak ditemukan.');
-    if (state.tenants.some(t => t.propertyId === id) || state.invoices.some(i => i.propertyId === id) || state.transactions.some(t => t.propertyId === id) || state.complaints.some(c => c.propertyId === id)) throw new Error('Properti memiliki penghuni atau riwayat tagihan, transaksi, atau laporan. Riwayat tersebut dipertahankan; Anda dapat mengedit properti dan ketersediaan kamarnya.');
-    N.update(s => {s.properties = s.properties.filter(p => p.id !== id); s.conversations = s.conversations.filter(c => c.propertyId !== id); s.complaints = s.complaints.filter(c => c.propertyId !== id); N.log(s, 'Properti yang tidak aktif dihapus.');});
-  };
-  N.toggleRoom = (propertyId, roomId) => {
-    N.requireRole('owner');
-    if (state.tenants.some(t => t.roomId === roomId)) throw new Error('Kamar masih ditempati penghuni.');
-    N.update(s => {const r = s.properties.find(p => p.id === propertyId)?.rooms.find(r => r.id === roomId); if (!r) throw new Error('Kamar tidak ditemukan.'); r.available = !r.available;});
-  };
-  N.saveTenant = (form, id) => {
-    N.requireRole('owner');
-    const p = N.property(form.propertyId);
-    if (!form.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) || !/^[+\d\s-]{8,18}$/.test(form.phone) || !p) throw new Error('Lengkapi nama, email, nomor telepon, dan kamar.');
-    const room = p.rooms.find(r => r.id === form.roomId);
-    if (!room?.available || state.tenants.some(t => t.roomId === room.id && t.id !== id)) throw new Error('Kamar tidak tersedia.');
-    N.update(s => {
-      const old = s.tenants.find(t => t.id === id);
-      const data = {id:id || N.id('tenant'), name:form.name.trim(), email:form.email.trim(), phone:form.phone.trim(), propertyId:p.id, roomId:room.id, joinedAt:old?.joinedAt || N.dateKey()};
-      if (old) s.tenants[s.tenants.findIndex(t => t.id === id)] = data; else s.tenants.push(data);
-      N.log(s, `Data penghuni ${data.name} disimpan.`);
-    });
-  };
-  N.deleteTenant = id => {
-    N.requireRole('owner');
-    if (state.invoices.some(i => i.tenantId === id) || state.complaints.some(c => c.tenantId === id) || state.conversations.some(c => c.participantId === id)) throw new Error('Penghuni memiliki riwayat tagihan, keluhan, atau percakapan. Riwayat tersebut perlu dipertahankan; Anda dapat mengedit data dan kamarnya.');
-    N.update(s => {s.tenants = s.tenants.filter(t => t.id !== id); if (s.activeTenantId === id) s.activeTenantId = s.tenants[0]?.id || '';});
-  };
-  N.boost = (propertyId, success) => {
-    N.requireRole('owner');
-    const p = N.property(propertyId);
-    if (!p || N.isBoosted(p)) throw new Error('Properti tidak tersedia atau promosi masih aktif.');
-    N.update(s => {s.transactions.unshift({id:N.id('boost'), kind:'boost', propertyId, amount:30000, fee:0, status:success ? 'Berhasil' : 'Gagal', method:'Saldo demo', date:new Date().toISOString()}); if (success) {s.properties.find(p => p.id === propertyId).boostUntil = N.offsetDate(30); N.log(s, `Promosi ${p.name} diaktifkan selama 30 hari.`);}});
-  };
-  N.addComplaint = form => {
-    N.requireRole('tenant');
-    const t = N.activeTenant();
-    if (!t || form.title.trim().length < 5 || form.description.trim().length < 10) throw new Error('Judul minimal 5 karakter dan deskripsi minimal 10 karakter.');
-    if (form.photo && (!/^data:image\/(png|jpeg|webp);base64,/.test(form.photo) || form.photo.length > 1500000)) throw new Error('Foto harus JPG, PNG, atau WebP maksimal 1 MB.');
-    N.update(s => {s.complaints.unshift({id:N.id('report'), tenantId:t.id, propertyId:t.propertyId, title:form.title.trim(), category:form.category, description:form.description.trim(), photo:form.photo || '', status:'Menunggu', createdAt:N.dateKey(), updatedAt:N.dateKey(), confirmed:false}); N.log(s, `${t.name} mengirim laporan ${form.title.trim()}.`);});
-  };
-  N.updateComplaint = (id, status) => {
-    N.requireRole('owner');
-    if (!['Menunggu','Diproses','Selesai'].includes(status)) throw new Error('Status tidak valid.');
-    N.update(s => {const c = s.complaints.find(c => c.id === id); if (!c) throw new Error('Laporan tidak ditemukan.'); c.status = status; c.confirmed = false; c.updatedAt = N.dateKey(); N.log(s, `Laporan ${c.title}: ${status.toLowerCase()}.`);});
-  };
-  N.confirmComplaint = id => {
-    N.requireRole('tenant');
-    N.update(s => {const c = s.complaints.find(c => c.id === id && c.tenantId === s.activeTenantId); if (!c || c.status !== 'Selesai') throw new Error('Laporan belum diselesaikan.'); c.confirmed = true; c.updatedAt = N.dateKey();});
-  };
-  N.contact = propertyId => {
-    if (!N.property(propertyId)) throw new Error('Properti tidak ditemukan.');
-    const participantId = state.role === 'tenant' ? state.activeTenantId : 'guest';
-    let conversation = state.conversations.find(c => c.propertyId === propertyId && c.participantId === participantId);
-    if (!conversation) conversation = N.update(s => {const c = {id:N.id('chat'), propertyId, participantId, messages:[{id:N.id('msg'), sender:'owner', text:`Halo! Ada yang ingin ditanyakan tentang ${N.property(propertyId).name}? Silakan kirim pesan di sini.`, date:new Date().toISOString()}]}; s.conversations.push(c); return c;});
-    return conversation.id;
-  };
-  N.sendMessage = (id, text) => {
-    const message = text.trim();
-    if (!message || message.length > 1000) throw new Error('Pesan harus berisi 1–1.000 karakter.');
-    N.update(s => {const c = s.conversations.find(c => c.id === id); const who = s.role === 'tenant' ? s.activeTenantId : 'guest'; if (!c || (s.role !== 'owner' && c.participantId !== who)) throw new Error('Percakapan tidak tersedia.'); c.messages.push({id:N.id('msg'), sender:s.role === 'owner' ? 'owner' : who, text:message, date:new Date().toISOString()});});
-  };
+(function(N){
+'use strict';
+const KEY='ngekosaja.demo.v2';let state,volatile=false;N.STORAGE_KEY=KEY;N.storageWarning='';
+try{const raw=localStorage.getItem(KEY),old=localStorage.getItem('ngekosaja.demo.v1');state=raw?N.migrate(JSON.parse(raw)):old?N.migrate(JSON.parse(old)):N.seed();N.migrated=!raw&&!!old;localStorage.setItem(KEY,JSON.stringify(state));}catch(e){state=state||N.seed();volatile=true;N.storageWarning='Penyimpanan tidak tersedia. Sesi memakai data sementara; data lama tidak dihapus.';}
+N.state=()=>state;
+N.update=fn=>{const next=JSON.parse(JSON.stringify(state)),result=fn(next);if(!volatile){try{localStorage.setItem(KEY,JSON.stringify(next));}catch(e){throw new Error('Penyimpanan penuh atau tidak tersedia. Perubahan dibatalkan; gunakan foto lebih kecil.');}}state=next;return result;};
+N.reset=()=>{const next=N.seed();if(!volatile)localStorage.setItem(KEY,JSON.stringify(next));state=next;};
+N.property=id=>state.properties.find(p=>p.id===id);N.tenant=id=>state.tenants.find(t=>t.id===id);N.owner=id=>state.owners.find(o=>o.id===id);N.room=(pid,rid)=>N.property(pid)?.rooms.find(r=>r.id===rid);
+N.actorId=()=>state.role==='owner'?state.activeOwnerId:state.role==='tenant'?state.activeTenantId:state.role==='admin'?'admin':state.activeUserId||'guest';
+N.actor=()=>state.users.find(u=>u.id===N.actorId())||{id:'guest',name:'Pengunjung Demo',role:'guest'};N.activeTenant=()=>N.tenant(state.activeTenantId);N.activeOwner=()=>N.owner(state.activeOwnerId);N.isActive=t=>t?.leaseStatus==='Aktif';
+N.occupants=pid=>state.tenants.filter(t=>t.propertyId===pid&&N.isActive(t));N.roomStatus=(p,r)=>N.occupants(p.id).some(t=>t.roomId===r.id)?'Terisi':r.status||'Tersedia';N.availableRooms=p=>p&&!p.archived?p.rooms.filter(r=>N.roomStatus(p,r)==='Tersedia'):[];
+N.publicProperties=()=>state.properties.filter(p=>!p.archived);N.isBoosted=p=>!!p&&!p.archived&&!!p.boostUntil&&p.boostUntil>=N.dateKey();
+N.requireRole=role=>{if(state.role!==role)throw new Error('Ganti peran demo untuk menggunakan fitur ini.');};
+N.requireProperty=id=>{N.requireRole('owner');const p=N.property(id);if(!p||p.ownerId!==state.activeOwnerId)throw new Error('Properti ini bukan milik pemilik aktif.');return p;};
+N.requireOwned=(group,id)=>{N.requireRole('owner');const item=state[group].find(x=>x.id===id);if(!item||item.ownerId!==state.activeOwnerId)throw new Error('Data tidak tersedia untuk pemilik aktif.');return item;};
+N.visible=group=>{if(state.role==='admin')return [...state[group]];if(state.role==='owner')return state[group].filter(x=>x.ownerId===state.activeOwnerId);if(state.role==='tenant')return state[group].filter(x=>group==='tenants'?x.id===state.activeTenantId:group==='conversations'?x.participantId===state.activeTenantId:x.tenantId===state.activeTenantId);return group==='conversations'?state.conversations.filter(c=>c.participantId===N.actorId()):[];};
+N.log=(s,text,oid)=>{s.activities.unshift({id:N.id('act'),text,ownerId:oid||s.activeOwnerId,actorId:N.actorId(),date:new Date().toISOString()});s.activities=s.activities.slice(0,150);};
+N.notify=(s,userId,key,title,text,link,invoiceId='')=>{if(!s.notifications.some(n=>n.key===key&&n.userId===userId))s.notifications.unshift({id:N.id('notice'),userId,key,title,text,link,invoiceId,read:false,date:new Date().toISOString()});};
+N.setRole=(role,id)=>{if(!['guest','tenant','owner','admin'].includes(role))throw new Error('Peran tidak valid.');if(role==='tenant'&&!N.tenant(id||state.activeTenantId))throw new Error('Pilih penghuni yang tersedia.');if(role==='owner'&&!N.owner(id||state.activeOwnerId))throw new Error('Pilih pemilik yang tersedia.');N.update(s=>{s.role=role;if(role==='tenant')s.activeTenantId=id||s.activeTenantId;if(role==='owner')s.activeOwnerId=id||s.activeOwnerId;s.activeUserId=role==='guest'?(s.users.some(u=>u.id===id&&u.role==='guest')?id:'guest'):role==='owner'?s.activeOwnerId:role==='tenant'?s.activeTenantId:'admin';s.demoReminder=false;s.compare=[];});};
+N.registerDemo=f=>{if(!f.name?.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email||'')||!['guest','tenant','owner'].includes(f.role)||!f.consent)throw new Error('Lengkapi profil demo dan setujui ketentuan.');if(state.users.some(u=>u.email.toLowerCase()===f.email.trim().toLowerCase()))throw new Error('Email demo sudah terdaftar. Pilih akun pada halaman Masuk.');const id=N.update(s=>{const id=N.id(f.role),u={id,name:f.name.trim(),email:f.email.trim(),role:f.role,phone:''};s.users.push(u);if(f.role==='owner')s.owners.push({...u});if(f.role==='tenant')s.tenants.push({...u,propertyId:'',roomId:'',ownerId:'',leaseStatus:'Belum menempati',rent:0,joinedAt:N.dateKey(),endDate:'',paymentDay:5});return id;});N.setRole(f.role,id);return id;};
+N.saveSettings=f=>N.update(s=>{const id=N.actorId(),u=s.users.find(u=>u.id===id);if(!f.name?.trim())throw new Error('Nama profil wajib diisi.');u.name=f.name.trim();const mirror=s.owners.find(o=>o.id===id)||s.tenants.find(t=>t.id===id);if(mirror)mirror.name=u.name;s.settings[id]={...s.settings[id],notifications:!!f.notifications,compact:!!f.compact};});
+N.toggleFavorite=id=>{if(!N.property(id))throw new Error('Listing tidak ditemukan.');N.update(s=>{const key=N.actorId(),ids=s.favorites[key]||[];s.favorites[key]=ids.includes(id)?ids.filter(x=>x!==id):[...ids,id];});};N.favoriteIds=()=>state.favorites[N.actorId()]||[];
+N.toggleCompare=id=>N.update(s=>{if(!N.property(id))throw new Error('Listing tidak ditemukan.');if(s.compare.includes(id))s.compare=s.compare.filter(x=>x!==id);else{if(s.compare.length===3)throw new Error('Maksimal tiga kos. Hapus salah satu pilihan terlebih dahulu.');s.compare.push(id);}});
+N.rememberSearch=q=>{const text=q.trim().slice(0,80);if(text)N.update(s=>{const id=N.actorId();s.recentSearches[id]=[text,...(s.recentSearches[id]||[]).filter(x=>x!==text)].slice(0,5);});};
+N.recordInteraction=(pid,kind,session='')=>{if(!['views','details','contacts'].includes(kind)||!N.property(pid))return;const date=N.dateKey(),actorId=N.actorId();if(state.analytics.some(a=>a.propertyId===pid&&a.kind===kind&&a.date===date&&a.actorId===actorId&&a.session===session))return;N.update(s=>s.analytics.push({id:N.id('event'),propertyId:pid,ownerId:N.property(pid).ownerId,kind,date,actorId,session}));};
+N.daysUntil=date=>Math.round((new Date(date+'T00:00:00')-new Date(N.dateKey()+'T00:00:00'))/86400000);N.unpaid=i=>!['Lunas','Dibatalkan'].includes(i.status);N.invoiceStatus=i=>!N.unpaid(i)?i.status:N.daysUntil(i.dueDate)<0?'Terlambat':'Belum lunas';
+N.reminders=()=>state.invoices.filter(i=>i.tenantId===state.activeTenantId&&N.unpaid(i)&&(N.daysUntil(i.dueDate)<=3||state.manualReminders.includes(i.id)));
+N.accessInvoice=id=>{const i=state.invoices.find(i=>i.id===id);if(!i||!((state.role==='owner'&&i.ownerId===N.actorId())||(state.role==='tenant'&&i.tenantId===N.actorId())||state.role==='admin'))throw new Error('Tagihan tidak tersedia untuk akun ini.');return i;};
+function invoiceRow(f,tid,id){const t=N.requireOwned('tenants',tid),p=N.requireProperty(t.propertyId),amount=Number(f.useRent?t.rent:f.amount),period=f.period?.trim();if(!N.isActive(t)||p.archived||!Number.isFinite(amount)||amount<10000||amount>100000000||!N.validDate(f.dueDate)||!period)throw new Error('Lengkapi data tagihan untuk penghuni aktif.');if(state.invoices.some(i=>i.id!==id&&i.tenantId===tid&&i.propertyId===p.id&&i.period.toLowerCase()===period.toLowerCase()&&i.status!=='Dibatalkan'))throw new Error(`Tagihan periode ini untuk ${t.name} sudah ada.`);return {id:id||N.id('INV'),tenantId:tid,propertyId:p.id,ownerId:p.ownerId,agreementId:state.agreements.find(a=>a.tenantId===tid&&a.status==='Aktif')?.id,amount,dueDate:f.dueDate,period,status:'Belum lunas',notes:f.notes?.trim()||'',createdAt:id?N.accessInvoice(id).createdAt:N.dateKey()};}
+N.saveInvoice=(f,id)=>{N.requireRole('owner');if(id){const old=N.requireOwned('invoices',id);if(state.transactions.some(t=>t.invoiceId===id)||!N.unpaid(old))throw new Error('Tagihan dengan transaksi atau status final tidak dapat diubah.');}const inv=invoiceRow(f,f.tenantId,id);N.update(s=>{if(id)s.invoices[s.invoices.findIndex(i=>i.id===id)]=inv;else s.invoices.unshift(inv);N.notify(s,inv.tenantId,`invoice-${inv.id}`,id?'Tagihan diperbarui':'Tagihan sewa baru',inv.period,'#/tenant/bills',inv.id);N.log(s,`Tagihan ${inv.period} untuk ${N.tenant(inv.tenantId).name} disimpan.`);});return inv;};
+N.bulkInvoice=f=>{N.requireRole('owner');const ids=[...new Set(f.tenantIds||[])];if(!ids.length)throw new Error('Pilih minimal satu penghuni.');const rows=ids.map(id=>invoiceRow(f,id));N.update(s=>{s.invoices.unshift(...rows);rows.forEach(i=>N.notify(s,i.tenantId,`invoice-${i.id}`,'Tagihan sewa baru',i.period,'#/tenant/bills',i.id));N.log(s,`${rows.length} tagihan dibuat sekaligus.`);});return rows;};
+N.cancelInvoice=id=>{const i=N.requireOwned('invoices',id);if(!N.unpaid(i)||state.transactions.some(t=>t.invoiceId===id))throw new Error('Tagihan dengan transaksi atau status final tidak dapat dibatalkan.');N.update(s=>{s.invoices.find(i=>i.id===id).status='Dibatalkan';s.notifications.filter(n=>n.invoiceId===id).forEach(n=>n.read=true);N.log(s,`Tagihan ${i.period} dibatalkan.`);});};
+N.payInvoice=(id,method,success)=>{N.requireRole('tenant');const i=N.accessInvoice(id);if(!N.unpaid(i)||state.transactions.some(t=>t.invoiceId===id&&t.status==='Berhasil'))throw new Error('Tagihan sudah lunas atau dibatalkan.');if(!N.methods.includes(method))throw new Error('Pilih metode pembayaran demo.');return N.update(s=>{const tx={id:N.id('TRX'),kind:'rent',invoiceId:id,tenantId:i.tenantId,propertyId:i.propertyId,ownerId:i.ownerId,amount:i.amount,fee:2000,method,status:success?'Berhasil':'Gagal',date:new Date().toISOString()};s.transactions.unshift(tx);if(success){s.invoices.find(x=>x.id===id).status='Lunas';s.notifications.filter(n=>n.invoiceId===id).forEach(n=>n.read=true);s.demoReminder=false;N.notify(s,i.ownerId,`payment-${tx.id}`,'Pembayaran sewa diterima',`${N.tenant(i.tenantId)?.name} · ${i.period}`,'#/owner/transactions');N.log(s,`${N.tenant(i.tenantId)?.name} membayar sewa ${i.period}.`,i.ownerId);}return tx;});};
+N.manualReminder=id=>{const i=N.requireOwned('invoices',id);if(!N.unpaid(i))throw new Error('Tagihan sudah selesai.');N.update(s=>{if(!s.manualReminders.includes(id))s.manualReminders.push(id);N.notify(s,i.tenantId,`manual-${id}-${N.dateKey()}`,'Pengingat dari pengelola',`${i.period} · jatuh tempo ${i.dueDate}`,'#/tenant/bills',id);N.log(s,'Pengingat pembayaran lokal dibuat.');});};
+N.saveRecurring=f=>{const t=N.requireOwned('tenants',f.tenantId),day=Number(f.day);if(!N.isActive(t)||!Number.isInteger(day)||day<1||day>28||!/^\d{4}-\d{2}$/.test(f.startMonth))throw new Error('Pilih penghuni aktif, bulan mulai, dan hari 1–28.');N.update(s=>{if(s.recurring.some(r=>r.tenantId===t.id&&r.active))throw new Error('Jadwal bulanan penghuni ini sudah aktif.');s.recurring.push({id:N.id('schedule'),tenantId:t.id,propertyId:t.propertyId,ownerId:t.ownerId,amount:t.rent,day,startMonth:f.startMonth,lastMonth:'',active:true});});};
+N.runRecurring=(reference=N.monthKey(),simulate=false)=>{if(simulate)N.requireRole('owner');if(!/^\d{4}-\d{2}$/.test(reference))throw new Error('Periode tidak valid.');const pending=state.recurring.filter(r=>r.active&&reference>=r.startMonth&&(!r.lastMonth||r.lastMonth<reference)&&(!simulate||r.ownerId===state.activeOwnerId));if(!pending.length)return 0;let count=0;N.update(s=>pending.forEach(r=>{const t=s.tenants.find(t=>t.id===r.tenantId),p=s.properties.find(p=>p.id===r.propertyId);if(!N.isActive(t)||t.propertyId!==r.propertyId||p?.archived)return;const d=`${reference}-${String(r.day).padStart(2,'0')}`;if(!N.validDate(d))return;const period=new Date(d+'T12:00:00').toLocaleDateString('id-ID',{month:'long',year:'numeric'});if(!s.invoices.some(i=>i.tenantId===t.id&&i.propertyId===r.propertyId&&i.period.toLowerCase()===period.toLowerCase()&&i.status!=='Dibatalkan')){const i={id:N.id('INV'),tenantId:t.id,propertyId:r.propertyId,ownerId:r.ownerId,amount:r.amount,period,dueDate:d,status:'Belum lunas',createdAt:N.dateKey(),notes:'Pemeriksaan jadwal bulanan lokal.'};s.invoices.unshift(i);N.notify(s,t.id,`invoice-${i.id}`,'Tagihan bulanan baru',period,'#/tenant/bills',i.id);count++;}s.recurring.find(x=>x.id===r.id).lastMonth=reference;}));return count;};
+N.syncReminders=()=>{const pending=state.invoices.filter(i=>N.unpaid(i)&&N.daysUntil(i.dueDate)<=3).map(i=>({i,stage:N.daysUntil(i.dueDate)<0?'late':N.daysUntil(i.dueDate)===0?'due':'h3'})).filter(({i,stage})=>!state.notifications.some(n=>n.key===`${i.id}-${stage}`&&n.userId===i.tenantId));if(pending.length)N.update(s=>pending.forEach(({i,stage})=>N.notify(s,i.tenantId,`${i.id}-${stage}`,stage==='late'?'Sewa melewati jatuh tempo':stage==='due'?'Sewa jatuh tempo hari ini':'Pengingat sewa H-3',`${i.period} · jatuh tempo ${i.dueDate}`,'#/tenant/bills',i.id)));};
+N.myNotifications=()=>state.notifications.filter(n=>n.userId===N.actorId());N.markRead=id=>N.update(s=>s.notifications.filter(n=>n.userId===N.actorId()&&(id==='all'||n.id===id)).forEach(n=>n.read=true));
+N.safeImage=src=>typeof src==='string'&&(/^assets\/images\/[\w.-]+\.(jpg|jpeg|png|webp)$/.test(src)||/^data:image\/(jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(src));N.validateImage=src=>{if(!N.safeImage(src)||!src.startsWith('data:')||src.length>1400000)throw new Error('Foto harus JPG, PNG, atau WebP maksimal 1 MB.');};
+N.saveProperty=(f,id)=>{N.requireRole('owner');const old=id?N.requireProperty(id):null,price=Number(f.price),total=Number(f.total);if(!f.name?.trim()||!f.location?.trim()||!f.address?.trim()||!f.description?.trim()||!Number.isFinite(price)||price<100000||price>100000000||!Number.isInteger(total)||total<1||total>100||!['Campur','Putra','Putri'].includes(f.type))throw new Error('Periksa nama, alamat, harga, jumlah kamar, dan tipe kos.');if(old&&old.rooms.slice(total).some(r=>state.tenants.some(t=>N.isActive(t)&&t.roomId===r.id)||state.agreements.some(a=>a.roomId===r.id)))throw new Error('Kamar yang masih ditempati atau memiliki riwayat sewa tidak dapat dihapus.');if(f.photo)N.validateImage(f.photo);return N.update(s=>{const pid=id||N.id('property'),rooms=Array.from({length:total},(_,i)=>old?.rooms[i]||{id:`${pid}-r${i+1}`,number:`K${String(i+1).padStart(2,'0')}`,available:true,status:'Tersedia',type:'Standard',price,ownerId:s.activeOwnerId,facilities:[...(f.facilities||[])]}),image=f.photo||f.image||old?.image||'assets/images/room-2.jpg';if(!N.safeImage(image))throw new Error('Pilih foto lokal atau unggahan gambar yang didukung.');const p={...old,id:pid,ownerId:s.activeOwnerId,name:f.name.trim(),location:f.location.trim(),address:f.address.trim(),description:f.description.trim(),price,type:f.type,size:f.size?.trim()||'3 × 4 m',facilities:(f.facilities||[]).filter(x=>N.facilities.includes(x)),rules:(f.rules||'Jaga kebersihan dan ketenangan bersama.').split('\n').map(x=>x.trim()).filter(Boolean),image,photos:[image,...(old?.photos?.slice(1)||['assets/images/kitchen.jpg','assets/images/bathroom.jpg'])],rooms,archived:old?.archived||false,createdAt:old?.createdAt||N.dateKey(),nearby:old?.nearby||[{name:'Fasilitas sekitar',distance:'Tanyakan kepada pengelola; data ilustrasi.'}]};if(old)s.properties[s.properties.findIndex(p=>p.id===id)]=p;else s.properties.push(p);N.log(s,`Properti ${p.name} disimpan.`);return p;});};
+N.archiveProperty=id=>{const p=N.requireProperty(id);N.update(s=>{s.properties.find(p=>p.id===id).archived=!p.archived;N.log(s,`${p.name} ${p.archived?'dipublikasikan kembali':'diarsipkan'}.`);});};
+N.deleteProperty=id=>{N.requireProperty(id);if(['tenants','invoices','transactions','complaints','agreements','campaigns'].some(k=>state[k].some(x=>x.propertyId===id)))throw new Error('Properti memiliki penghuni atau riwayat. Gunakan Arsipkan.');N.update(s=>{s.properties=s.properties.filter(p=>p.id!==id);s.conversations=s.conversations.filter(c=>c.propertyId!==id);s.compare=s.compare.filter(x=>x!==id);Object.keys(s.favorites).forEach(k=>s.favorites[k]=s.favorites[k].filter(x=>x!==id));N.log(s,'Properti tanpa riwayat dihapus.');});};
+N.setRoom=(pid,rid,f)=>{const p=N.requireProperty(pid),r=p.rooms.find(r=>r.id===rid);if(!r)throw new Error('Kamar tidak ditemukan.');const status=f.status||r.status,price=Number(f.price||r.price);if(!['Tersedia','Dalam perbaikan','Tidak aktif'].includes(status)||!Number.isFinite(price)||price<100000||price>100000000)throw new Error('Status atau harga kamar tidak valid.');if(N.occupants(pid).some(t=>t.roomId===rid)&&status!=='Tersedia')throw new Error('Kamar masih ditempati. Pindahkan atau check-out penghuni terlebih dahulu.');N.update(s=>{const room=s.properties.find(p=>p.id===pid).rooms.find(r=>r.id===rid);Object.assign(room,{status,available:status==='Tersedia',type:f.type?.trim()||r.type,price,facilities:f.facilities||r.facilities});N.log(s,`Kamar ${r.number} diperbarui.`);});};
+N.toggleRoom=(pid,rid)=>{const p=N.requireProperty(pid),r=p.rooms.find(r=>r.id===rid);N.setRoom(pid,rid,{status:r.status==='Tersedia'?'Tidak aktif':'Tersedia'});};
+N.saveTenant=(f,id)=>{let profile=null;if(!id&&f.accountId){profile=state.users.find(u=>u.id===f.accountId);const existing=N.tenant(f.accountId);if(!profile||profile.id==='guest'||!['guest','tenant'].includes(profile.role)||(existing&&(existing.ownerId||existing.leaseStatus!=='Belum menempati')))throw new Error('Profil ini tidak tersedia untuk check-in baru.');}const old=id?N.requireOwned('tenants',id):profile?N.tenant(profile.id):null,p=N.requireProperty(f.propertyId),r=p.rooms.find(r=>r.id===f.roomId),rent=Number(f.rent||r?.price||p.price),joined=f.joinedAt||old?.joinedAt||N.dateKey(),end=f.endDate||old?.endDate||N.offsetDate(180),day=Number(f.paymentDay||5);if(!f.name?.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email||'')||!/^[+\d\s-]{8,18}$/.test(f.phone||'')||p.archived||!r||r.status!=='Tersedia'||state.tenants.some(t=>t.id!==id&&N.isActive(t)&&t.roomId===r.id))throw new Error('Periksa kontak dan pilih kamar aktif yang tidak ditempati.');if(!N.validDate(joined)||!N.validDate(end)||end<joined||!Number.isFinite(rent)||rent<100000||rent>100000000||!Number.isInteger(day)||day<1||day>28)throw new Error('Periksa tanggal sewa, harga, dan jadwal pembayaran.');return N.update(s=>{const tid=id||profile?.id||N.id('tenant'),t={...old,id:tid,name:f.name.trim(),email:f.email.trim(),phone:f.phone.trim(),propertyId:p.id,roomId:r.id,ownerId:p.ownerId,rent,joinedAt:joined,endDate:end,paymentDay:day,leaseStatus:'Aktif'};if(old)s.tenants[s.tenants.findIndex(t=>t.id===old.id)]=t;else s.tenants.push(t);const current=s.agreements.find(a=>a.tenantId===tid&&a.status==='Aktif');if(current&&(current.roomId!==r.id||current.propertyId!==p.id)){current.status='Pindah';current.checkoutDate=N.dateKey();}if(!current||current.status!=='Aktif')s.agreements.push({id:N.id('lease'),tenantId:tid,propertyId:p.id,roomId:r.id,ownerId:p.ownerId,rent,startDate:joined,endDate:end,paymentDay:day,status:'Aktif'});else Object.assign(current,{rent,endDate:end,paymentDay:day});const u=s.users.find(u=>u.id===tid);if(u)Object.assign(u,{name:t.name,email:t.email,phone:t.phone,role:'tenant'});else s.users.push({id:tid,name:t.name,email:t.email,phone:t.phone,role:'tenant'});N.log(s,`${t.name} ditempatkan di kamar ${r.number}.`);return t;});};
+N.checkoutTenant=id=>{const t=N.requireOwned('tenants',id);if(!N.isActive(t))throw new Error('Penghuni sudah tidak aktif.');N.update(s=>{s.tenants.find(t=>t.id===id).leaseStatus='Check-out';s.agreements.filter(a=>a.tenantId===id&&a.status==='Aktif').forEach(a=>{a.status='Check-out';a.checkoutDate=N.dateKey();});s.recurring.filter(r=>r.tenantId===id).forEach(r=>r.active=false);N.log(s,`${t.name} check-out. Kamar dilepas; riwayat disimpan.`);});};
+N.deleteTenant=id=>{N.requireOwned('tenants',id);if(['invoices','complaints','agreements'].some(k=>state[k].some(x=>x.tenantId===id))||state.conversations.some(c=>c.participantId===id))throw new Error('Penghuni memiliki riwayat. Gunakan Check-out.');N.update(s=>{s.tenants=s.tenants.filter(t=>t.id!==id);s.users=s.users.filter(u=>u.id!==id);});};
+N.boost=(id,success)=>{const p=N.requireProperty(id);if(p.archived||N.isBoosted(p))throw new Error('Properti diarsipkan atau promosi masih aktif.');return N.update(s=>{const tx={id:N.id('BOOST'),kind:'boost',propertyId:id,ownerId:p.ownerId,amount:30000,fee:0,method:'Saldo demo',status:success?'Berhasil':'Gagal',date:new Date().toISOString()};s.transactions.unshift(tx);if(success){const end=N.offsetDate(30);s.properties.find(p=>p.id===id).boostUntil=end;s.campaigns.unshift({id:N.id('campaign'),propertyId:id,ownerId:p.ownerId,startDate:N.dateKey(),endDate:end,transactionId:tx.id});N.log(s,`Promosi ${p.name} aktif selama 30 hari.`);}return tx;});};
+N.contact=pid=>{const p=N.property(pid);if(!p||p.archived)throw new Error('Properti tidak tersedia.');if(state.role==='owner'){N.requireProperty(pid);return state.conversations.find(c=>c.propertyId===pid&&c.ownerId===N.actorId())?.id||'';}if(state.role==='admin')throw new Error('Gunakan akun calon penghuni untuk memulai percakapan.');const participantId=N.actorId();let c=state.conversations.find(c=>c.propertyId===pid&&c.participantId===participantId);if(!c)c=N.update(s=>{const item={id:N.id('chat'),propertyId:pid,ownerId:p.ownerId,participantId,messages:[],readBy:{}};s.conversations.push(item);return item;});N.recordInteraction(pid,'contacts',N.sessionId||'');return c.id;};
+N.accessConversation=id=>{const c=state.conversations.find(c=>c.id===id);if(!c||!((state.role==='owner'&&c.ownerId===N.actorId())||(['guest','tenant'].includes(state.role)&&c.participantId===N.actorId())))throw new Error('Percakapan tidak tersedia untuk akun ini.');return c;};
+N.sendMessage=(id,text,photo='')=>{const c=N.accessConversation(id),message=text.trim();if((!message&&!photo)||message.length>1000)throw new Error('Isi pesan 1–1.000 karakter atau tambahkan foto.');if(photo)N.validateImage(photo);N.update(s=>{const item=s.conversations.find(c=>c.id===id);item.messages.push({id:N.id('message'),sender:N.actorId(),text:message,photo,date:new Date().toISOString()});const to=state.role==='owner'?c.participantId:c.ownerId;N.notify(s,to,`chat-${id}-${item.messages.length}`,'Pesan baru',message.slice(0,80)||'Lampiran gambar',to===c.ownerId?'#/owner/chat':N.tenant(to)?'#/tenant/chat':'#/chat');});};
+N.unreadMessages=c=>c.messages.filter(m=>m.sender!==N.actorId()&&(!c.readBy[N.actorId()]||m.date>c.readBy[N.actorId()])).length;
+N.readConversation=id=>{const c=N.accessConversation(id);if(!N.unreadMessages(c))return;N.update(s=>{s.conversations.find(c=>c.id===id).readBy[N.actorId()]=new Date().toISOString();s.notifications.filter(n=>n.userId===N.actorId()&&n.key.startsWith(`chat-${id}-`)).forEach(n=>n.read=true);});};
 })(window.NK);

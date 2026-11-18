@@ -1,0 +1,34 @@
+{
+  "base_url": "http://127.0.0.1:5500",
+  "responsive_route_checks": 0,
+  "viewports": [
+    1440,
+    390,
+    320
+  ],
+  "screenshots": [
+    "homepage.png",
+    "homepage-full.png",
+    "marketplace.png",
+    "property-detail.png",
+    "login.png",
+    "owner-dashboard.png",
+    "property-management.png",
+    "room-management.png",
+    "tenant-management.png",
+    "financial-report.png",
+    "complaint-management.png",
+    "chat.png",
+    "boost-listing.png",
+    "complaint-analysis.png",
+    "tenant-dashboard.png",
+    "payment-checkout.png",
+    "payment-success.png",
+    "platform-admin.png",
+    "mobile-homepage.png",
+    "mobile-homepage-full.png",
+    "mobile-tenant-dashboard.png"
+  ],
+  "javascript_errors": [],
+  "resource_errors": []
+}

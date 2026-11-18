@@ -1,0 +1,24 @@
+[
+  {
+    "url": "http://127.0.0.1:5500",
+    "passed": [
+      "registration -> same-identity owner check-in",
+      "preserved favorites and property conversation",
+      "reload persistence",
+      "financial chart date/property filtering",
+      "CSV report respects filters, transactions export includes visible account rows"
+    ],
+    "javascript_errors": []
+  },
+  {
+    "url": "file:///C:/Users/Mayceren/Documents/technopreneurship/NgekosAja/index.html",
+    "passed": [
+      "registration -> same-identity owner check-in",
+      "preserved favorites and property conversation",
+      "reload persistence",
+      "financial chart date/property filtering",
+      "CSV report respects filters, transactions export includes visible account rows"
+    ],
+    "javascript_errors": []
+  }
+]
