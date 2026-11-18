@@ -1,5 +1,11 @@
 # NgekosAja.com 2.0
 
+Fondasi **3.0 Phase 1 — Database Foundation** tersedia terpisah di `supabase/` dan `scripts/`. Frontend versi 2 tetap memakai LocalStorage dan dapat dijalankan seperti sebelumnya. Sebelas migrasi dan seed master telah diterapkan ke project Supabase development setelah persetujuan pengguna; integrasi frontend dan UI tetap seperti versi 2.
+
+Mulai dari [setup database](docs/database/SETUP_GUIDE.md), [schema dan tabel](docs/database/DATABASE_SCHEMA.md), [ERD](docs/database/ERD.md), [Data Dictionary](docs/database/DATA_DICTIONARY.md), [RLS](docs/database/RLS_POLICIES.md), [migrasi](docs/database/MIGRATION_GUIDE.md), [seed/fixture Auth](docs/database/SEED_GUIDE.md), dan [hasil pengujian aktual](docs/database/VERIFICATION.md). Tool database opsional: `npm ci`; pengujian PostgreSQL native lokal: `npm run db:test -- --native`. Stack Supabase lengkap membutuhkan Docker/Podman.
+
+[Hasil penerapan remote](docs/database/REMOTE_DEPLOYMENT.md): 11 migrasi, 31 tabel dengan RLS aktif, 45 policy, serta 7 fasilitas master berhasil diverifikasi pada `ngekosaja-development`. [Review sebelum apply](docs/database/REMOTE_REVIEW.md) dipertahankan sebagai histori.
+
 **Cari Kos, Bayar Sewa, Kelola Semua dalam Satu Tempat.**
 
 Upgrade prototype PropTech Business Model Lean Canvas (BMLC), Milestone 2 Technopreneurship. Dibangun dengan HTML5, CSS, JavaScript ES6+, navigasi hash, dan LocalStorage. Tidak memerlukan build, database, API key, atau instalasi npm.

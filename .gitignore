@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+.local-db/
+.database-test/
+*.log
+*.pid
+__pycache__/
+*.pem
+*.key
+credentials*.json
+.supabase/

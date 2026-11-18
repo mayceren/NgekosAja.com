@@ -1,0 +1,3613 @@
+{
+  "stats": {
+    "tables": 31,
+    "columns": 236,
+    "foreign_keys": 48,
+    "policies": 45,
+    "public_functions": 24
+  },
+  "tables": [
+    {
+      "name": "activity_logs",
+      "description": "Audit append-only tanpa payload data pribadi; scoped ke pemilik dan admin.",
+      "columns": [
+        {
+          "table_name": "activity_logs",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 2,
+          "name": "owner_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 3,
+          "name": "actor_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 4,
+          "name": "entity_table",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 5,
+          "name": "entity_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 6,
+          "name": "action",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 7,
+          "name": "description",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 8,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "activity_logs",
+          "attnum": 9,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "activity_logs_action_check",
+          "type": "c",
+          "definition": "CHECK ((action = ANY (ARRAY['INSERT'::text, 'UPDATE'::text, 'DELETE'::text, 'ROLE_GRANT'::text])))"
+        },
+        {
+          "name": "activity_logs_actor_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "activity_logs_description_check",
+          "type": "c",
+          "definition": "CHECK ((char_length(description) <= 300))"
+        },
+        {
+          "name": "activity_logs_owner_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (owner_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "activity_logs_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "name": "boost_campaigns",
+      "description": "Periode promosi 30 hari dengan pembayaran atau grant development yang tidak dianggap pendapatan.",
+      "columns": [
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 3,
+          "name": "transaction_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 4,
+          "name": "start_date",
+          "type": "date",
+          "not_null": true,
+          "default_value": "private.today()"
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 5,
+          "name": "end_date",
+          "type": "date",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 6,
+          "name": "source",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'payment'::text"
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 7,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "boost_campaigns",
+          "attnum": 8,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "boost_campaigns_check",
+          "type": "c",
+          "definition": "CHECK ((end_date = (start_date + 30)))"
+        },
+        {
+          "name": "boost_campaigns_check1",
+          "type": "c",
+          "definition": "CHECK ((((source = 'payment'::text) AND (transaction_id IS NOT NULL)) OR ((source = 'development_grant'::text) AND (transaction_id IS NULL))))"
+        },
+        {
+          "name": "boost_campaigns_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "boost_campaigns_property_id_daterange_excl",
+          "type": "x",
+          "definition": "EXCLUDE USING gist (property_id WITH =, daterange(start_date, end_date, '[)'::text) WITH &&)"
+        },
+        {
+          "name": "boost_campaigns_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "boost_campaigns_source_check",
+          "type": "c",
+          "definition": "CHECK ((source = ANY (ARRAY['payment'::text, 'development_grant'::text])))"
+        },
+        {
+          "name": "boost_campaigns_transaction_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "boost_campaigns_transaction_id_key",
+          "type": "u",
+          "definition": "UNIQUE (transaction_id)"
+        }
+      ]
+    },
+    {
+      "name": "complaint_analyses",
+      "description": "Rekomendasi berbasis aturan lokal yang diterima pengguna, bukan hasil API AI.",
+      "columns": [
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 2,
+          "name": "complaint_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 3,
+          "name": "accepted_by",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 4,
+          "name": "rule_version",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'local-keywords-v2'::text"
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 5,
+          "name": "suggested_category",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 6,
+          "name": "suggested_priority",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 7,
+          "name": "summary",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 8,
+          "name": "safe_action",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 9,
+          "name": "emergency",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "false"
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 10,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "complaint_analyses",
+          "attnum": 11,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "complaint_analyses_accepted_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (accepted_by) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_analyses_complaint_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_analyses_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "complaint_analyses_safe_action_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(safe_action) >= 1) AND (char_length(safe_action) <= 1000)))"
+        },
+        {
+          "name": "complaint_analyses_suggested_category_check",
+          "type": "c",
+          "definition": "CHECK ((suggested_category = ANY (ARRAY['AC'::text, 'Listrik'::text, 'Air'::text, 'Internet'::text, 'Kebersihan'::text, 'Keamanan'::text, 'Furnitur'::text, 'Lainnya'::text])))"
+        },
+        {
+          "name": "complaint_analyses_suggested_priority_check",
+          "type": "c",
+          "definition": "CHECK ((suggested_priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])))"
+        },
+        {
+          "name": "complaint_analyses_summary_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(summary) >= 1) AND (char_length(summary) <= 300)))"
+        }
+      ]
+    },
+    {
+      "name": "complaint_attachments",
+      "description": "Metadata lampiran tiket. Penulisan browser ditutup selama cloud storage belum tersedia.",
+      "columns": [
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 2,
+          "name": "complaint_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 3,
+          "name": "uploaded_by",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 4,
+          "name": "storage_path",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 5,
+          "name": "mime_type",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 6,
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 7,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "complaint_attachments",
+          "attnum": 8,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "complaint_attachments_complaint_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_attachments_mime_type_check",
+          "type": "c",
+          "definition": "CHECK ((mime_type = ANY (ARRAY['image/jpeg'::text, 'image/png'::text, 'image/webp'::text])))"
+        },
+        {
+          "name": "complaint_attachments_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "complaint_attachments_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK (((size_bytes >= 1) AND (size_bytes <= 1048576)))"
+        },
+        {
+          "name": "complaint_attachments_storage_path_check",
+          "type": "c",
+          "definition": "CHECK ((((char_length(storage_path) >= 1) AND (char_length(storage_path) <= 500)) AND (storage_path !~* '^(data:|javascript:)'::text)))"
+        },
+        {
+          "name": "complaint_attachments_uploaded_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (uploaded_by) REFERENCES profiles(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "complaint_histories",
+      "description": "Timeline append-only yang dibuat trigger, bukan input bebas browser.",
+      "columns": [
+        {
+          "table_name": "complaint_histories",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 2,
+          "name": "complaint_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 3,
+          "name": "actor_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 4,
+          "name": "previous_status",
+          "type": "text",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 5,
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 6,
+          "name": "note",
+          "type": "text",
+          "not_null": true,
+          "default_value": "''::text"
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 7,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "complaint_histories",
+          "attnum": 8,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "complaint_histories_actor_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_histories_complaint_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_histories_note_check",
+          "type": "c",
+          "definition": "CHECK ((char_length(note) <= 1000))"
+        },
+        {
+          "name": "complaint_histories_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "complaint_histories_previous_status_check",
+          "type": "c",
+          "definition": "CHECK ((previous_status = ANY (ARRAY['waiting'::text, 'in_progress'::text, 'awaiting_confirmation'::text, 'resolved'::text])))"
+        },
+        {
+          "name": "complaint_histories_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['waiting'::text, 'in_progress'::text, 'awaiting_confirmation'::text, 'resolved'::text])))"
+        }
+      ]
+    },
+    {
+      "name": "complaint_notes",
+      "description": "Catatan tindakan yang dibagikan kepada pihak terkait; tidak ada catatan internal tersembunyi.",
+      "columns": [
+        {
+          "table_name": "complaint_notes",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "complaint_notes",
+          "attnum": 2,
+          "name": "complaint_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_notes",
+          "attnum": 3,
+          "name": "author_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_notes",
+          "attnum": 4,
+          "name": "body",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaint_notes",
+          "attnum": 5,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "complaint_notes",
+          "attnum": 6,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "complaint_notes_author_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (author_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_notes_body_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(body)) >= 1) AND (char_length(btrim(body)) <= 1000)))"
+        },
+        {
+          "name": "complaint_notes_complaint_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaint_notes_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "name": "complaints",
+      "description": "Tiket fasilitas sesuai agreement asal; konfirmasi akhir oleh penghuni.",
+      "columns": [
+        {
+          "table_name": "complaints",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 2,
+          "name": "agreement_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 3,
+          "name": "title",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 4,
+          "name": "description",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 5,
+          "name": "category",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 6,
+          "name": "urgency",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 7,
+          "name": "priority",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 8,
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'waiting'::text"
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 9,
+          "name": "estimated_completion",
+          "type": "date",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 10,
+          "name": "confirmed_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 11,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "complaints",
+          "attnum": 12,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "complaints_agreement_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (agreement_id) REFERENCES rental_agreements(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "complaints_category_check",
+          "type": "c",
+          "definition": "CHECK ((category = ANY (ARRAY['AC'::text, 'Listrik'::text, 'Air'::text, 'Internet'::text, 'Kebersihan'::text, 'Keamanan'::text, 'Furnitur'::text, 'Lainnya'::text])))"
+        },
+        {
+          "name": "complaints_check",
+          "type": "c",
+          "definition": "CHECK ((((status = 'resolved'::text) AND (confirmed_at IS NOT NULL)) OR ((status <> 'resolved'::text) AND (confirmed_at IS NULL))))"
+        },
+        {
+          "name": "complaints_description_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(description)) >= 10) AND (char_length(btrim(description)) <= 4000)))"
+        },
+        {
+          "name": "complaints_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "complaints_priority_check",
+          "type": "c",
+          "definition": "CHECK ((priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])))"
+        },
+        {
+          "name": "complaints_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['waiting'::text, 'in_progress'::text, 'awaiting_confirmation'::text, 'resolved'::text])))"
+        },
+        {
+          "name": "complaints_title_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(title)) >= 5) AND (char_length(btrim(title)) <= 150)))"
+        },
+        {
+          "name": "complaints_urgency_check",
+          "type": "c",
+          "definition": "CHECK ((urgency = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])))"
+        }
+      ]
+    },
+    {
+      "name": "conversation_members",
+      "description": "Dua peserta sah: pemilik properti dan calon penghuni; menyimpan penanda baca.",
+      "columns": [
+        {
+          "table_name": "conversation_members",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "conversation_members",
+          "attnum": 2,
+          "name": "conversation_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "conversation_members",
+          "attnum": 3,
+          "name": "user_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "conversation_members",
+          "attnum": 4,
+          "name": "last_read_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "conversation_members",
+          "attnum": 5,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "conversation_members",
+          "attnum": 6,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "conversation_members_conversation_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "conversation_members_conversation_id_user_id_key",
+          "type": "u",
+          "definition": "UNIQUE (conversation_id, user_id)"
+        },
+        {
+          "name": "conversation_members_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "conversation_members_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "conversations",
+      "description": "Percakapan properti dan satu calon penghuni; identitas tetap saat menjadi penghuni.",
+      "columns": [
+        {
+          "table_name": "conversations",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "conversations",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "conversations",
+          "attnum": 3,
+          "name": "prospect_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "conversations",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "conversations",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "conversations_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "conversations_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "conversations_property_id_prospect_id_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, prospect_id)"
+        },
+        {
+          "name": "conversations_prospect_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (prospect_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "facilities",
+      "description": "Master fasilitas publik nonpersonal.",
+      "columns": [
+        {
+          "table_name": "facilities",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "facilities",
+          "attnum": 2,
+          "name": "code",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "facilities",
+          "attnum": 3,
+          "name": "name",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "facilities",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "facilities",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "facilities_code_check",
+          "type": "c",
+          "definition": "CHECK ((code ~ '^[a-z_]+$'::text))"
+        },
+        {
+          "name": "facilities_code_key",
+          "type": "u",
+          "definition": "UNIQUE (code)"
+        },
+        {
+          "name": "facilities_name_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(name) >= 1) AND (char_length(name) <= 80)))"
+        },
+        {
+          "name": "facilities_name_key",
+          "type": "u",
+          "definition": "UNIQUE (name)"
+        },
+        {
+          "name": "facilities_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "name": "favorites",
+      "description": "Wishlist terikat identitas, tetap ada setelah check-in.",
+      "columns": [
+        {
+          "table_name": "favorites",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "favorites",
+          "attnum": 2,
+          "name": "user_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "favorites",
+          "attnum": 3,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "favorites",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "favorites",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "favorites_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "favorites_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "favorites_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "favorites_user_id_property_id_key",
+          "type": "u",
+          "definition": "UNIQUE (user_id, property_id)"
+        }
+      ]
+    },
+    {
+      "name": "invoices",
+      "description": "Tagihan bulanan terkait agreement, termasuk snapshot bukti historis.",
+      "columns": [
+        {
+          "table_name": "invoices",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 2,
+          "name": "agreement_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 3,
+          "name": "period_start",
+          "type": "date",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 4,
+          "name": "due_date",
+          "type": "date",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 5,
+          "name": "amount",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 6,
+          "name": "admin_fee",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": "2000"
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 7,
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'pending'::text"
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 8,
+          "name": "notes",
+          "type": "text",
+          "not_null": true,
+          "default_value": "''::text"
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 9,
+          "name": "tenant_name_snapshot",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 10,
+          "name": "property_name_snapshot",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 11,
+          "name": "room_number_snapshot",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 12,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "invoices",
+          "attnum": 13,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "invoices_admin_fee_check",
+          "type": "c",
+          "definition": "CHECK ((admin_fee = 2000))"
+        },
+        {
+          "name": "invoices_agreement_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (agreement_id) REFERENCES rental_agreements(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "invoices_agreement_id_period_start_key",
+          "type": "u",
+          "definition": "UNIQUE (agreement_id, period_start)"
+        },
+        {
+          "name": "invoices_amount_check",
+          "type": "c",
+          "definition": "CHECK (((amount >= 100000) AND (amount <= 100000000)))"
+        },
+        {
+          "name": "invoices_notes_check",
+          "type": "c",
+          "definition": "CHECK ((char_length(notes) <= 1000))"
+        },
+        {
+          "name": "invoices_period_start_check",
+          "type": "c",
+          "definition": "CHECK ((EXTRACT(day FROM period_start) = (1)::numeric))"
+        },
+        {
+          "name": "invoices_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "invoices_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text])))"
+        }
+      ]
+    },
+    {
+      "name": "listing_analytics",
+      "description": "Event listing bertanggal Jakarta yang dideduplikasi; akses tulis hanya RPC aktor login, tanpa klaim unique visitor.",
+      "columns": [
+        {
+          "table_name": "listing_analytics",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 3,
+          "name": "actor_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 4,
+          "name": "session_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 5,
+          "name": "event_date",
+          "type": "date",
+          "not_null": true,
+          "default_value": "private.today()"
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 6,
+          "name": "kind",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 7,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "listing_analytics",
+          "attnum": 8,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "listing_analytics_actor_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "listing_analytics_kind_check",
+          "type": "c",
+          "definition": "CHECK ((kind = ANY (ARRAY['view'::text, 'detail'::text, 'contact'::text])))"
+        },
+        {
+          "name": "listing_analytics_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "listing_analytics_property_id_actor_id_session_id_event_dat_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, actor_id, session_id, event_date, kind)"
+        },
+        {
+          "name": "listing_analytics_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "message_attachments",
+      "description": "Metadata lampiran gambar pesan; tidak menyediakan upload cloud.",
+      "columns": [
+        {
+          "table_name": "message_attachments",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "message_attachments",
+          "attnum": 2,
+          "name": "message_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "message_attachments",
+          "attnum": 3,
+          "name": "storage_path",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "message_attachments",
+          "attnum": 4,
+          "name": "mime_type",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "message_attachments",
+          "attnum": 5,
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "message_attachments",
+          "attnum": 6,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "message_attachments",
+          "attnum": 7,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "attachment_content_check",
+          "type": "t",
+          "definition": "TRIGGER DEFERRABLE INITIALLY DEFERRED"
+        },
+        {
+          "name": "message_attachments_message_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_attachments_mime_type_check",
+          "type": "c",
+          "definition": "CHECK ((mime_type = ANY (ARRAY['image/jpeg'::text, 'image/png'::text, 'image/webp'::text])))"
+        },
+        {
+          "name": "message_attachments_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "message_attachments_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK (((size_bytes >= 1) AND (size_bytes <= 1048576)))"
+        },
+        {
+          "name": "message_attachments_storage_path_check",
+          "type": "c",
+          "definition": "CHECK ((((char_length(storage_path) >= 1) AND (char_length(storage_path) <= 500)) AND (storage_path !~* '^(data:|javascript:)'::text)))"
+        }
+      ]
+    },
+    {
+      "name": "messages",
+      "description": "Pesan append-only. Wajib mempunyai teks atau lampiran pada akhir transaksi.",
+      "columns": [
+        {
+          "table_name": "messages",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "messages",
+          "attnum": 2,
+          "name": "conversation_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "messages",
+          "attnum": 3,
+          "name": "sender_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "messages",
+          "attnum": 4,
+          "name": "body",
+          "type": "text",
+          "not_null": true,
+          "default_value": "''::text"
+        },
+        {
+          "table_name": "messages",
+          "attnum": 5,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "messages",
+          "attnum": 6,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_content_check",
+          "type": "t",
+          "definition": "TRIGGER DEFERRABLE INITIALLY DEFERRED"
+        },
+        {
+          "name": "messages_body_check",
+          "type": "c",
+          "definition": "CHECK ((char_length(body) <= 1000))"
+        },
+        {
+          "name": "messages_conversation_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "messages_conversation_id_sender_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (conversation_id, sender_id) REFERENCES conversation_members(conversation_id, user_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "messages_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "messages_sender_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (sender_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "description": "Notifikasi privat dengan key deduplikasi per pengguna.",
+      "columns": [
+        {
+          "table_name": "notifications",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 2,
+          "name": "user_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 3,
+          "name": "dedupe_key",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 4,
+          "name": "invoice_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 5,
+          "name": "title",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 6,
+          "name": "body",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 7,
+          "name": "route",
+          "type": "text",
+          "not_null": true,
+          "default_value": "''::text"
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 8,
+          "name": "read_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 9,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "notifications",
+          "attnum": 10,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "notifications_body_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(body) >= 1) AND (char_length(body) <= 1000)))"
+        },
+        {
+          "name": "notifications_dedupe_key_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(dedupe_key) >= 1) AND (char_length(dedupe_key) <= 200)))"
+        },
+        {
+          "name": "notifications_invoice_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "notifications_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "notifications_route_check",
+          "type": "c",
+          "definition": "CHECK ((char_length(route) <= 200))"
+        },
+        {
+          "name": "notifications_title_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(title) >= 1) AND (char_length(title) <= 150)))"
+        },
+        {
+          "name": "notifications_user_id_dedupe_key_key",
+          "type": "u",
+          "definition": "UNIQUE (user_id, dedupe_key)"
+        },
+        {
+          "name": "notifications_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "profiles",
+      "description": "Profil privat dengan ID yang sama dengan Supabase Auth. Email/kata sandi dikelola Auth, tidak disalin ke tabel aplikasi.",
+      "columns": [
+        {
+          "table_name": "profiles",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "profiles",
+          "attnum": 2,
+          "name": "display_name",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "profiles",
+          "attnum": 3,
+          "name": "phone",
+          "type": "text",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "profiles",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "profiles",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "profiles_display_name_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 70)))"
+        },
+        {
+          "name": "profiles_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "profiles_phone_check",
+          "type": "c",
+          "definition": "CHECK (((phone IS NULL) OR (phone ~ '^[+0-9 -]{8,18}$'::text)))"
+        },
+        {
+          "name": "profiles_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "name": "properties",
+      "description": "Properti milik satu pemilik terotorisasi; arsip mempertahankan riwayat.",
+      "columns": [
+        {
+          "table_name": "properties",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "properties",
+          "attnum": 2,
+          "name": "owner_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 3,
+          "name": "name",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 4,
+          "name": "location",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 5,
+          "name": "address",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 6,
+          "name": "description",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 7,
+          "name": "base_rent",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 8,
+          "name": "gender_policy",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "properties",
+          "attnum": 9,
+          "name": "room_size",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'3 × 4 m'::text"
+        },
+        {
+          "table_name": "properties",
+          "attnum": 10,
+          "name": "publication_status",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'draft'::text"
+        },
+        {
+          "table_name": "properties",
+          "attnum": 11,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "properties",
+          "attnum": 12,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "properties_address_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(address)) >= 5) AND (char_length(btrim(address)) <= 300)))"
+        },
+        {
+          "name": "properties_base_rent_check",
+          "type": "c",
+          "definition": "CHECK (((base_rent >= 100000) AND (base_rent <= 100000000)))"
+        },
+        {
+          "name": "properties_description_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(description)) >= 10) AND (char_length(btrim(description)) <= 4000)))"
+        },
+        {
+          "name": "properties_gender_policy_check",
+          "type": "c",
+          "definition": "CHECK ((gender_policy = ANY (ARRAY['mixed'::text, 'male'::text, 'female'::text])))"
+        },
+        {
+          "name": "properties_location_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(location)) >= 2) AND (char_length(btrim(location)) <= 80)))"
+        },
+        {
+          "name": "properties_name_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(name)) >= 3) AND (char_length(btrim(name)) <= 100)))"
+        },
+        {
+          "name": "properties_owner_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (owner_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "properties_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "properties_publication_status_check",
+          "type": "c",
+          "definition": "CHECK ((publication_status = ANY (ARRAY['draft'::text, 'published'::text, 'archived'::text])))"
+        },
+        {
+          "name": "properties_room_size_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(room_size) >= 1) AND (char_length(room_size) <= 60)))"
+        }
+      ]
+    },
+    {
+      "name": "property_facilities",
+      "description": "Relasi fasilitas yang berlaku untuk properti.",
+      "columns": [
+        {
+          "table_name": "property_facilities",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "property_facilities",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_facilities",
+          "attnum": 3,
+          "name": "facility_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_facilities",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "property_facilities",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "property_facilities_facility_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (facility_id) REFERENCES facilities(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "property_facilities_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "property_facilities_property_id_facility_id_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, facility_id)"
+        },
+        {
+          "name": "property_facilities_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "property_images",
+      "description": "Galeri berurutan berupa path metadata; tidak membuat bucket atau mengunggah file.",
+      "columns": [
+        {
+          "table_name": "property_images",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "property_images",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_images",
+          "attnum": 3,
+          "name": "image_path",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_images",
+          "attnum": 4,
+          "name": "alt_text",
+          "type": "text",
+          "not_null": true,
+          "default_value": "''::text"
+        },
+        {
+          "table_name": "property_images",
+          "attnum": 5,
+          "name": "position",
+          "type": "integer",
+          "not_null": true,
+          "default_value": "0"
+        },
+        {
+          "table_name": "property_images",
+          "attnum": 6,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "property_images",
+          "attnum": 7,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "property_images_alt_text_check",
+          "type": "c",
+          "definition": "CHECK ((char_length(alt_text) <= 150))"
+        },
+        {
+          "name": "property_images_image_path_check",
+          "type": "c",
+          "definition": "CHECK ((((char_length(image_path) >= 1) AND (char_length(image_path) <= 500)) AND (image_path !~* '^(data:|javascript:)'::text)))"
+        },
+        {
+          "name": "property_images_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "property_images_position_check",
+          "type": "c",
+          "definition": "CHECK ((\"position\" >= 0))"
+        },
+        {
+          "name": "property_images_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "property_images_property_id_position_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, \"position\")"
+        }
+      ]
+    },
+    {
+      "name": "property_landmarks",
+      "description": "Area sekitar dan jarak ilustrasi sesuai listing versi 2.",
+      "columns": [
+        {
+          "table_name": "property_landmarks",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "property_landmarks",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_landmarks",
+          "attnum": 3,
+          "name": "name",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_landmarks",
+          "attnum": 4,
+          "name": "distance_label",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_landmarks",
+          "attnum": 5,
+          "name": "is_illustrative",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "true"
+        },
+        {
+          "table_name": "property_landmarks",
+          "attnum": 6,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "property_landmarks",
+          "attnum": 7,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "property_landmarks_distance_label_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(distance_label) >= 1) AND (char_length(distance_label) <= 120)))"
+        },
+        {
+          "name": "property_landmarks_name_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(name)) >= 1) AND (char_length(btrim(name)) <= 100)))"
+        },
+        {
+          "name": "property_landmarks_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "property_landmarks_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "property_landmarks_property_id_name_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, name)"
+        }
+      ]
+    },
+    {
+      "name": "property_rules",
+      "description": "Peraturan properti berurutan, satu peraturan per baris.",
+      "columns": [
+        {
+          "table_name": "property_rules",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "property_rules",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_rules",
+          "attnum": 3,
+          "name": "rule_text",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_rules",
+          "attnum": 4,
+          "name": "position",
+          "type": "integer",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "property_rules",
+          "attnum": 5,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "property_rules",
+          "attnum": 6,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "property_rules_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "property_rules_position_check",
+          "type": "c",
+          "definition": "CHECK ((\"position\" >= 0))"
+        },
+        {
+          "name": "property_rules_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "property_rules_property_id_position_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, \"position\")"
+        },
+        {
+          "name": "property_rules_rule_text_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(rule_text)) >= 1) AND (char_length(btrim(rule_text)) <= 500)))"
+        }
+      ]
+    },
+    {
+      "name": "recent_searches",
+      "description": "Pencarian tersimpan per pengguna; UI Phase 2 dapat mengambil lima terbaru.",
+      "columns": [
+        {
+          "table_name": "recent_searches",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "recent_searches",
+          "attnum": 2,
+          "name": "user_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "recent_searches",
+          "attnum": 3,
+          "name": "query",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "recent_searches",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "recent_searches",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "recent_searches_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "recent_searches_query_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(query)) >= 1) AND (char_length(btrim(query)) <= 80)))"
+        },
+        {
+          "name": "recent_searches_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "recent_searches_user_id_query_key",
+          "type": "u",
+          "definition": "UNIQUE (user_id, query)"
+        }
+      ]
+    },
+    {
+      "name": "recurring_invoices",
+      "description": "Konfigurasi tagihan berkala per agreement; generator eksplisit, tanpa scheduler.",
+      "columns": [
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 2,
+          "name": "agreement_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 3,
+          "name": "amount",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 4,
+          "name": "payment_day",
+          "type": "smallint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 5,
+          "name": "start_month",
+          "type": "date",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 6,
+          "name": "last_generated_month",
+          "type": "date",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 7,
+          "name": "active",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "true"
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 8,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "recurring_invoices",
+          "attnum": 9,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "recurring_invoices_agreement_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (agreement_id) REFERENCES rental_agreements(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "recurring_invoices_agreement_id_key",
+          "type": "u",
+          "definition": "UNIQUE (agreement_id)"
+        },
+        {
+          "name": "recurring_invoices_amount_check",
+          "type": "c",
+          "definition": "CHECK (((amount >= 100000) AND (amount <= 100000000)))"
+        },
+        {
+          "name": "recurring_invoices_check",
+          "type": "c",
+          "definition": "CHECK (((last_generated_month IS NULL) OR (last_generated_month >= start_month)))"
+        },
+        {
+          "name": "recurring_invoices_last_generated_month_check",
+          "type": "c",
+          "definition": "CHECK ((EXTRACT(day FROM last_generated_month) = (1)::numeric))"
+        },
+        {
+          "name": "recurring_invoices_payment_day_check",
+          "type": "c",
+          "definition": "CHECK (((payment_day >= 1) AND (payment_day <= 28)))"
+        },
+        {
+          "name": "recurring_invoices_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "recurring_invoices_start_month_check",
+          "type": "c",
+          "definition": "CHECK ((EXTRACT(day FROM start_month) = (1)::numeric))"
+        }
+      ]
+    },
+    {
+      "name": "rental_agreements",
+      "description": "Histori sewa/penempatan dengan snapshot harga, tanpa menyalin owner/property yang dapat diturunkan dari kamar.",
+      "columns": [
+        {
+          "table_name": "rental_agreements",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 2,
+          "name": "tenant_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 3,
+          "name": "room_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 4,
+          "name": "start_date",
+          "type": "date",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 5,
+          "name": "end_date",
+          "type": "date",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 6,
+          "name": "rent",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 7,
+          "name": "payment_day",
+          "type": "smallint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 8,
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'active'::text"
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 9,
+          "name": "closed_on",
+          "type": "date",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 10,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "rental_agreements",
+          "attnum": 11,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "rental_agreements_check",
+          "type": "c",
+          "definition": "CHECK ((end_date >= start_date))"
+        },
+        {
+          "name": "rental_agreements_check1",
+          "type": "c",
+          "definition": "CHECK ((((status = 'active'::text) AND (closed_on IS NULL)) OR ((status <> 'active'::text) AND ((closed_on >= start_date) AND (closed_on <= (end_date + 1))))))"
+        },
+        {
+          "name": "rental_agreements_payment_day_check",
+          "type": "c",
+          "definition": "CHECK (((payment_day >= 1) AND (payment_day <= 28)))"
+        },
+        {
+          "name": "rental_agreements_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "rental_agreements_rent_check",
+          "type": "c",
+          "definition": "CHECK (((rent >= 100000) AND (rent <= 100000000)))"
+        },
+        {
+          "name": "rental_agreements_room_id_daterange_excl",
+          "type": "x",
+          "definition": "EXCLUDE USING gist (room_id WITH =, daterange(start_date, COALESCE(closed_on, (end_date + 1)), '[)'::text) WITH &&)"
+        },
+        {
+          "name": "rental_agreements_room_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "rental_agreements_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'transferred'::text, 'checked_out'::text])))"
+        },
+        {
+          "name": "rental_agreements_tenant_id_daterange_excl",
+          "type": "x",
+          "definition": "EXCLUDE USING gist (tenant_id WITH =, daterange(start_date, COALESCE(closed_on, (end_date + 1)), '[)'::text) WITH &&)"
+        },
+        {
+          "name": "rental_agreements_tenant_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE RESTRICT"
+        }
+      ]
+    },
+    {
+      "name": "room_facilities",
+      "description": "Relasi fasilitas per kamar.",
+      "columns": [
+        {
+          "table_name": "room_facilities",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "room_facilities",
+          "attnum": 2,
+          "name": "room_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "room_facilities",
+          "attnum": 3,
+          "name": "facility_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "room_facilities",
+          "attnum": 4,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "room_facilities",
+          "attnum": 5,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "room_facilities_facility_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (facility_id) REFERENCES facilities(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "room_facilities_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "room_facilities_room_id_facility_id_key",
+          "type": "u",
+          "definition": "UNIQUE (room_id, facility_id)"
+        },
+        {
+          "name": "room_facilities_room_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "name": "rooms",
+      "description": "Inventaris kamar, harga saat ini, dan kondisi operasional; Terisi dihitung dari agreement aktif.",
+      "columns": [
+        {
+          "table_name": "rooms",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 2,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 3,
+          "name": "number",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 4,
+          "name": "room_type",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'Standard'::text"
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 5,
+          "name": "rent",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 6,
+          "name": "operational_status",
+          "type": "text",
+          "not_null": true,
+          "default_value": "'available'::text"
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 7,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "rooms",
+          "attnum": 8,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "rooms_number_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(number)) >= 1) AND (char_length(btrim(number)) <= 20)))"
+        },
+        {
+          "name": "rooms_operational_status_check",
+          "type": "c",
+          "definition": "CHECK ((operational_status = ANY (ARRAY['available'::text, 'maintenance'::text, 'inactive'::text])))"
+        },
+        {
+          "name": "rooms_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "rooms_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "rooms_property_id_number_key",
+          "type": "u",
+          "definition": "UNIQUE (property_id, number)"
+        },
+        {
+          "name": "rooms_rent_check",
+          "type": "c",
+          "definition": "CHECK (((rent >= 100000) AND (rent <= 100000000)))"
+        },
+        {
+          "name": "rooms_room_type_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(room_type)) >= 1) AND (char_length(btrim(room_type)) <= 60)))"
+        }
+      ]
+    },
+    {
+      "name": "tenants",
+      "description": "Identitas penghuni yang tetap sama dengan profil; penempatan dan harga ada pada agreement.",
+      "columns": [
+        {
+          "table_name": "tenants",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "tenants",
+          "attnum": 2,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "tenants",
+          "attnum": 3,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "tenants_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "tenants_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ]
+    },
+    {
+      "name": "transactions",
+      "description": "Ledger append-only percobaan pembayaran sewa atau promosi, berhasil maupun gagal.",
+      "columns": [
+        {
+          "table_name": "transactions",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 2,
+          "name": "kind",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 3,
+          "name": "invoice_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 4,
+          "name": "property_id",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 5,
+          "name": "amount",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 6,
+          "name": "admin_fee",
+          "type": "bigint",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 7,
+          "name": "method",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 8,
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 9,
+          "name": "idempotency_key",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 10,
+          "name": "is_simulation",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "true"
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 11,
+          "name": "occurred_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 12,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "transactions",
+          "attnum": 13,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "transactions_amount_check",
+          "type": "c",
+          "definition": "CHECK (((amount > 0) AND (amount <= 100000000)))"
+        },
+        {
+          "name": "transactions_check",
+          "type": "c",
+          "definition": "CHECK ((((kind = 'rent'::text) AND (invoice_id IS NOT NULL) AND (property_id IS NULL) AND (admin_fee = 2000)) OR ((kind = 'boost'::text) AND (invoice_id IS NULL) AND (property_id IS NOT NULL) AND (admin_fee = 0) AND (amount = 30000))))"
+        },
+        {
+          "name": "transactions_idempotency_key_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(idempotency_key) >= 8) AND (char_length(idempotency_key) <= 150)))"
+        },
+        {
+          "name": "transactions_idempotency_key_key",
+          "type": "u",
+          "definition": "UNIQUE (idempotency_key)"
+        },
+        {
+          "name": "transactions_invoice_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "transactions_kind_check",
+          "type": "c",
+          "definition": "CHECK ((kind = ANY (ARRAY['rent'::text, 'boost'::text])))"
+        },
+        {
+          "name": "transactions_method_check",
+          "type": "c",
+          "definition": "CHECK (((char_length(btrim(method)) >= 1) AND (char_length(btrim(method)) <= 80)))"
+        },
+        {
+          "name": "transactions_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "transactions_property_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "transactions_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['succeeded'::text, 'failed'::text])))"
+        }
+      ]
+    },
+    {
+      "name": "user_roles",
+      "description": "Keanggotaan peran server; pengguna dapat mempunyai beberapa peran tanpa mengganti identitas.",
+      "columns": [
+        {
+          "table_name": "user_roles",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "user_roles",
+          "attnum": 2,
+          "name": "user_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "user_roles",
+          "attnum": 3,
+          "name": "role",
+          "type": "text",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "user_roles",
+          "attnum": 4,
+          "name": "granted_by",
+          "type": "uuid",
+          "not_null": false,
+          "default_value": null
+        },
+        {
+          "table_name": "user_roles",
+          "attnum": 5,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "user_roles",
+          "attnum": 6,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "user_roles_granted_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (granted_by) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "user_roles_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "user_roles_role_check",
+          "type": "c",
+          "definition": "CHECK ((role = ANY (ARRAY['prospect'::text, 'tenant'::text, 'owner'::text, 'admin'::text])))"
+        },
+        {
+          "name": "user_roles_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "user_roles_user_id_role_key",
+          "type": "u",
+          "definition": "UNIQUE (user_id, role)"
+        }
+      ]
+    },
+    {
+      "name": "user_settings",
+      "description": "Preferensi tampilan dan indikator notifikasi per identitas.",
+      "columns": [
+        {
+          "table_name": "user_settings",
+          "attnum": 1,
+          "name": "id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": "gen_random_uuid()"
+        },
+        {
+          "table_name": "user_settings",
+          "attnum": 2,
+          "name": "user_id",
+          "type": "uuid",
+          "not_null": true,
+          "default_value": null
+        },
+        {
+          "table_name": "user_settings",
+          "attnum": 3,
+          "name": "notifications_enabled",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "true"
+        },
+        {
+          "table_name": "user_settings",
+          "attnum": 4,
+          "name": "compact_mode",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "false"
+        },
+        {
+          "table_name": "user_settings",
+          "attnum": 5,
+          "name": "sidebar_collapsed",
+          "type": "boolean",
+          "not_null": true,
+          "default_value": "false"
+        },
+        {
+          "table_name": "user_settings",
+          "attnum": 6,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        },
+        {
+          "table_name": "user_settings",
+          "attnum": 7,
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "default_value": "now()"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "user_settings_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "user_settings_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "user_settings_user_id_key",
+          "type": "u",
+          "definition": "UNIQUE (user_id)"
+        }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "tablename": "activity_logs",
+      "policyname": "activity_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "((owner_id = ( SELECT auth.uid() AS uid)) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "boost_campaigns",
+      "policyname": "campaigns_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(private.owns_property(property_id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "complaint_analyses",
+      "policyname": "analyses_insert",
+      "cmd": "INSERT",
+      "roles": "{authenticated}",
+      "qual": null,
+      "with_check": "((accepted_by = ( SELECT auth.uid() AS uid)) AND private.can_read_complaint(complaint_id))"
+    },
+    {
+      "tablename": "complaint_analyses",
+      "policyname": "analyses_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_complaint(complaint_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "complaint_attachments",
+      "policyname": "complaint_attachments_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_complaint(complaint_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "complaint_histories",
+      "policyname": "histories_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_complaint(complaint_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "complaint_notes",
+      "policyname": "notes_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_complaint(complaint_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "complaints",
+      "policyname": "complaints_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_agreement(agreement_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "conversation_members",
+      "policyname": "members_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(private.is_member(conversation_id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "conversations",
+      "policyname": "conversations_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(private.is_member(id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "facilities",
+      "policyname": "facilities_public",
+      "cmd": "SELECT",
+      "roles": "{anon,authenticated}",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "tablename": "favorites",
+      "policyname": "favorites_own",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "with_check": "((user_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM public_listings() l(id, name, location, address, description, base_rent, gender_policy, room_size, total_rooms, available_rooms, images, facilities, rules, landmarks, promoted)\n  WHERE (l.id = favorites.property_id))))"
+    },
+    {
+      "tablename": "invoices",
+      "policyname": "invoices_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_agreement(agreement_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "listing_analytics",
+      "policyname": "analytics_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(private.owns_property(property_id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "message_attachments",
+      "policyname": "message_attachments_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(EXISTS ( SELECT 1\n   FROM messages m\n  WHERE ((m.id = message_attachments.message_id) AND (private.is_member(m.conversation_id) OR private.is_admin()))))",
+      "with_check": null
+    },
+    {
+      "tablename": "messages",
+      "policyname": "messages_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(private.is_member(conversation_id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "notifications",
+      "policyname": "notifications_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "with_check": null
+    },
+    {
+      "tablename": "notifications",
+      "policyname": "notifications_update",
+      "cmd": "UPDATE",
+      "roles": "{authenticated}",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "tablename": "profiles",
+      "policyname": "profiles_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "((id = ( SELECT auth.uid() AS uid)) OR private.related_tenant(id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "profiles",
+      "policyname": "profiles_update_self",
+      "cmd": "UPDATE",
+      "roles": "{authenticated}",
+      "qual": "(id = ( SELECT auth.uid() AS uid))",
+      "with_check": "(id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "tablename": "properties",
+      "policyname": "properties_delete",
+      "cmd": "DELETE",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(id)",
+      "with_check": null
+    },
+    {
+      "tablename": "properties",
+      "policyname": "properties_insert",
+      "cmd": "INSERT",
+      "roles": "{authenticated}",
+      "qual": null,
+      "with_check": "((owner_id = ( SELECT auth.uid() AS uid)) AND private.has_role('owner'::text))"
+    },
+    {
+      "tablename": "properties",
+      "policyname": "properties_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.property_party(id)",
+      "with_check": null
+    },
+    {
+      "tablename": "properties",
+      "policyname": "properties_update",
+      "cmd": "UPDATE",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(id)",
+      "with_check": "(owner_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "tablename": "property_facilities",
+      "policyname": "property_facilities_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.property_party(property_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "property_facilities",
+      "policyname": "property_facilities_write",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(property_id)",
+      "with_check": "private.owns_property(property_id)"
+    },
+    {
+      "tablename": "property_images",
+      "policyname": "images_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.property_party(property_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "property_images",
+      "policyname": "images_write",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(property_id)",
+      "with_check": "private.owns_property(property_id)"
+    },
+    {
+      "tablename": "property_landmarks",
+      "policyname": "landmarks_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.property_party(property_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "property_landmarks",
+      "policyname": "landmarks_write",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(property_id)",
+      "with_check": "private.owns_property(property_id)"
+    },
+    {
+      "tablename": "property_rules",
+      "policyname": "rules_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.property_party(property_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "property_rules",
+      "policyname": "rules_write",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(property_id)",
+      "with_check": "private.owns_property(property_id)"
+    },
+    {
+      "tablename": "recent_searches",
+      "policyname": "searches_own",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "tablename": "recurring_invoices",
+      "policyname": "recurring_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_agreement(agreement_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "rental_agreements",
+      "policyname": "agreements_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_agreement(id)",
+      "with_check": null
+    },
+    {
+      "tablename": "room_facilities",
+      "policyname": "room_facilities_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_room(room_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "room_facilities",
+      "policyname": "room_facilities_write",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "private.owns_room(room_id)",
+      "with_check": "private.owns_room(room_id)"
+    },
+    {
+      "tablename": "rooms",
+      "policyname": "rooms_delete",
+      "cmd": "DELETE",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(property_id)",
+      "with_check": null
+    },
+    {
+      "tablename": "rooms",
+      "policyname": "rooms_insert",
+      "cmd": "INSERT",
+      "roles": "{authenticated}",
+      "qual": null,
+      "with_check": "private.owns_property(property_id)"
+    },
+    {
+      "tablename": "rooms",
+      "policyname": "rooms_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "private.can_read_room(id)",
+      "with_check": null
+    },
+    {
+      "tablename": "rooms",
+      "policyname": "rooms_update",
+      "cmd": "UPDATE",
+      "roles": "{authenticated}",
+      "qual": "private.owns_property(property_id)",
+      "with_check": "private.owns_property(property_id)"
+    },
+    {
+      "tablename": "tenants",
+      "policyname": "tenants_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "((id = ( SELECT auth.uid() AS uid)) OR private.related_tenant(id) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "transactions",
+      "policyname": "transactions_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "(((kind = 'rent'::text) AND (EXISTS ( SELECT 1\n   FROM invoices i\n  WHERE ((i.id = transactions.invoice_id) AND private.can_read_agreement(i.agreement_id))))) OR ((kind = 'boost'::text) AND private.owns_property(property_id)) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "user_roles",
+      "policyname": "roles_read",
+      "cmd": "SELECT",
+      "roles": "{authenticated}",
+      "qual": "((user_id = ( SELECT auth.uid() AS uid)) OR private.is_admin())",
+      "with_check": null
+    },
+    {
+      "tablename": "user_settings",
+      "policyname": "settings_own",
+      "cmd": "ALL",
+      "roles": "{authenticated}",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    }
+  ],
+  "functions": [
+    {
+      "proname": "generate_payment_reminders",
+      "arguments": "",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "mark_conversation_read",
+      "arguments": "target_conversation uuid",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "open_conversation",
+      "arguments": "target_property uuid",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_check_in",
+      "arguments": "target_tenant uuid, target_room uuid, starts date, ends date, monthly_rent bigint, due_day smallint",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_close_agreement",
+      "arguments": "target_agreement uuid, close_date date, reason text",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_create_invoice",
+      "arguments": "target_agreement uuid, billing_month date, due_on date, rent_amount bigint, invoice_notes text",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_create_invoices_bulk",
+      "arguments": "target_agreements uuid[], billing_month date, due_on date, fixed_rent bigint, invoice_notes text",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_delete_property",
+      "arguments": "target_property uuid",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_financial_report",
+      "arguments": "target_property uuid, from_date date, to_date date",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_generate_recurring",
+      "arguments": "billing_month date",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_monthly_revenue",
+      "arguments": "target_property uuid, from_date date, to_date date",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_send_reminder",
+      "arguments": "target_invoice uuid",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_set_recurring",
+      "arguments": "target_agreement uuid, rent_amount bigint, due_day smallint, starts date, enabled boolean",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_transfer_agreement",
+      "arguments": "target_agreement uuid, target_room uuid, moving_on date, ends date, monthly_rent bigint, due_day smallint",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "owner_update_invoice",
+      "arguments": "target_invoice uuid, rent_amount bigint, due_on date, invoice_notes text, cancel boolean",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "platform_financial_report",
+      "arguments": "",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "public_listings",
+      "arguments": "",
+      "prosecdef": true,
+      "anon": true,
+      "authenticated": true,
+      "server": true
+    },
+    {
+      "proname": "record_listing_event",
+      "arguments": "target_property uuid, event_kind text, event_session uuid",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "send_message",
+      "arguments": "target_conversation uuid, message_body text",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "server_grant_role",
+      "arguments": "target_user uuid, target_role text",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": false,
+      "server": true
+    },
+    {
+      "proname": "server_record_boost",
+      "arguments": "target_property uuid, payment_key text, succeeded boolean, payment_method text, simulated boolean",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": false,
+      "server": true
+    },
+    {
+      "proname": "server_record_rent_payment",
+      "arguments": "target_invoice uuid, payment_key text, succeeded boolean, payment_method text, simulated boolean, paid_at timestamp with time zone",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": false,
+      "server": true
+    },
+    {
+      "proname": "tenant_create_complaint",
+      "arguments": "target_agreement uuid, ticket_title text, ticket_description text, ticket_category text, ticket_urgency text",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    },
+    {
+      "proname": "transition_complaint",
+      "arguments": "target_complaint uuid, next_status text, treatment_note text, final_category text, final_priority text, eta date",
+      "prosecdef": true,
+      "anon": false,
+      "authenticated": true,
+      "server": false
+    }
+  ]
+}

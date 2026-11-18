@@ -1,0 +1,39 @@
+import { readFileSync,readdirSync,writeFileSync,mkdirSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+import { connect,localConfiguration,safeError } from './local-database.mjs';
+import { runContracts } from '../supabase/tests/contracts.mjs';
+
+// Always creates a NEW throwaway DB. It never resets, drops or migrates the input DB.
+// Native adapter deliberately excludes Supabase Auth/PostgREST integration verification.
+const native=process.argv.includes('--native');
+let root,client,scratch;
+const results={engine:'',mode:native?'native-postgresql-auth-contract-adapter':'local-supabase-postgresql-auth-contract-adapter',migrations:[],passed:[],failed:[],limitations:['GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter.']};
+try {
+ const config=localConfiguration({native});
+ root=await connect(config.db);
+ scratch='ngekosaja_test_'+randomUUID().replaceAll('-','');
+ await root.query(`create database "${scratch}"`);
+ const dbConfig=config.db.connectionString?{...config.db,database:scratch,connectionString:undefined,...(()=>{const u=new URL(config.db.connectionString);return {host:u.hostname,port:Number(u.port||5432),user:decodeURIComponent(u.username),password:decodeURIComponent(u.password)};})()}:{...config.db,database:scratch};
+ client=await connect(dbConfig);
+ results.engine=(await client.query('select version() as version')).rows[0].version;
+ await client.query(readFileSync('supabase/tests/bootstrap_native.sql','utf8'));
+ for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort()) {
+  try { await client.query(readFileSync(`supabase/migrations/${file}`,'utf8'));results.migrations.push(file);console.log(`Migration OK: ${file}`); }
+  catch(error) { throw new Error(`${file}: ${safeError(error)}`); }
+ }
+ await runContracts(client,dbConfig,results);
+ if(process.argv.includes('--postflight')) {
+  const {postflight}= (await client.query(readFileSync('supabase/review/postflight.sql','utf8'))).rows[0];
+  if(postflight.table_count!==31||postflight.policy_count!==45||postflight.foreign_key_count!==48||postflight.public_function_count!==24||postflight.rls_disabled_table_count!==0||postflight.public_execute_grants!==0||postflight.unsafe_definer_search_paths!==0||postflight.browser_can_grant_roles||postflight.browser_can_record_rent||postflight.browser_can_record_boost||!postflight.invoice_view_security_invoker||!postflight.public_listings_accessible_to_anon||postflight.dangerous_api_table_privileges.length||postflight.master_facility_count!==7) throw new Error('Postflight verification contract failed.');
+  results.postflight=postflight;console.log('PASS postflight verification SQL against locally migrated database');
+ }
+ if(process.argv.includes('--docs')) { const {generateDatabaseDocs}=await import('./database-docs.mjs');await generateDatabaseDocs(client); }
+} catch(error) { results.failed.push(safeError(error));console.error(safeError(error));process.exitCode=1; }
+finally {
+ if(client)await client.end();
+ if(root&&scratch) { await root.query(`drop database "${scratch}" with (force)`).catch(()=>{}); }
+ if(root)await root.end();
+ results.executed_at=new Date().toISOString();mkdirSync('tests',{recursive:true});
+ writeFileSync('tests/database-results.json',JSON.stringify(results,null,2)+'\n');
+ console.log(`${results.passed.length} passed, ${results.failed.length} failed; scratch database removed.`);
+}

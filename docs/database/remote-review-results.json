@@ -1,0 +1,316 @@
+{
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob",
+    "region": "ap-northeast-1",
+    "status": "ACTIVE_HEALTHY",
+    "verified_live_at": "2026-11-18T16:41:38.103Z"
+  },
+  "cli_version": "3.2.0",
+  "migrations": [
+    {
+      "file": "20261118000100_foundation_identity.sql",
+      "sha256": "15c9d9bede183a46a2bc4e4e4a2cc7692a0814afe17673bb5835c11a51cc1367"
+    },
+    {
+      "file": "20261118000200_properties_rooms.sql",
+      "sha256": "974b1f81adae491fb2467839b0883a5b27189dc6e2f131091e3c2e7ac24ad13d"
+    },
+    {
+      "file": "20261118000300_tenants_agreements.sql",
+      "sha256": "7e50a9045ea0a0e5eaefb01a39abe3d0967e27857aa0debdf33363bc09187b3b"
+    },
+    {
+      "file": "20261118000400_finance_promotions.sql",
+      "sha256": "7ef60886be01e0ad6278bd88cc9859cb965a054f3bab88729b53243f91ba69a1"
+    },
+    {
+      "file": "20261118000500_complaints.sql",
+      "sha256": "69582a90035a2ca00c53fd1e72504f2cba913305b6fc83d9c9e4d004991328e1"
+    },
+    {
+      "file": "20261118000600_messaging_personal_data.sql",
+      "sha256": "2319aa3cca6718c9fe0a8e1015f0e77c9413325e80b5b29371612db1ebc59d23"
+    },
+    {
+      "file": "20261118000700_atomic_business_operations.sql",
+      "sha256": "0a496879f2d18eb347993fda0b98935027831cad9e54a29c1d4cb3c07d25c7c8"
+    },
+    {
+      "file": "20261118000800_complaint_chat_notifications.sql",
+      "sha256": "da2b90721527b43b774ad69c16c21d7e8698e5006902180e55ffb64f94dde1dc"
+    },
+    {
+      "file": "20261118000900_public_catalogue_reports.sql",
+      "sha256": "5a4c093efb23ff98f3767de393e44d296a9e9b9ef9fa80cee545353a5fea1cd0"
+    },
+    {
+      "file": "20261118001000_rls_and_audit.sql",
+      "sha256": "136299d7d5862d3cc84bd91df19d87505fb64a8378ba7bcf32ff3bfbdba1f1cd"
+    },
+    {
+      "file": "20261118001100_integrity_hardening.sql",
+      "sha256": "b6519d3fac122f4d2f82b2616448a56e2c037ac399a19d4779e1282f8570a724"
+    }
+  ],
+  "catalogue": {
+    "api_roles": [
+      {
+        "bypass_rls": false,
+        "inherit": true,
+        "name": "authenticated",
+        "superuser": false
+      },
+      {
+        "bypass_rls": false,
+        "inherit": true,
+        "name": "anon",
+        "superuser": false
+      },
+      {
+        "bypass_rls": true,
+        "inherit": true,
+        "name": "service_role",
+        "superuser": false
+      }
+    ],
+    "api_schema_settings": [],
+    "application_functions": [],
+    "application_relations": [],
+    "auth_user_count": 0,
+    "auth_user_triggers": [],
+    "database_name": "postgres",
+    "default_privileges": [
+      {
+        "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+        "object_type": "S",
+        "owner": "supabase_admin",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+        "object_type": "r",
+        "owner": "supabase_admin",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+        "object_type": "f",
+        "owner": "supabase_admin",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,anon=Dxtm/postgres,authenticated=Dxtm/postgres,service_role=Dxtm/postgres}",
+        "object_type": "r",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=rwU/postgres}",
+        "object_type": "S",
+        "owner": "postgres",
+        "schema": "public"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "object_type": "f",
+        "owner": "postgres",
+        "schema": "public"
+      }
+    ],
+    "extensions": [
+      {
+        "name": "pg_stat_statements",
+        "schema": "extensions",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "schema": "extensions",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "schema": "pg_catalog",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "schema": "vault",
+        "version": "0.3.2"
+      },
+      {
+        "name": "uuid-ossp",
+        "schema": "extensions",
+        "version": "1.1"
+      }
+    ],
+    "inspection_role": "supabase_read_only_user",
+    "inspection_session_role": "supabase_read_only_user",
+    "migration_history_exists": false,
+    "migration_prerequisites": {
+      "auth_users_trigger": false,
+      "btree_gist_available": true,
+      "database_create": false,
+      "postgres_current_role": false,
+      "public_schema_create": false
+    },
+    "policies": [],
+    "server_version": "17.12"
+  },
+  "catalogue_checked_at": "2026-11-18T16:36:47.339Z",
+  "dry_run": {
+    "command": "npx supabase db push --remote=wfmhsbdfdcugxblqsaob --dry-run --include-seed --skip-vault --output-format json",
+    "checked_at": "2026-11-18T16:33:10.045Z",
+    "output": {
+      "upToDate": false,
+      "dryRun": true,
+      "migrations": [
+        "20261118000100_foundation_identity.sql",
+        "20261118000200_properties_rooms.sql",
+        "20261118000300_tenants_agreements.sql",
+        "20261118000400_finance_promotions.sql",
+        "20261118000500_complaints.sql",
+        "20261118000600_messaging_personal_data.sql",
+        "20261118000700_atomic_business_operations.sql",
+        "20261118000800_complaint_chat_notifications.sql",
+        "20261118000900_public_catalogue_reports.sql",
+        "20261118001000_rls_and_audit.sql",
+        "20261118001100_integrity_hardening.sql"
+      ],
+      "seeds": [
+        "supabase/seed.sql"
+      ],
+      "roles": [],
+      "message": "Finished supabase db push.",
+      "target": {
+        "kind": "linked",
+        "project_ref": "wfmhsbdfdcugxblqsaob",
+        "project_name": "ngekosaja-development",
+        "environment": "production"
+      }
+    },
+    "applied": false
+  },
+  "config_diff": {
+    "checked_at": "2026-11-18T16:35:02.536Z",
+    "changes": [
+      {
+        "path": "api.schemas",
+        "classification": "update",
+        "local": [
+          "public"
+        ],
+        "remote": [
+          "public",
+          "graphql_public"
+        ]
+      },
+      {
+        "path": "auth.additional_redirect_urls",
+        "classification": "update",
+        "local": "[1 values withheld]",
+        "remote": "[0 values withheld]"
+      },
+      {
+        "path": "auth.email.enable_confirmations",
+        "classification": "update",
+        "local": false,
+        "remote": true
+      },
+      {
+        "path": "auth.email.max_frequency",
+        "classification": "update",
+        "local": "1s",
+        "remote": "[value withheld]"
+      },
+      {
+        "path": "auth.email.otp_length",
+        "classification": "update",
+        "local": 6,
+        "remote": 8
+      },
+      {
+        "path": "auth.mfa.totp.enroll_enabled",
+        "classification": "update",
+        "local": false,
+        "remote": true
+      },
+      {
+        "path": "auth.mfa.totp.verify_enabled",
+        "classification": "update",
+        "local": false,
+        "remote": true
+      },
+      {
+        "path": "auth.password_requirements",
+        "classification": "local_only",
+        "local": "",
+        "remote": null
+      },
+      {
+        "path": "auth.site_url",
+        "classification": "update",
+        "local": "[value withheld]",
+        "remote": "[value withheld]"
+      },
+      {
+        "path": "auth.sms.enable_confirmations",
+        "classification": "update",
+        "local": false,
+        "remote": true
+      },
+      {
+        "path": "db.pooler.default_pool_size",
+        "classification": "update",
+        "local": 20,
+        "remote": 15
+      },
+      {
+        "path": "db.pooler.max_client_conn",
+        "classification": "update",
+        "local": 100,
+        "remote": 200
+      },
+      {
+        "path": "storage.s3_protocol.enabled",
+        "classification": "update",
+        "local": false,
+        "remote": true
+      }
+    ],
+    "counts": {
+      "update": 12,
+      "remote_only": 0,
+      "local_only": 1,
+      "total": 13
+    },
+    "masked_setting_names": [
+      "auth.external.apple.secret",
+      "auth.sms.twilio.auth_token"
+    ],
+    "unmanaged_setting_names": [
+      "auth.external.apple.client_id",
+      "auth.external.apple.email_optional",
+      "auth.oauth_server.allow_dynamic_registration",
+      "auth.oauth_server.authorization_url_path",
+      "auth.rate_limit.email_sent",
+      "auth.sms.twilio.account_sid",
+      "auth.sms.twilio.message_service_sid",
+      "db.network_restrictions.allowed_cidrs",
+      "db.network_restrictions.allowed_cidrs_v6",
+      "storage.analytics.max_catalogs",
+      "storage.analytics.max_namespaces",
+      "storage.analytics.max_tables",
+      "storage.vector.max_buckets",
+      "storage.vector.max_indexes"
+    ],
+    "raw_values_saved": false
+  },
+  "seeds": [
+    {
+      "file": "supabase/seed.sql",
+      "sha256": "3f89d8834e35e4ce826ca0c9d578af48f376c8f4fff1aafb3f30c0bcc3b6cdaa"
+    }
+  ]
+}
