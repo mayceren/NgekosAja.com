@@ -1,5 +1,7 @@
 # NgekosAja.com 2.0
 
+[Final verification Phase 1 — 19 November 2026](docs/database/FINAL_VERIFICATION.md): struktur Cloud cocok dengan baseline, tetapi dua perbaikan masih menunggu persetujuan migrasi tambahan. Kandidat lulus 52 kelompok tes fresh install dan 54 kelompok tes upgrade; frontend tetap versi 2.
+
 Fondasi **3.0 Phase 1 — Database Foundation** tersedia terpisah di `supabase/` dan `scripts/`. Frontend versi 2 tetap memakai LocalStorage dan dapat dijalankan seperti sebelumnya. Sebelas migrasi dan seed master telah diterapkan ke project Supabase development setelah persetujuan pengguna; integrasi frontend dan UI tetap seperti versi 2.
 
 Mulai dari [setup database](docs/database/SETUP_GUIDE.md), [schema dan tabel](docs/database/DATABASE_SCHEMA.md), [ERD](docs/database/ERD.md), [Data Dictionary](docs/database/DATA_DICTIONARY.md), [RLS](docs/database/RLS_POLICIES.md), [migrasi](docs/database/MIGRATION_GUIDE.md), [seed/fixture Auth](docs/database/SEED_GUIDE.md), dan [hasil pengujian aktual](docs/database/VERIFICATION.md). Tool database opsional: `npm ci`; pengujian PostgreSQL native lokal: `npm run db:test -- --native`. Stack Supabase lengkap membutuhkan Docker/Podman.

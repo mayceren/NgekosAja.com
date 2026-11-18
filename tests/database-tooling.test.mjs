@@ -15,8 +15,9 @@ test('Provisioning refuses remote configuration before any network or SQL connec
   process.env.SUPABASE_URL='http://localhost:54321';process.env.SUPABASE_DB_URL='postgresql://127.0.0.1/postgres?host=remote.invalid';assert.throws(()=>localConfiguration(),/parameter URL/);
  } finally {for(const key of ['SUPABASE_URL','SUPABASE_DB_URL','SUPABASE_SERVICE_ROLE_KEY']) {if(old[key]===undefined)delete process.env[key];else process.env[key]=old[key];}}
 });
-test('Error output redacts database addresses and JWT-shaped tokens',()=>{
+test('Error output redacts database addresses, JWT-shaped tokens and Supabase secret formats',()=>{
  const address=new URL('postgresql://127.0.0.1/db');address.username='redaction-test';address.password=randomBytes(16).toString('hex');
- const raw=address.href+' '+['eyJ','header.payload.signature'].join('');
- const message=safeError(new Error(raw));assert.ok(!message.includes(address.password));assert.ok(!message.includes('eyJ'));assert.ok(message.includes('redacted'));
+ const secrets=['sbp_','sb_secret_'].map(prefix=>prefix+randomBytes(24).toString('hex'));
+ const raw=address.href+' '+['eyJ','header.payload.signature'].join('')+' '+secrets.join(' ');
+ const message=safeError(new Error(raw));assert.ok(!message.includes(address.password));assert.ok(!message.includes('eyJ'));assert.ok(secrets.every(secret=>!message.includes(secret)));assert.ok(message.includes('redacted'));
 });

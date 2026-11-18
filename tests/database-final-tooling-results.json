@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-11-18T17:32:02.213Z",
+  "syntax": {
+    "count": 14,
+    "files": [
+      "scripts/apply-approved-remote.mjs",
+      "scripts/database-docs.mjs",
+      "scripts/database-test.mjs",
+      "scripts/development-fixtures.mjs",
+      "scripts/final-artifact-audit.mjs",
+      "scripts/final-verify-remote.mjs",
+      "scripts/local-database.mjs",
+      "scripts/provision-fixtures.mjs",
+      "scripts/review-remote.mjs",
+      "supabase/tests/contracts.mjs",
+      "supabase/tests/final-contracts.mjs",
+      "supabase/tests/final-upgrade.mjs",
+      "tests/database-tooling.test.mjs",
+      "tests/domain.cjs"
+    ],
+    "passed": true
+  },
+  "tooling": {
+    "exit_code": 0,
+    "passed": 3,
+    "failed": 0,
+    "output": "TAP version 13\n# Subtest: Loopback guard rejects remote hosts, credential tricks, driver host overrides and unexpected schemes\nok 1 - Loopback guard rejects remote hosts, credential tricks, driver host overrides and unexpected schemes\n  ---\n  duration_ms: 1.4419\n  ...\n# Subtest: Provisioning refuses remote configuration before any network or SQL connection\nok 2 - Provisioning refuses remote configuration before any network or SQL connection\n  ---\n  duration_ms: 1.0873\n  ...\n# Subtest: Error output redacts database addresses, JWT-shaped tokens and Supabase secret formats\nok 3 - Error output redacts database addresses, JWT-shaped tokens and Supabase secret formats\n  ---\n  duration_ms: 0.9648\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 157.5918\n"
+  },
+  "cleanup": {
+    "checked_at": "2026-11-18T17:33:03.823Z",
+    "scratch_database_count": 0,
+    "local_server_stopped": true,
+    "server_stopped_at": "2026-11-18T17:33:56.159Z"
+  }
+}

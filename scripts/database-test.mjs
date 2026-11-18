@@ -6,6 +6,11 @@ import { runContracts } from '../supabase/tests/contracts.mjs';
 // Always creates a NEW throwaway DB. It never resets, drops or migrates the input DB.
 // Native adapter deliberately excludes Supabase Auth/PostgREST integration verification.
 const native=process.argv.includes('--native');
+const option=name=>process.argv.find(arg=>arg.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
+const through=option('through');
+if(through&&!/^\d{14}$/.test(through))throw new Error('Invalid migration boundary.');
+const output=option('output')||'tests/database-results.json';
+if(!/^tests\/[a-z0-9-]+\.json$/.test(output))throw new Error('Results must be written to a JSON file in tests/.');
 let root,client,scratch;
 const results={engine:'',mode:native?'native-postgresql-auth-contract-adapter':'local-supabase-postgresql-auth-contract-adapter',migrations:[],passed:[],failed:[],limitations:['GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter.']};
 try {
@@ -17,11 +22,27 @@ try {
  client=await connect(dbConfig);
  results.engine=(await client.query('select version() as version')).rows[0].version;
  await client.query(readFileSync('supabase/tests/bootstrap_native.sql','utf8'));
- for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort()) {
+ for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(!through||f.slice(0,14)<=through)).sort()) {
   try { await client.query(readFileSync(`supabase/migrations/${file}`,'utf8'));results.migrations.push(file);console.log(`Migration OK: ${file}`); }
   catch(error) { throw new Error(`${file}: ${safeError(error)}`); }
  }
  await runContracts(client,dbConfig,results);
+ if(process.argv.includes('--upgrade-check')) {
+  if(through!=='20261118001100')throw new Error('Upgrade check must start from the applied 11-migration baseline.');
+  const {verifyFinalUpgrade}=await import('../supabase/tests/final-upgrade.mjs');
+  await verifyFinalUpgrade(client,results);
+ }
+ if(process.argv.includes('--extended')) {
+  const {runFinalContracts}=await import('../supabase/tests/final-contracts.mjs');
+  await runFinalContracts(client,dbConfig,results);
+  if(results.failed.length)process.exitCode=1;
+ }
+ if(option('catalogue-output')) {
+  const path=option('catalogue-output');
+  if(!/^tests\/[a-z0-9-]+\.json$/.test(path))throw new Error('Invalid catalogue output path.');
+  const row=(await client.query(readFileSync('supabase/review/final-catalogue.sql','utf8'))).rows[0];
+  writeFileSync(path,JSON.stringify(row.catalogue,null,2)+'\n');
+ }
  if(process.argv.includes('--postflight')) {
   const {postflight}= (await client.query(readFileSync('supabase/review/postflight.sql','utf8'))).rows[0];
   if(postflight.table_count!==31||postflight.policy_count!==45||postflight.foreign_key_count!==48||postflight.public_function_count!==24||postflight.rls_disabled_table_count!==0||postflight.public_execute_grants!==0||postflight.unsafe_definer_search_paths!==0||postflight.browser_can_grant_roles||postflight.browser_can_record_rent||postflight.browser_can_record_boost||!postflight.invoice_view_security_invoker||!postflight.public_listings_accessible_to_anon||postflight.dangerous_api_table_privileges.length||postflight.master_facility_count!==7) throw new Error('Postflight verification contract failed.');
@@ -34,6 +55,6 @@ finally {
  if(root&&scratch) { await root.query(`drop database "${scratch}" with (force)`).catch(()=>{}); }
  if(root)await root.end();
  results.executed_at=new Date().toISOString();mkdirSync('tests',{recursive:true});
- writeFileSync('tests/database-results.json',JSON.stringify(results,null,2)+'\n');
+ writeFileSync(output,JSON.stringify(results,null,2)+'\n');
  console.log(`${results.passed.length} passed, ${results.failed.length} failed; scratch database removed.`);
 }

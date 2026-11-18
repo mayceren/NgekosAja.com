@@ -1,5 +1,7 @@
 # Hasil pemeriksaan Phase 1
 
+**Pembaruan 19 November 2026:** final verification menemukan dua masalah baseline dan menyiapkan migrasi perbaikan yang **belum diterapkan ke Cloud**. Kandidat lulus 52 kelompok tes fresh install dan 54 kelompok tes upgrade. Keputusan kesiapan dan bukti terbaru ada di [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md). Angka 0 pending dan 43 kelompok pada catatan di bawah merupakan hasil historis 18 November.
+
 Pemeriksaan aktual dilakukan pada **18 November 2026** di workspace Windows. Hasil pengujian SQL lokal dan timestamp mesin tersedia di [tests/database-results.json](../../tests/database-results.json). Hasil penerapan dan inspeksi cloud dicatat terpisah di [REMOTE_DEPLOYMENT.md](REMOTE_DEPLOYMENT.md) dan [remote-apply-results.json](remote-apply-results.json).
 
 Pembaruan remote: setelah pengguna menyetujui, **11 migrasi dan seed 7 fasilitas berhasil diterapkan** ke ngekosaja-development pada PostgreSQL 17.12. Verifikasi remote membuktikan 31 tabel RLS aktif, 236 kolom sesuai schema, 48 FK, 45 policy, 24 fungsi public, seluruh histori migrasi, grants aman, serta 0 migrasi pending. Kontrak SQL 43 kelompok dan 3 tes tooling adalah pengujian lokal; pengujian JWT/HTTP penuh tidak diklaim sebagai bagian dari inspeksi katalog ini.

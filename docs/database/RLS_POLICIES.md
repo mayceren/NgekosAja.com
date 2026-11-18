@@ -1,5 +1,7 @@
 # Row Level Security dan izin aktual
 
+Snapshot 11 migrasi applied, dicocokkan ulang dengan Cloud pada 19 November 2026. Kandidat migrasi 12 tidak mengubah policy; hanya menambah EXECUTE private.today() untuk service_role serta memperbaiki checkout. Kandidat belum applied; lihat [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md).
+
 Semua tabel public mengaktifkan RLS dalam transaksi pembuatannya. `private` tidak diekspos pada Data API. Migrasi awal menutup default grants; kebijakan akhir menambah akses yang sudah dibatasi. Tabel tanpa kebijakan tulis tetap tertutup. PUBLIC tidak mempunyai EXECUTE pada fungsi aplikasi.
 
 Anonymous hanya mendapat `public_listings()` dengan proyeksi kolom tetap dan master facilities. Base properties tidak dapat dibaca anonymous. Profil, kontak, nomor kamar internal, owner UUID, dan transaksi tidak termasuk hasil katalog. Pemilik wajib menjaga isi teks listing tidak mengandung kontak pribadi.

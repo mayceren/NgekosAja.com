@@ -1,5 +1,7 @@
 # Entity Relationship Diagram
 
+Snapshot baseline 11 migrasi yang telah deployed. Final verification 19 November mencocokkan 31 tabel aplikasi dan 48 relasi/kardinalitas dengan katalog Cloud. Kandidat perbaikan belum menambah tabel/kolom/FK; lihat [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md).
+
 Dihasilkan dari PK/FK dan kolom database aktual. `auth_users` mewakili tabel Supabase Auth eksternal; hanya ID yang ditampilkan. Hubungan audit entity_id sengaja tidak mempunyai FK.
 
 ```mermaid

@@ -1,5 +1,7 @@
 # Data Dictionary
 
+Snapshot baseline **11 migrasi applied** yang cocok dengan Cloud pada final verification 19 November 2026. CHECK agreement_closed_on_required pada migrasi 12 masih kandidat dan belum termasuk daftar constraint deployed di bawah. Temuan validasi NULL dan izin view dijelaskan di [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md).
+
 Dihasilkan dari katalog PostgreSQL yang menjalankan seluruh migrasi. Semua nilai uang disimpan sebagai bigint rupiah. Kolom nullable, default, PK/FK, constraint dan index di bawah sesuai database aktual.
 
 ## activity_logs

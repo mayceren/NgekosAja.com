@@ -10,7 +10,7 @@
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset:local": "supabase db reset",
-    "db:test": "node scripts/database-test.mjs",
+    "db:test": "node scripts/database-test.mjs --extended",
     "db:fixtures": "node scripts/provision-fixtures.mjs",
     "db:docs": "node scripts/database-docs.mjs",
     "test:frontend": "node tests/domain.cjs",

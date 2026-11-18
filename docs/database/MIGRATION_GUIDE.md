@@ -15,6 +15,9 @@ Semua file dijalankan menurut nama timestamp, masing-masing dalam transaksi. Tab
 | 9 | 20261118000900_public_catalogue_reports.sql | Katalog publik aman, invoice_statuses, laporan owner/platform |
 | 10 | 20261118001000_rls_and_audit.sql | Policy/grants terperinci dan trigger audit |
 | 11 | 20261118001100_integrity_hardening.sql | Cursor recurring, pesan berlampiran, penghapusan properti terotorisasi |
+| 12 — kandidat, belum applied | 20261119000100_final_verification_fixes.sql | CHECK tanggal checkout wajib, validasi RPC, EXECUTE helper tanggal untuk service_role |
+
+Sebelas migrasi pertama telah applied. Migrasi 12 masih menunggu persetujuan remote; hasil dry-run, reproduksi temuan dan uji upgrade aman tercatat di [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md). Jangan menjalankan db push tanpa dry-run sebelum persetujuan baru.
 
 ## Development lokal
 

@@ -31,4 +31,4 @@ export function localConfiguration({ native = false } = {}) {
 
 export async function connect(config) { const client = new pg.Client(config); await client.connect(); return client; }
 // Never log raw pg/network errors: a connection error can contain secrets.
-export function safeError(error) { return `${error.code ? `[${error.code}] ` : ''}${String(error.message || error).replace(/postgres(?:ql)?:\/\/[^\s]+/gi,'[redacted database address]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted token]')}`; }
+export function safeError(error) { return `${error.code ? `[${error.code}] ` : ''}${String(error.message || error).replace(/postgres(?:ql)?:\/\/[^\s]+/gi,'[redacted database address]').replace(/\b(?:sbp_|sb_secret_)[A-Za-z0-9_-]+/g,'[redacted credential]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted token]')}`; }
