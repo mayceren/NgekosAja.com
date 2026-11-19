@@ -6,6 +6,7 @@ import json,time,secrets,os
 from pathlib import Path
 from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1]
+OUT=Path(os.environ.get('NGEKOSAJA_TEST_OUTPUT',str(ROOT/'tests')));OUT.mkdir(parents=True,exist_ok=True)
 ORIGIN=os.environ.get('NGEKOSAJA_TEST_ORIGIN','http://127.0.0.1:5500').rstrip('/')
 passed=[];errors=[];calls=[]
 PW,WRONG,UNVERIFIED,MISMATCH,UPDATED,RESET=[secrets.token_urlsafe(24)+'Qa1!' for _ in range(6)]
@@ -52,7 +53,7 @@ with sync_playwright() as p:
  page.goto(ORIGIN+'/#/login');page.wait_for_function('NA.ready')
  expect(page.locator('#auth-login-form')).to_be_visible();passed.append('Primary login uses real email/password UI and local official SDK')
  assert 'connected mode' not in page.locator('body').inner_text().lower();passed.append('Login does not expose the internal connection-mode label')
- page.screenshot(path=str(ROOT/'tests/auth-desktop.png'),full_page=True)
+ page.screenshot(path=str(OUT/'auth-desktop.png'),full_page=True)
  page.locator('[data-auth-action=password-toggle]').click();assert page.locator('[name=password]').get_attribute('type')=='text';passed.append('Password visibility is accessible and functional')
  page.locator('[name=email]').fill(user['email']);page.locator('[name=password]').fill(WRONG);page.locator('[type=submit]').click();expect(page.locator('.auth-form-error')).to_contain_text('tidak cocok');passed.append('Failed login displays safe Indonesian error')
  page.locator('[name=password]').fill(UNVERIFIED);page.locator('[type=submit]').click();expect(page.locator('#auth-resend-form')).to_be_visible();passed.append('Unverified login routes to email verification')
@@ -137,7 +138,7 @@ with sync_playwright() as p:
  page.locator('.sidebar nav a[href="#/account/security"]').click()
  for field,value in [('current',WRONG),('password',UPDATED),('confirmation',UPDATED)]:page.locator('#auth-password-form [name='+field+']').fill(value)
  page.locator('#auth-password-form [type=submit]').click();expect(page.locator('#auth-password-form .auth-form-error')).to_contain_text('tidak cocok');page.locator('#auth-password-form [name=current]').fill(PW);page.locator('#auth-password-form [type=submit]').click();expect(page.locator('.notice').first).to_contain_text('berhasil diperbarui');passed.append('Profile password change revalidates current password and persists success state')
- page.evaluate('NK.navigate("owner")');rights[:]=['owner'];page.evaluate('NA.refreshIdentity()');page.wait_for_function('NA.effectiveRoles.includes("owner")');page.evaluate('NK.navigate("owner")');expect(page.locator('.connected-phase')).to_be_visible();expect(page.locator('.connected-phase')).to_contain_text('Phase 3');passed.append('Trusted owner role enables scoped workspace with explicit unintegrated state')
+ page.evaluate('NK.navigate("owner")');rights[:]=['owner'];page.evaluate('NA.refreshIdentity()');page.wait_for_function('NA.effectiveRoles.includes("owner")');page.evaluate('NK.navigate("owner")');expect(page.locator('.connected-phase')).to_be_visible();expect(page.locator('.connected-phase')).to_contain_text('sedang dikembangkan');passed.append('Trusted owner role enables scoped workspace with explicit unintegrated state')
  assert page.evaluate('(()=>{try{NK.setRole("admin");return false}catch{return true}})()');passed.append('Connected mode blocks legacy demo mutation/role switching')
  page.evaluate('document.body.insertAdjacentHTML("beforeend",\'<button id="injected-demo" data-auth-action="demo">Injected demo</button>\')');page.locator('#injected-demo').dispatch_event('click');assert page.evaluate('NA.mode==="connected" && !!NA.user');page.locator('#injected-demo').evaluate('(el)=>el.remove()');passed.append('Signed-in demo mode switch is refused even if a stale action is triggered')
  page.evaluate('NK.navigate("account/security")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');assert page.evaluate('sessionStorage.getItem("ngekosaja.auth.v3")') is None;expect(page.locator('[data-auth-action=demo]')).not_to_have_count(0);passed.append('Logout clears authorization and makes Demo available again')
@@ -161,9 +162,9 @@ with sync_playwright() as p:
    assert bounds['left']>=0 and bounds['right']<=width+1 and bounds['height']<=70,'All account menus must fit visibly with compact rows'
   expect(page.locator('.account-logout-menu')).to_be_visible();page.locator('.account-logout-menu').click();expect(page.get_by_role('dialog')).to_be_visible()
   assert page.get_by_role('dialog').evaluate('(el)=>{const box=el.getBoundingClientRect();return box.left>=0 && box.right<=innerWidth+1 && box.height<=innerHeight}')
-  if width==1440:page.screenshot(path=str(ROOT/'tests/logout-confirmation.png'),full_page=True,animations='disabled')
+  if width==1440:page.screenshot(path=str(OUT/'logout-confirmation.png'),full_page=True,animations='disabled')
   page.get_by_role('button',name='Batal',exact=True).click();assert page.evaluate('!!NA.user')
-  page.screenshot(path=str(ROOT/('tests/account-mobile.png' if width==390 else 'tests/account-desktop.png' if width==1440 else 'tests/account-tablet.png')),full_page=True)
+  page.screenshot(path=str(OUT/('account-mobile.png' if width==390 else 'account-desktop.png' if width==1440 else 'account-tablet.png')),full_page=True)
   for route in ['login','forgot','verify','reset','account','account/profile','account/email','account/security','account/access','workspace','owner','marketplace','access-denied']:
    page.evaluate('(route)=>NK.navigate(route)',route);page.wait_for_timeout(60);assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),f'Overflow: {route} at {width}'
  passed.append('Authentication pages fit 390/768/1440px without horizontal overflow')
@@ -195,5 +196,5 @@ with sync_playwright() as p:
  context.close();browser.close()
 assert not errors,errors
 report={'mode':'real-chromium-sdk-with-mocked-http-auth-boundary','passed':passed,'count':len(passed),'javascript_errors':errors,'limitations':['No real email, GoTrue or Cloud account is created by this browser suite. Public Cloud signup with Confirm Email off has not been rerun. Historical live-cloud results do not verify this change.']}
-(ROOT/'tests/auth-browser-results.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+(OUT/'auth-browser-results.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 print(json.dumps({'passed':len(passed),'javascript_errors':len(errors),'mode':report['mode']}))

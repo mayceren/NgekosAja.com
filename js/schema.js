@@ -21,7 +21,7 @@
     const s=JSON.parse(JSON.stringify(input));
     const old=s.version !== 2 || fresh;
     s.owners ||= owners.map(o=>({...o}));
-    s.users ||= [{id:'guest',name:'Pengunjung Demo',email:'tamu@demo.ngekosaja.com',role:'guest'},...s.owners,{id:'admin',name:'Tim NgekosAja',email:'admin@demo.ngekosaja.com',role:'admin'}];
+    s.users ||= [{id:'guest',name:'Pengunjung Demo',email:'tamu@demo.ngekosaja.com',role:'guest'},...s.owners,{id:'admin',name:'Tim NgekosAja.com',email:'admin@demo.ngekosaja.com',role:'admin'}];
     s.activeOwnerId ||= 'o1'; s.activeUserId ||= 'guest';
     for(const key of ['agreements','notifications','campaigns','recurring','analytics']) s[key] ||= [];
     for(const key of ['favorites','recentSearches','settings']) s[key] ||= {};
@@ -31,7 +31,7 @@
       for(const [id,name,location,price,type] of extra){
         if(s.properties.some(p=>p.id===id))continue;
         const i=Number(id.slice(1));
-        s.properties.push({id,name,location,price,type,ownerId:i%3===0?'o1':i%3===1?'o2':'o3',address:`Jl. ${location} Utama No. ${i+4}, Jakarta Barat`,description:`Kos hangat dan fungsional di ${location}. Ada meja belajar, tempat menyimpan barang, serta akses mudah ke tempat makan dan transportasi. Ruang yang pas untuk kuliah, bekerja, dan beristirahat. Informasi area merupakan ilustrasi demo; tanyakan kondisi kamar kepada pengelola.`,size:'3 × 4 m',image:`assets/images/room-${9+(i-9)%4}.jpg`,facilities:i%2?['WiFi','Furnitur','Parkir','Dapur bersama']:['WiFi','AC','Furnitur','Kamar mandi dalam','Dapur bersama'],rooms:Array.from({length:6},(_,r)=>({id:`${id}-r${r+1}`,number:`${String.fromCharCode(65+i%16)}${String(r+1).padStart(2,'0')}`,available:true})),createdAt:N.dateKey()});
+        s.properties.push({id,name,location,price,type,ownerId:i%3===0?'o1':i%3===1?'o2':'o3',address:`Jl. ${location} Utama No. ${i+4}, Jakarta Barat`,description:`Kos hangat dan fungsional di ${location}. Ada meja belajar, tempat menyimpan barang, serta akses mudah ke tempat makan dan transportasi. Ruang untuk aktivitas sehari-hari, bekerja, dan beristirahat. Informasi area merupakan ilustrasi demo; tanyakan kondisi kamar kepada pengelola.`,size:'3 × 4 m',image:`assets/images/room-${9+(i-9)%4}.jpg`,facilities:i%2?['WiFi','Furnitur','Parkir','Dapur bersama']:['WiFi','AC','Furnitur','Kamar mandi dalam','Dapur bersama'],rooms:Array.from({length:6},(_,r)=>({id:`${id}-r${r+1}`,number:`${String.fromCharCode(65+i%16)}${String(r+1).padStart(2,'0')}`,available:true})),createdAt:N.dateKey()});
       }
     }
     s.properties.forEach((p,i)=>{

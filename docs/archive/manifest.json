@@ -1,0 +1,16 @@
+{
+  "captured_at": "2026-11-19",
+  "purpose": "Original documents captured before product content cleanup; immutable archived snapshots, not active setup instructions.",
+  "files": [
+    {
+      "file": "docs/archive/README-2026-11-19.md",
+      "original": "README.md",
+      "sha256": "fa8d2ed42dc5f18868f68015cd2d7926628917564ea781904f11318cd1fbade3"
+    },
+    {
+      "file": "docs/archive/auth/development-account-plan-2026-11-19.json",
+      "original": "docs/auth/development-account-plan.json",
+      "sha256": "5cd83a921b1db82b7f25f4431983131777b64f3830307c794b87867f5644d2a3"
+    }
+  ]
+}

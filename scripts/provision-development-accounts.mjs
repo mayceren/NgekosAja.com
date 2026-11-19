@@ -4,13 +4,13 @@ import {createHash} from 'node:crypto';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createClient} from '@supabase/supabase-js';
-import {accounts,resourceIds,fixtureTag,preflightSQL,provisionNewAccounts,verificationSQL} from './lib/uas-fixtures.mjs';
+import {accounts,resourceIds,fixtureTag,preflightSQL,provisionNewAccounts,verificationSQL} from './lib/development-accounts.mjs';
 import {hiddenPrompt} from './lib/hidden-prompt.mjs';
 import {projectRef,projectName,RepairError} from './lib/owned-auth-account.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const cli=resolve(root,'node_modules/supabase/dist/supabase.js');
-const dir=resolve(root,'.database-test/uas-accounts');
+const dir=resolve(root,'.database-test/development-accounts');
 const args=process.argv.slice(2), apply=args.includes('--apply');
 const approval=args.find(arg=>arg.startsWith('--approve-remote='))?.slice('--approve-remote='.length);
 const manifest={project:projectName,ref:projectRef,fixture:fixtureTag,accounts,resources:resourceIds,final_publication_status:'draft'};
@@ -31,7 +31,7 @@ try {
   if(readFileSync(resolve(root,'supabase/.temp/project-ref'),'utf8').trim()!==projectRef)throw new RepairError('Project CLI bukan target development yang diizinkan.');
   if(!objects(run(['projects','list','--output-format','json'])).some(p=>(p.id===projectRef||p.ref===projectRef)&&p.name===projectName))throw new RepairError('Nama/ref project remote tidak cocok.');
   mkdirSync(dir,{recursive:true});
-  const preflight=field(query(preflightSQL(),'preflight'),'uas_preflight');
+  const preflight=field(query(preflightSQL(),'preflight'),'development_preflight');
   const local=readFileSync(resolve(root,'supabase/config.toml'),'utf8').split('[auth.email]')[1]?.split(/\n\[/)[0];
   const localSetting=local?.match(/^\s*enable_confirmations\s*=\s*(true|false)/m)?.[1];
   if(!localSetting)throw new RepairError('Nilai konfirmasi email lokal tidak dapat dibaca.');
@@ -43,7 +43,7 @@ try {
     confirm_email_enabled:confirmEmail,configuration_changed:false,production_ready:false,preflight,
     changes:{auth_users:6,profiles_from_trigger:6,additional_role_grants:5,properties_draft:2,rooms:2,tenants:2,active_agreements:2},
     protected_existing_accounts:true,password_delivery:'User enters six private passwords in interactive terminal; no password is logged, saved, or shared with the agent.',
-    apply_command:`npm run auth:provision-uas -- --apply --approve-remote=${fingerprint}`};
+    apply_command:`npm run auth:provision-development -- --apply --approve-remote=${fingerprint}`};
   report.status='awaiting-explicit-remote-approval';
   writeFileSync(resolve(root,'docs/auth/development-account-plan.json'),JSON.stringify(report,null,2)+'\n');
   if(!apply){console.log(JSON.stringify({project:projectName,status:report.status,confirm_email_enabled:confirmEmail,existing_target_accounts:preflight.existing_target_accounts,fixture_id_collisions:preflight.fixture_id_collisions,planned_accounts:6,fingerprint}));process.exit(0);}
@@ -55,7 +55,7 @@ try {
   const publicKey=values.find(key=>key.value?.startsWith('sb_publishable_'))?.value;
   if(!serverKey||!publicKey)throw new RepairError('Key administratif/publik tidak tersedia; tidak ada credential yang dicetak.');
   const url=`https://${projectRef}.supabase.co`, admin=createClient(url,serverKey,options).auth.admin;
-  console.log('Hanya akun khusus UAS baru. Isi password berbeda untuk setiap akun; ketikan tidak ditampilkan.');
+  console.log('Hanya akun development baru. Isi password berbeda untuk setiap akun; ketikan tidak ditampilkan.');
   stage='create-new-development-identities';
   const checks=[];
   const result=await provisionNewAccounts({admin,prompt:hiddenPrompt,
@@ -63,7 +63,7 @@ try {
     writeRelations:sql=>{stage='new-fixture-relations-transaction';query(sql,'apply',false);},
     verifyAccounts:async(identities,passwords)=>{
       stage='verify-new-identities-and-isolation';
-      const verified=field(query(verificationSQL(identities),'verify'),'uas_verification');
+      const verified=field(query(verificationSQL(identities),'verify'),'development_verification');
       if(verified.profiles!==6||verified.agreements!==2||verified.draft_properties!==2)throw new RepairError('Verifikasi relasi fixture belum lengkap.');
       for(const account of accounts){
         const scoped=createClient(url,publicKey,options);

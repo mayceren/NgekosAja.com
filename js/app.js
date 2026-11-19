@@ -52,7 +52,7 @@ document.addEventListener('click',async event=>{
  case 'guide':N.guideModal();break;
  case 'guide-step':N.setRole(el.dataset.role,el.dataset.role==='owner'?'o1':el.dataset.role==='tenant'?'t1':'guest');N.closeModal();N.navigate(el.dataset.path);break;
  case 'reset':N.confirm('Mulai ulang data demo versi 2?','Semua perubahan versi 2, foto unggahan, dan pesan akan direset. Salinan data versi 1 tetap dipertahankan sebagai cadangan migrasi.','reset-confirm');break;
- case 'reset-confirm':N.reset();N.selectedConversation='';N.pagination={};N.marketplaceFilters=N.defaultFilters();N.financeFilter={property:'all',from:'',to:'',months:6};N.closeModal();N.navigate('');N.render();N.toast('Data demo versi 2 dikembalikan ke kondisi awal.');break;
+ case 'reset-confirm':N.reset();N.selectedConversation='';N.pagination={};N.marketplaceFilters=N.defaultFilters();N.financeFilter={property:'all',from:'',to:'',months:6};N.closeModal();N.navigate('');N.render();N.toast('Data demo dikembalikan ke kondisi awal.');break;
  case 'location-search':case 'recent-search':searchLocation(el.dataset.query);break;
  case 'need-search':{N.marketplaceFilters=N.defaultFilters();const need=el.dataset.need;if(need==='budget')N.marketplaceFilters.max='1500000';else if(need==='Putri')N.marketplaceFilters.type='Putri';else N.marketplaceFilters.facilities=[need];N.navigate('marketplace');break;}
  case 'reset-filters':N.marketplaceFilters=N.defaultFilters();N.render();break;
@@ -65,7 +65,7 @@ document.addEventListener('click',async event=>{
  case 'detail-click':N.recordInteraction(id,'details',N.sessionId);break;
  case 'gallery':{const img=document.getElementById('gallery-main');img.src=el.dataset.src;img.alt=el.dataset.alt;break;}
  case 'fullscreen-photo':N.photoViewer(id,el.dataset.index);break;
- case 'share':{const url=location.href.split('#')[0]+'#/property/'+id;try{await navigator.clipboard.writeText(url);N.toast('Tautan kos disalin.');}catch(_){N.modal('Bagikan pilihanmu',`${N.input('link','Tautan kos',url,'text','readonly id="share-link"')}<p class="field-help">Pilih dan salin tautan ini untuk browser dengan alamat project yang sama.</p>`);document.getElementById('share-link').select();}break;}
+ case 'share':{const url=location.href.split('#')[0]+'#/property/'+id;try{await navigator.clipboard.writeText(url);N.toast('Tautan kos disalin.');}catch(_){N.modal('Bagikan pilihanmu',`${N.input('link','Tautan kos',url,'text','readonly id="share-link"')}<p class="field-help">Pilih dan salin tautan ini untuk browser yang membuka alamat website yang sama.</p>`);document.getElementById('share-link').select();}break;}
  case 'contact':{N.selectedConversation=N.contact(id);N.chatMobileList=false;N.closeModal();N.navigate(N.state().role==='guest'?'chat':N.state().role+'/chat');break;}
  case 'select-chat':N.selectedConversation=id;N.chatMobileList=false;N.render();break;
  case 'chat-list':N.chatMobileList=true;N.render();break;
@@ -102,7 +102,7 @@ document.addEventListener('click',async event=>{
  case 'process-payment':{const pending=N.pendingPayment;if(!pending||pending.actorId!==N.actorId())throw new Error('Konfirmasi kedaluwarsa. Buka checkout kembali.');el.disabled=true;const tx=N.payInvoice(pending.id,pending.method,el.dataset.result==='success');N.pendingPayment=null;N.closeModal();N.paymentResult(tx);break;}
  case 'receipt':N.receiptModal(id);break;
  case 'print-receipt':window.print();break;
- case 'simulate-reminder':N.requireRole('tenant');N.update(s=>{s.demoReminder=true;N.notify(s,N.actorId(),`demo-reminder-${N.dateKey()}`,'Contoh pengingat H-3','Notifikasi demonstrasi. Nominal dan tanggal tagihan tidak berubah.','#/tenant/bills');});N.render();N.toast('Contoh reminder H-3 ditampilkan.');break;
+ case 'simulate-reminder':N.requireRole('tenant');N.update(s=>{s.demoReminder=true;N.notify(s,N.actorId(),`demo-reminder-${N.dateKey()}`,'Contoh pengingat H-3','Notifikasi demonstrasi. Nominal dan tanggal tagihan tidak berubah.','#/tenant/bills');});N.render();N.toast('Contoh pengingat H-3 ditampilkan.');break;
  case 'notifications':N.notifications();break;
  case 'mark-read':N.markRead(id);N.render();break;
  case 'open-notification':N.markRead(id);break;
@@ -131,7 +131,7 @@ document.addEventListener('submit',async event=>{
  case 'filter-form':if(d.min&&d.max&&Number(d.min)>Number(d.max))throw new Error('Harga minimum tidak boleh melebihi maksimum.');N.marketplaceFilters={...N.marketplaceFilters,query:d.query.trim(),min:d.min,max:d.max,type:d.type,facilities:fd.getAll('facilities'),availability:d.available?'available':'all'};N.rememberSearch(d.query);document.body.classList.remove('filter-is-open');N.render();break;
  case 'login-form':{const user=N.state().users.find(u=>u.id===d.account);if(!user)throw new Error('Pilih akun demo.');changeRole(user.role,user.id);break;}
  case 'register-form':N.registerDemo(d);N.navigate(targetRolePath());N.toast('Profil demo dibuat. Tidak ada kata sandi yang disimpan.');break;
- case 'forgot-form':{const u=N.state().users.find(u=>u.id===d.account);N.modal('Akses akun demo',`<p class="modal-description">${N.e(u.name)} tidak memerlukan kata sandi pada prototype ini. Tidak ada email yang dikirim.</p><button class="btn btn-primary btn-full" data-action="login-selected" data-id="${u.id}">Lanjut sebagai ${N.e(u.name)} ${N.icon('arrow')}</button>`);break;}
+ case 'forgot-form':{const u=N.state().users.find(u=>u.id===d.account);N.modal('Akses akun demo',`<p class="modal-description">${N.e(u.name)} tidak memerlukan kata sandi di Demo Produk. Tidak ada email yang dikirim.</p><button class="btn btn-primary btn-full" data-action="login-selected" data-id="${u.id}">Lanjut sebagai ${N.e(u.name)} ${N.icon('arrow')}</button>`);break;}
  case 'settings-form':N.saveSettings({...d,notifications:fd.has('notifications'),compact:fd.has('compact')});N.refresh('Profil dan preferensi akun diperbarui.');break;
  case 'property-form':N.saveProperty({...d,facilities:fd.getAll('facilities'),photo:await N.readImage(form.elements.photo.files[0])},form.dataset.id||null);N.refresh('Properti disimpan. Marketplace mengikuti data terbaru.');break;
  case 'room-filter':N.roomFilter=d;N.render();break;

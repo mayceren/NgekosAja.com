@@ -1,58 +1,58 @@
 {
-  "checked_at": "2026-11-19T07:04:01.549Z",
+  "checked_at": "2026-11-19T07:23:31.303Z",
   "manifest": {
     "project": "ngekosaja-development",
     "ref": "wfmhsbdfdcugxblqsaob",
-    "fixture": "ngekosaja-uas-auth-v1",
+    "fixture": "ngekosaja-development-auth-v1",
     "accounts": [
       {
         "key": "prospect",
         "role": "prospect",
-        "name": "UAS Calon Penghuni",
-        "email": "uas-prospect@ngekosaja.test"
+        "name": "Development Calon Penghuni",
+        "email": "dev-prospect@ngekosaja.test"
       },
       {
         "key": "tenant-a",
         "role": "tenant",
-        "name": "UAS Penghuni A",
-        "email": "uas-tenant-a@ngekosaja.test"
+        "name": "Development Penghuni A",
+        "email": "dev-tenant-a@ngekosaja.test"
       },
       {
         "key": "tenant-b",
         "role": "tenant",
-        "name": "UAS Penghuni B",
-        "email": "uas-tenant-b@ngekosaja.test"
+        "name": "Development Penghuni B",
+        "email": "dev-tenant-b@ngekosaja.test"
       },
       {
         "key": "owner-a",
         "role": "owner",
-        "name": "UAS Pemilik A",
-        "email": "uas-owner-a@ngekosaja.test"
+        "name": "Development Pemilik A",
+        "email": "dev-owner-a@ngekosaja.test"
       },
       {
         "key": "owner-b",
         "role": "owner",
-        "name": "UAS Pemilik B",
-        "email": "uas-owner-b@ngekosaja.test"
+        "name": "Development Pemilik B",
+        "email": "dev-owner-b@ngekosaja.test"
       },
       {
         "key": "admin",
         "role": "admin",
-        "name": "UAS Administrator",
-        "email": "uas-admin@ngekosaja.test"
+        "name": "Development Administrator",
+        "email": "dev-admin@ngekosaja.test"
       }
     ],
     "resources": {
-      "property-a": "e77df99e-75f4-43a8-a43d-a0df105aae19",
-      "property-b": "7cecd419-f91f-496d-a5a6-34b170ba17f5",
-      "room-a": "f91b82c2-d25b-44fd-a23b-6556dab7f1c2",
-      "room-b": "c7ed473f-9679-4417-a6be-cda2cddee1b1",
-      "agreement-a": "f3e2e283-39d8-4d30-a99d-d28734532e8a",
-      "agreement-b": "b7efb903-75b0-4db2-a17d-c9ed66e0ed7c"
+      "property-a": "b40c09a6-d832-40fe-af7b-aae0952a3302",
+      "property-b": "7e50aeea-7d65-413d-a98d-18fb01340ecb",
+      "room-a": "224ba9c4-f757-4d1d-aa94-2519cbf9e7be",
+      "room-b": "bf2c4319-4e6c-440b-ad87-1c316e0c8555",
+      "agreement-a": "2231cc5d-625d-40e6-a641-91d44b5b5eb5",
+      "agreement-b": "ddca09d1-7f2c-4354-ab73-c84c02590332"
     },
     "final_publication_status": "draft"
   },
-  "fingerprint": "2fe7c5dcbafc07e7ff25c2cbda34438cfb6218023497944a49064a1ef4d07d4d",
+  "fingerprint": "7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
   "remote_read_only": true,
   "remote_applied": false,
   "confirm_email_enabled": false,
@@ -76,6 +76,6 @@
   },
   "protected_existing_accounts": true,
   "password_delivery": "User enters six private passwords in interactive terminal; no password is logged, saved, or shared with the agent.",
-  "apply_command": "npm run auth:provision-uas -- --apply --approve-remote=2fe7c5dcbafc07e7ff25c2cbda34438cfb6218023497944a49064a1ef4d07d4d",
+  "apply_command": "npm run auth:provision-development -- --apply --approve-remote=7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
   "status": "awaiting-explicit-remote-approval"
 }

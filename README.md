@@ -1,169 +1,146 @@
-# NgekosAja.com 3.0 - Authentication UAS
-
-Supabase Auth dan PostgreSQL tetap digunakan, dengan RLS, session persistence, profil dan pembatasan role. **Confirm Email dinonaktifkan khusus UAS/development** beranggaran Rp0; pemeriksaan read-only Cloud 19 November 2026 memastikan setting remote false. Tidak memakai layanan email tambahan/berbayar. Prototype ini **belum siap production**.
-
-```powershell
-npm run dev
-```
-
-Buka **http://127.0.0.1:5500/#/register** atau **http://127.0.0.1:5500/#/login**. Live Server port 5500 juga didukung; Auth memerlukan HTTP dan internet. SDK resmi disertakan lokal. Jika dependency tooling belum tersedia, jalankan npm ci. config/runtime.js hanya berisi URL dan Publishable Key publik; secret/server key tidak masuk frontend.
-
-Registrasi dengan session aktif langsung memuat profil/role database, masuk sesuai hak efektif dan menampilkan notifikasi berhasil. Pendaftaran publik tetap prospect; tujuan pemilik bukan pemberian role. Jika Confirm Email diaktifkan lagi dan session tidak tersedia, halaman verifikasi tetap bekerja. Login biasa tetap menuju home; logout berada di menu profil paling bawah dengan konfirmasi. UI existing dipertahankan.
-
-Lupa/reset password tetap menggunakan email Supabase dan recovery session yang valid. Form menjelaskan batas kuota; tidak ada bypass reset. Coba Demo hanya tersedia sebelum login dan memakai data lokal terpisah. Workspace bisnis terhubung tetap tahap Phase 3, bukan data demo yang disamarkan menjadi data akun.
-
-**Hasil perubahan UAS:** 51 kelompok browser terkontrol lulus tanpa error JavaScript; 60 kelompok SQL/RLS lokal + postflight lulus; 27 unit test tooling/pemulihan/provisioning lulus; 30 domain demo dan 3 guard QA offline lulus. Audit Cloud read-only: 12 migrasi cocok, 31 tabel RLS, 45 policy, nol temuan pola credential. Browser memakai API mock dan SQL memakai adapter Auth lokal: signup Cloud tanpa verifikasi belum diuji ulang.
-
-**Enam akun development disiapkan, belum dibuat di Cloud.** Plan read-only dan script administratif menunggu persetujuan. Pengguna memasukkan enam password sendiri melalui terminal tersembunyi; akun existing tidak diubah. Tidak ada migration baru, reset remote atau git push.
-
-Dokumentasi: [setup Auth](docs/auth/AUTH_SETUP.md), [akun development dan persetujuan](docs/auth/DEVELOPMENT_ACCOUNTS.md), [plan aktual](docs/auth/development-account-plan.json), [arsitektur](docs/auth/AUTH_ARCHITECTURE.md), [role management](docs/auth/ROLE_MANAGEMENT.md), [hasil pengujian](docs/auth/AUTH_TESTING.md).
-
-## Fondasi database dan referensi Demo 2.0
-
-[Phase 1 Database Foundation selesai — 19 November 2026](docs/database/PHASE1_COMPLETION.md): dua temuan telah diperbaiki di Cloud, 12 migrasi applied dan 0 pending. Tes fresh install 52 kelompok dan upgrade 54 kelompok lulus; frontend tetap versi 2. Auth/JWT/HTTP menjadi pemeriksaan awal integrasi Phase 2.
-
-Fondasi **3.0 Phase 1 — Database Foundation** tersedia terpisah di `supabase/` dan `scripts/`. Frontend versi 2 tetap memakai LocalStorage dan dapat dijalankan seperti sebelumnya. Dua belas migrasi dan seed master telah diterapkan ke project Supabase development setelah persetujuan pengguna; integrasi frontend dan UI tetap seperti versi 2.
-
-Mulai dari [setup database](docs/database/SETUP_GUIDE.md), [schema dan tabel](docs/database/DATABASE_SCHEMA.md), [ERD](docs/database/ERD.md), [Data Dictionary](docs/database/DATA_DICTIONARY.md), [RLS](docs/database/RLS_POLICIES.md), [migrasi](docs/database/MIGRATION_GUIDE.md), [seed/fixture Auth](docs/database/SEED_GUIDE.md), dan [hasil pengujian aktual](docs/database/VERIFICATION.md). Tool database opsional: `npm ci`; pengujian PostgreSQL native lokal: `npm run db:test -- --native`. Stack Supabase lengkap membutuhkan Docker/Podman.
-
-[Hasil remote terkini](docs/database/PHASE1_COMPLETION.md): 12 migrasi, 31 tabel dengan RLS aktif, 45 policy, serta 7 fasilitas master terverifikasi pada `ngekosaja-development`. [Penerapan awal 11 migrasi](docs/database/REMOTE_DEPLOYMENT.md) dan [review sebelum apply](docs/database/REMOTE_REVIEW.md) dipertahankan sebagai histori.
+# NgekosAja.com
 
 **Cari Kos, Bayar Sewa, Kelola Semua dalam Satu Tempat.**
 
-Upgrade prototype PropTech Business Model Lean Canvas (BMLC), Milestone 2 Technopreneurship. Dibangun dengan HTML5, CSS, JavaScript ES6+, navigasi hash, dan LocalStorage. Tidak memerlukan build, database, API key, atau instalasi npm.
+## Product Overview
 
-## Jalankan
+NgekosAja.com merupakan platform digital yang menghubungkan calon penghuni, penghuni, serta pemilik atau pengelola kos melalui layanan pencarian properti, pembayaran sewa, dan pengelolaan operasional dalam satu sistem yang terintegrasi.
 
-1. Buka folder project ini di VS Code.
-2. Klik kanan `index.html` → **Open with Live Server**.
-3. Alternatif: buka `index.html` langsung di Chrome/Edge/Firefox.
-4. Alternatif terminal: `python -m http.server 5500`, lalu buka `http://localhost:5500`.
+Produk menggabungkan **Property Marketplace**, **Integrated Rental Payment**, dan **Property Management**. Pengembangan saat ini mencakup fondasi database, autentikasi, katalog publik, dan Demo Produk untuk mengeksplorasi alur bisnis dengan data ilustrasi. Integrasi operasional untuk akun terhubung masih dalam pengembangan; pembayaran belum memproses uang sungguhan.
 
-Gunakan origin yang sama selama presentasi. `file://`, `localhost`, `127.0.0.1`, dan port berbeda mempunyai penyimpanan terpisah. Seluruh foto, font, dan ikon tersedia lokal sehingga website tidak membutuhkan koneksi internet.
+## Key Features
 
-## Apa yang berubah
+| Area | Akun terhubung | Demo Produk |
+| --- | --- | --- |
+| Authentication | Supabase Auth, session persistence, profil, pemulihan password, role database, protected routes | Profil dan peran contoh tanpa password |
+| Marketplace | Pencarian nama/lokasi dan detail listing terpublikasi melalui katalog aman | 16 listing ilustrasi, filter gabungan, sort, favorit, perbandingan dan galeri |
+| Property Management | Schema, RLS dan fungsi transaksi tersedia; workspace operasional belum diintegrasikan | Properti/kamar, check-in/check-out, penghuni, tagihan, jadwal dan laporan |
+| Rental Payment | Payment gateway belum diintegrasikan | Checkout berhasil/gagal, admin Rp2.000, bukti cetak, reminder H-3, pencegahan pembayaran ganda |
+| Maintenance & Chat | Integrasi antarmuka bisnis masih dalam pengembangan | Tracking keluhan, konfirmasi penghuni, analisis aturan teks, lampiran dan chat lokal |
+| Boost Listing | Pembelian promosi belum diintegrasikan | Simulasi Rp30.000/30 hari, badge Promosi, prioritas rekomendasi dan metrik interaksi lokal |
 
-- Redesign menyeluruh: deep forest green, warm cream, heading editorial Cormorant Garamond, body Plus Jakarta Sans, fotografi besar, komposisi bento, status yang konsisten, modal, toast, drawer, dan motion singkat dengan dukungan reduced motion.
-- Homepage baru: pencarian lokasi/budget/tipe, rekomendasi, delapan area populer, pencarian berdasarkan kebutuhan, pembayaran transparan, pratinjau workspace dari state, alur penggunaan, FAQ interaktif, serta CTA pemilik.
-- Marketplace **16 listing ilustrasi**: pencarian/saran lokasi dan nama, recent searches, rentang harga, tipe, beberapa fasilitas sekaligus, ketersediaan, chips, reset, grid/list, wishlist per identitas, dan perbandingan maksimal tiga kos.
-- Detail kos: galeri/thumbnail/fullscreen viewer, fasilitas, tipe kamar, peraturan, area sekitar berlabel ilustrasi, pengelola terkait, rekomendasi serupa, favorit, copy link, dan percakapan yang tepat.
-- Akun: halaman Masuk, Daftar, pilihan peran, pemulihan akses demo, pengaturan profil, logout, dan Quick Demo Access. Tidak meminta atau menyimpan kata sandi.
-- **Multi-owner**: tiga pemilik awal, dengan pembatasan pada query dan fungsi bisnis untuk properti, kamar, penghuni, tagihan, transaksi, keluhan, chat, promosi, aktivitas, dan laporan. Marketplace tetap menampilkan seluruh listing publik.
-- Workspace pemilik: sidebar berkelompok dan dapat diringkas, grafik pendapatan interaktif, occupancy donut, distribusi pembayaran, transaksi, jatuh tempo, aktivitas, quick actions, serta filter properti/periode.
-- Properti: tambah/edit foto lokal atau unggahan, deskripsi, alamat, harga, fasilitas, aturan, kapasitas, preview, arsip/publikasi, dan hapus tanpa riwayat.
-- Kamar: halaman grid khusus, filter properti/status, status Tersedia/Terisi/Dalam perbaikan/Tidak aktif, tipe, harga, fasilitas, dan pengamanan penempatan ganda.
-- Penghuni: pencarian/filter, profil, masa sewa, harga dan jadwal pembayaran, pindah kamar pada properti pemilik aktif, riwayat tagihan/keluhan, check-in dan check-out dengan histori yang dipertahankan. Profil pendaftar dapat dihubungkan saat check-in sehingga favorit dan percakapan tetap memakai identitas yang sama.
-- Keuangan: tagihan individual/massal, catatan, edit/pembatalan sebelum ada transaksi, jadwal bulanan lokal, simulasi periode berikutnya, reminder, serta status Belum lunas/Lunas/Terlambat/Dibatalkan.
-- **Checkout sewa**: VA, QRIS, E-Wallet, transfer bank; rincian sewa + admin Rp2.000; konfirmasi; skenario berhasil/gagal; pencegahan pembayaran ganda; hasil transaksi; bukti print-friendly dan simpan PDF melalui dialog cetak browser.
-- Laporan keuangan: filter properti/tanggal yang juga diterapkan pada grafik, pendapatan sewa, outstanding, overdue, collection rate, transaksi, serta export CSV. Admin platform dipisahkan dari pendapatan pemilik.
-- Notifikasi: H-3, hari H, keterlambatan, reminder manual, pesan dan perkembangan laporan, indikator unread, tandai dibaca, tandai semua, riwayat, serta deduplikasi berdasarkan tagihan/tahap.
-- Keluhan: kategori/urgensi/foto, search/filter, tabel dan kanban pemilik, detail tiket, catatan, estimasi, timeline, Menunggu → Diproses → Menunggu Konfirmasi → Selesai, konfirmasi penghuni, serta reopen.
-- **Analisis keluhan lokal**: kategori/prioritas berdasarkan kata kunci input, ringkasan, saran aman, pengelompokan kategori, dan arahan segera menghubungi pihak terkait bila terdeteksi keadaan darurat. Rekomendasi harus diterima/disimpan pengguna, bukan keputusan otomatis.
-- Chat: konteks properti/peserta, pencarian, unread lokal, tanggal, pesan dua arah, quick reply, lampiran gambar, auto-scroll, dan tampilan percakapan mobile. Tidak ada indikator online/typing/read receipt palsu.
-- Boost: Rp30.000/30 hari, preview, checkout gagal/berhasil, kampanye/mulai/berakhir/sisa hari, riwayat, serta analytics dari tampilan listing, detail, dan klik hubungi yang benar-benar dicatat lokal.
-- Platform admin demo: akun, pemilik, listing, transaksi, keluhan, promosi, GMV, occupancy, serta admin fee/boost revenue yang dipisahkan.
+Coba Demo tersedia sebelum login dan memakai penyimpanan terpisah. Pengguna dapat mencoba perspektif calon penghuni, penghuni, pemilik, dan administrator tanpa membuat akun Supabase. Jumlah listing, akun, transaksi dan pendapatan demo bukan klaim pelanggan atau performa bisnis nyata.
 
-**Sorting penting:** promosi didahulukan hanya pada Rekomendasi. Harga terendah/tertinggi mengikuti nominal secara global, sambil mempertahankan badge Promosi.
+## Technology Stack
 
-## Mulai presentasi
+- HTML5, CSS3, Vanilla JavaScript ES6+, SVG, Grid dan Flexbox; tanpa framework atau build frontend.
+- Supabase Auth dan PostgreSQL dengan RLS untuk akun/data terhubung; SDK resmi tersedia lokal.
+- LocalStorage untuk data demo; sessionStorage/localStorage untuk session Auth sesuai pilihan Ingat saya.
+- Node.js >=20, Supabase CLI dan PostgreSQL native untuk tooling opsional.
+- Playwright/Chromium untuk regresi browser; node:test untuk unit test.
 
-Klik **Mode Demo** di navbar atau identitas workspace. Pilih pemilik atau penghuni yang diinginkan. Tombol **Panduan Demo** berisi langkah yang dapat langsung membuka peran/halaman terkait.
+Teknologi open-source dan layanan free tier tetap digunakan. Tidak ada layanan email tambahan atau dependency berbayar yang ditambahkan.
 
-| Akun contoh | Untuk mencoba |
-| --- | --- |
-| Sari Wulandari / `o1` | Pemilik Kos Senja, Ruang Teduh, dan portofolio terkait |
-| Arif Rahman / `o2` | Memeriksa pembatasan portofolio pemilik kedua |
-| Dewi Anggraini / `o3` | Portofolio pemilik ketiga |
-| Andi Pratama / `t1` | Pembayaran, reminder H-3, keluhan, dan chat utama |
-| Nadia Putri / `t2` | Contoh tagihan terlambat |
-| Platform Admin | Monitoring GMV, pendapatan platform, pengguna, dan operasional |
+## System Architecture
 
-Untuk demo pembayaran: Penghuni Andi → Tagihan Sewa → Bayar → pilih metode → konfirmasi → Simulasikan Gagal → Coba Lagi → Simulasikan Berhasil. Ganti ke Sari → Tagihan/Laporan untuk melihat hasil yang sama. Bukti tersedia pada tagihan Lunas.
+Browser menjalankan hash router dan dua environment yang terpisah:
 
-Untuk demo keluhan: Andi → Buat Laporan → Analisis Keluhan → tentukan kategori/urgensi → kirim; Sari → Keluhan → detail tiket → catatan/estimasi/status Menunggu Konfirmasi; Andi → Konfirmasi Selesai atau buka kembali.
+1. **Akun terhubung:** SDK memvalidasi session melalui Supabase Auth, memuat profil/role dari PostgreSQL, kemudian menerapkan route guard. Query tetap dibatasi RLS di server.
+2. **Demo Environment:** alur bisnis berjalan pada sample data lokal. Mode ini tidak memberikan role Supabase atau menulis data bisnis Cloud.
 
-Untuk alur pendaftar: Daftar sebagai calon penghuni → favorit/chat → Sari → Tambah Penghuni → pilih profil pada **Hubungkan profil yang sudah terdaftar** → tentukan kamar/kontak contoh → simpan. Identitas tersebut kini tersedia sebagai Penghuni; favorit dan percakapannya tetap sama.
+[Arsitektur Auth](docs/auth/AUTH_ARCHITECTURE.md), [navigasi akun](docs/auth/NAVIGATION.md), dan [model data demo](docs/DATA_MODEL.md).
 
-Panduan lebih rinci: [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md).
+## Database Architecture
 
-## State, migrasi, dan konsistensi
+Fondasi database terdiri dari **12 migrasi, 31 tabel aplikasi dengan RLS, 48 foreign key, dan 45 policy**, sesuai pemeriksaan Cloud terdokumentasi. Model mencakup identitas/role, properti/kamar, perjanjian sewa, tagihan/ledger, keluhan, chat, notifikasi dan promosi. Constraint serta fungsi atomik melindungi relasi, histori, penempatan kamar dan pencatatan pembayaran.
 
-- Key aktif: **`ngekosaja.demo.v2`**.
-- Data `ngekosaja.demo.v1` dimigrasikan secara aditif, dengan ID, edit properti, foto, pembayaran, percakapan, dan riwayat lama dipertahankan.
-- Key versi 1 **tidak dihapus atau ditimpa**. Reset mengembalikan versi 2; cadangan versi 1 tetap ada.
-- Properti lama tanpa pemilik diatribusikan ke Sari (`o1`) agar portofolio lama tidak terpecah. Data baru menyediakan portofolio pemilik lain. Instalasi baru membagi portofolio contoh sejak awal.
-- State mempunyai owners, users, properties/rooms, tenants, agreements, invoices, transactions, complaints/history/notes, conversations/messages/readBy, notifications, favorites, recentSearches, recurring, campaigns, analytics, settings, dan activities.
-- Setiap perubahan dikloning lalu ditulis ke LocalStorage sebelum mengganti state aktif. Gagal quota tidak meninggalkan separuh operasi; batch tagihan divalidasi penuh sebelum disimpan.
-- Penghuni checkout tidak dihapus; invoice dan agreement lama tetap terhubung ke properti/pemilik pada saat dibuat.
-- Kamar terisi tidak boleh dinonaktifkan; kamar dengan riwayat agreement tidak boleh dihapus saat kapasitas dikurangi.
-- Arsip menyembunyikan listing dari publik tanpa menghapus data pengelolaan. Data dengan riwayat tidak dapat dihapus permanen lewat aksi hapus.
-- Pengingat dan jadwal bulanan diperiksa saat aplikasi dibuka. Reminder juga diperiksa saat halaman dirender. Tidak ada scheduler yang berjalan di latar belakang ketika browser ditutup.
+[Schema](docs/database/DATABASE_SCHEMA.md), [ERD](docs/database/ERD.md), [Data Dictionary](docs/database/DATA_DICTIONARY.md), [RLS policies](docs/database/RLS_POLICIES.md), [migration history](docs/database/MIGRATION_GUIDE.md), [verifikasi fondasi](docs/database/PHASE1_COMPLETION.md).
 
-Detail relasi dan definisi metrik: [docs/DATA_MODEL.md](docs/DATA_MODEL.md).
-
-## Struktur
+## Project Structure
 
 ```text
-index.html
-css/
-  style.css          # Tokens, typography, komponen publik, marketplace/detail
-  components.css     # Dashboard, management, checkout, tiket, chat, akun
-  responsive.css     # 320–1920px, motion, print
-js/
-  data.js            # Basis data awal versi 1 dan utilitas tanggal/ID
-  schema.js          # Seed versi 2 dan migrasi aditif
-  storage.js         # State, pembatasan bisnis, finance/rooms/identity/chat
-  ui.js              # Ikon SVG, formatter, modal, toast
-  shell.js           # Navbar, sidebar, tabel, notifikasi, panduan
-  finance.js         # Metrik, grafik, laporan, CSV, admin
-  accounts.js        # Login, register, pemulihan, settings, FAQ
-  analysis.js        # Analisis berbasis aturan dan siklus tiket
-  marketplace.js     # Homepage, pencarian, detail, wishlist, compare
-  owner.js           # Workspace pemilik dan formulir pengelolaan
-  tenant.js          # Dashboard penghuni, tagihan, tempat tinggal
-  payments.js        # Checkout, konfirmasi, hasil, invoice dan bukti
-  complaints.js      # Kanban/tabel, formulir, detail tiket
-  chat.js            # Antarmuka percakapan dan lampiran
-  app.js             # Router, events, rendering, inisialisasi
-assets/
-  images/            # Foto ilustrasi lokal
-  fonts/             # Font lokal dan lisensi OFL
-  icons/logo.svg
-  CREDITS.md
-docs/                # Panduan demo dan model data
-tests/               # Regresi domain, browser, visual, dan laporan aktual
-screenshots/         # Screenshot versi 2 aktual + contoh PDF simulasi
+index.html              Entry point dan metadata
+css/                    Design system dan responsive layout
+js/                     Router, UI dan domain Demo Produk
+js/auth/                Supabase Auth, profil, role dan route guard
+config/                 Konfigurasi publik browser
+assets/                 Foto, font, ikon dan SDK lokal
+supabase/migrations/    Migrasi PostgreSQL berurutan
+supabase/tests/         Kontrak SQL untuk database test sementara
+scripts/                Server lokal dan tooling administratif
+tests/                 Unit/browser tests dan bukti historis
+docs/                  Panduan teknis, produk dan hasil pemeriksaan
+docs/archive/          Dokumen arsip; bukan instruksi operasional aktif
 ```
 
-## Pemeriksaan
-
-Website tidak memerlukan tooling berikut untuk digunakan. Pengujian pengembangan memakai Node, Python, dan Playwright/Chromium yang tersedia pada lingkungan pengerjaan.
+## Getting Started
 
 ```powershell
-# Aturan bisnis tanpa dependensi npm
-Get-Content -Raw tests/domain.cjs | node --input-type=commonjs
-
-# Terminal terpisah, server QA lokal
-python tests/serve.py
-
-# Regresi UI lengkap dan screenshot/responsive
-python tests/browser_check.py --url http://127.0.0.1:5500
-python tests/visual_check.py --url http://127.0.0.1:5500
-
-# Identitas pendaftar -> check-in, grafik tanggal, HTTP dan file://
-python tests/upgrade_check.py
+npm ci
+npm run dev
 ```
 
-Hasil aktual: [tests/VERIFICATION.md](tests/VERIFICATION.md). Output mesin berada pada `tests/browser-results.json`, `tests/visual-results.json`, dan `tests/upgrade-results.json`. Screenshot versi 2 berada di `screenshots/`; gambar lama di `tests/*.png` merupakan dokumentasi versi 1.
+Buka **http://127.0.0.1:5500/**. Server hanya melayani file publik dan menolak secret, tooling serta file internal. VS Code Live Server pada port 5500 juga dapat digunakan tanpa build. Membuka index.html melalui file:// hanya mendukung Demo Produk; Supabase Auth memerlukan HTTP dan internet. Gunakan origin yang sama sepanjang sesi.
 
-## Batas simulasi
+## Installation & Configuration
 
-- Seluruh akun, properti, identitas, harga, foto, jarak area, dan transaksi adalah data ilustrasi.
-- Autentikasi dan pemisahan peran hanya simulasi frontend; LocalStorage dapat diperiksa/diubah dari browser dan bukan sistem keamanan produksi.
-- Pembayaran sewa/boost tidak menghubungi bank, QRIS, e-wallet, atau memindahkan uang. Tidak meminta rekening, PIN, OTP, atau kartu.
-- Analisis keluhan hanya membaca kata kunci teks, bukan foto, model AI, diagnosis teknis, atau pengganti penanganan darurat.
-- Chat/notification tersimpan lokal, tidak realtime lintas perangkat, tanpa WhatsApp/email/SMS/push eksternal.
-- Lampiran/properti menerima JPG/PNG/WebP maksimal 1 MB. Quota LocalStorage bergantung browser. Gunakan foto kecil untuk presentasi panjang.
-- Simpan PDF menggunakan dialog Cetak browser. Tautan berbagi hanya berguna jika penerima mempunyai alamat project/server yang sama.
-- Tampilan terang tersedia menyeluruh. Dark mode tidak ditambahkan agar kualitas tema utama tetap konsisten.
-- Tidak ada booking otomatis, backend, analytics eksternal, atau scheduler server.
+config/runtime.js berisi Project URL dan Publishable Key yang memang publik. Untuk checkout baru, ikuti bentuk config/runtime.example.js. Jangan menambahkan service role key, server secret atau password database ke frontend.
+
+Callback login/verifikasi/pemulihan harus masuk allowlist Supabase untuk origin yang dipakai. Workspace terhubung ke **ngekosaja-development**. Jangan melakukan config push penuh, mengubah setting hosted, menerapkan migrasi, atau membuat akun remote tanpa otorisasi yang sesuai. [Setup Auth](docs/auth/AUTH_SETUP.md) dan [setup database](docs/database/SETUP_GUIDE.md).
+
+## Authentication & Authorization
+
+Confirm Email dinonaktifkan pada environment development sesuai hasil pemeriksaan read-only sebelumnya. Jika signup mengembalikan session aktif, identitas/profil/role diverifikasi sebelum pengguna masuk dan menerima notifikasi berhasil. Jika tidak ada session, alur verifikasi tetap tersedia. Signup publik memberi prospect; memilih tujuan pemilik tidak memberi owner/admin.
+
+Login menuju home; pengaturan profil memiliki menu terpisah. Logout berada paling bawah menu akun dan meminta konfirmasi. Recovery tetap memerlukan email Supabase serta callback/session pemulihan yang valid; kuota email tetap berlaku. Menonaktifkan Confirm Email bukan bukti kepemilikan inbox atau konfigurasi siap production.
+
+[Role management](docs/auth/ROLE_MANAGEMENT.md) dan [Development Test Accounts](docs/auth/DEVELOPMENT_ACCOUNTS.md). Provisioning akun development menggunakan Admin API hanya melalui script server administratif. Perintah default membuat plan read-only; pembuatan remote memerlukan persetujuan dan password pribadi melalui terminal tersembunyi. Tidak ada akun remote baru yang dibuat oleh cleanup konten ini.
+
+## Security
+
+- RLS dan role database tetap menjadi batas akses server; route guard bukan pengganti RLS.
+- Metadata pendaftaran tidak dapat memberikan owner/admin. RPC sensitif tidak tersedia bagi JWT pengguna biasa.
+- Service key/password tidak masuk frontend, repository atau log. File privat dan receipt administratif diabaikan Git.
+- Reset Data Demo hanya memengaruhi state demo di browser, bukan akun atau database Supabase.
+- Tidak ada PIN, OTP, kartu atau rekening yang diminta oleh checkout simulasi.
+
+[Audit keamanan terdokumentasi](docs/auth/security-audit-results.json). Secret scan berbasis pola bukan jaminan seluruh Git history bebas credential; jangan menaruh secret pada direktori publik server statis.
+
+## Development Roadmap
+
+1. Fondasi PostgreSQL, constraint, RLS, laporan dan histori migrasi: tersedia dengan bukti pemeriksaan.
+2. Authentication, profil, role dan katalog publik: tersedia; validasi akun development Cloud lanjutan memerlukan provisioning yang disetujui.
+3. Integrasi workspace bisnis terhubung: properti, penghuni, tagihan, keluhan, chat dan promosi.
+4. Integrasi pembayaran, pengiriman notifikasi, Storage dan scheduler setelah rancangan operasional serta keamanan ditinjau.
+5. Kesiapan production: pengujian environment target, pengiriman email, pemantauan, backup/restore dan evaluasi keamanan.
+
+Roadmap bukan klaim bahwa integrasi yang belum tersedia sudah berfungsi.
+
+## Testing
+
+```powershell
+npm run test:frontend
+npm run test:auth-provision
+npm run test:auth-repair
+npm run test:database-tooling
+python tests/auth_browser.py
+python tests/browser_check.py
+```
+
+Tes browser membutuhkan Python, Playwright dan Chromium yang terpasang pada environment development. Website sendiri tidak memerlukan dependency Python. Untuk memisahkan artefak regresi baru dari bukti lama, gunakan NGEKOSAJA_TEST_OUTPUT. Auth browser mendukung NGEKOSAJA_TEST_ORIGIN; browser demo menerima --url.
+
+Dengan cluster PostgreSQL test loopback yang sudah aktif:
+
+```powershell
+npm run db:test -- --native --postflight --development-accounts --output=tests/branding-database-results.json
+```
+
+Runner membuat database acak baru, lalu membersihkannya. Jangan mereset remote. SQL adapter lokal tidak menguji GoTrue/JWT/PostgREST nyata; tes browser Auth menggunakan HTTP mock. Lihat [hasil Auth](docs/auth/AUTH_TESTING.md), [hasil database](docs/database/VERIFICATION.md), dan [audit konten](docs/CONTENT_AUDIT.md). Hasil historis tetap dipertahankan.
+
+## Deployment
+
+Frontend dapat disajikan melalui HTTP static hosting; konfigurasi origin/callback dan akses file publik harus ditinjau untuk environment tujuan. Jangan menerbitkan .env, scripts, node_modules, supabase/.temp atau receipt administratif. Tidak ada deployment, konfigurasi remote atau git push yang dilakukan pada cleanup ini.
+
+Produk masih dalam pengembangan dan **belum dinyatakan siap production**. Deployment production memerlukan pemeriksaan terpisah atas Auth/email, RLS, integrasi operasional, observability dan pengelolaan secret.
+
+## Current Limitations
+
+- Pembayaran dan boost hanya simulasi; tidak ada koneksi bank, QRIS atau dompet digital.
+- Workspace bisnis akun terhubung belum mengelola data operasional; Demo Produk tidak dijadikan data akun nyata.
+- Chat, notifikasi, jadwal dan analytics demo bersifat lokal, tanpa realtime/scheduler lintas perangkat.
+- Analisis keluhan mencocokkan kata kunci teks; tidak menganalisis foto atau menggantikan diagnosis teknis/darurat.
+- Foto demo maksimal 1 MB; kapasitas LocalStorage bergantung browser. Simpan PDF memakai dialog cetak browser.
+- Booking otomatis, gateway, Storage, pengiriman email production dan MFA end-to-end belum diverifikasi.
+- Inbound email dan signup Cloud tanpa Confirm Email belum diuji ulang oleh cleanup konten ini.
+
+[Demo Produk](docs/DEMO_GUIDE.md), [kredit aset](assets/CREDITS.md), dan [arsip](docs/archive/README.md).

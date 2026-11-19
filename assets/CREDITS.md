@@ -1,6 +1,6 @@
 # Aset visual
 
-Foto interior diunduh dari Unsplash dan disimpan lokal untuk prototype pendidikan. Semua foto merupakan ilustrasi properti demo, bukan dokumentasi listing nyata.
+Foto interior diunduh dari Unsplash dan disimpan lokal untuk demo produk NgekosAja.com. Semua foto merupakan ilustrasi properti demo, bukan dokumentasi listing nyata.
 
 | File | Sumber foto |
 | --- | --- |
@@ -13,7 +13,7 @@ Foto interior diunduh dari Unsplash dan disimpan lokal untuk prototype pendidika
 | room-7.jpg | https://images.unsplash.com/photo-1560448204-e02f11c3d0e2 |
 | room-8.jpg | https://images.unsplash.com/photo-1522708323590-d24dbb6b0267 |
 
-Logo dibuat dalam SVG khusus untuk NgekosAja. Ikon antarmuka dibuat sebagai inline SVG menggunakan bentuk geometris sederhana. Tidak ada library ikon atau skrip CDN.
+Logo dibuat dalam SVG khusus untuk NgekosAja.com. Ikon antarmuka dibuat sebagai inline SVG menggunakan bentuk geometris sederhana. Tidak ada library ikon atau skrip CDN.
 
 ## Tambahan versi 2
 

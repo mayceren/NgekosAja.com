@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomBytes,randomUUID} from 'node:crypto';
-import {accounts,fixtureTag,resourceIds,requireNewAccounts,provisionNewAccounts,relationSQL} from '../scripts/lib/uas-fixtures.mjs';
+import {accounts,fixtureTag,resourceIds,requireNewAccounts,provisionNewAccounts,relationSQL} from '../scripts/lib/development-accounts.mjs';
 
 const password=()=>randomBytes(20).toString('base64url')+'Qa1!';
 function harness(overrides={}) {
@@ -19,7 +19,7 @@ test('successful provisioning confirms only new accounts, commits relations and 
   const h=harness();const result=await provisionNewAccounts(h.options);
   assert.equal(result.created,6);assert.equal(h.prompts,12);assert.equal(h.verified,true);
   assert.equal(h.sql.length,1);assert.match(h.sql[0],/^begin;/);assert.match(h.sql[0],/publication_status='draft'/);assert.match(h.sql[0],/commit;$/);
-  for(const input of h.created){assert.equal(input.email_confirm,true);assert.equal(input.app_metadata.uas_fixture,fixtureTag);assert.equal(input.user_metadata.role,undefined);}
+  for(const input of h.created){assert.equal(input.email_confirm,true);assert.equal(input.app_metadata.development_fixture,fixtureTag);assert.equal(input.user_metadata.role,undefined);}
   assert.equal(h.receipts.at(-1).relations_committed,true);assert.equal(h.receipts.at(-1).created.length,6);
   const saved=JSON.stringify(h.receipts)+h.sql.join('');for(const pw of h.passwords.values())assert.ok(!saved.includes(pw));
 });

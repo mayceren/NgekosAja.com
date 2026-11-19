@@ -1,4 +1,4 @@
-# Panduan presentasi NgekosAja 2.0
+# Panduan Demo Produk NgekosAja.com
 
 Mulai pada Live Server dengan viewport 1440 × 900. Jika ingin data segar, klik Reset Data Demo dan konfirmasikan. Reset tidak diperlukan setelah setiap perpindahan peran.
 
@@ -20,4 +20,4 @@ Mulai pada Live Server dengan viewport 1440 × 900. Jika ingin data segar, klik 
 16. **Pemisahan pemilik:** ganti ke Arif/Dewi dan lihat bahwa properti, penghuni, tagihan, chat, laporan, serta statistik berubah sesuai pemilik. Kembali ke Sari untuk melanjutkan alur utama.
 17. **Check-out:** pilih penghuni, klik check-out dan konfirmasi. Kamar dilepas, jadwal berikutnya dihentikan, tetapi tagihan/riwayat lama tetap tersedia. Properti dengan histori dapat diarsipkan, bukan dihapus permanen.
 
-Panduan interaktif tersedia dari navbar profil atau sidebar **Panduan Demo**. Semua identitas dan transaksi adalah ilustrasi untuk presentasi BMLC.
+Panduan interaktif tersedia dari navbar profil atau sidebar **Panduan Demo**. Semua identitas dan transaksi merupakan sample data pada Demo Environment. Tidak ada perpindahan uang atau pesan eksternal.

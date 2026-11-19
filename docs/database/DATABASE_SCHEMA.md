@@ -1,4 +1,4 @@
-# NgekosAja 3.0 — Phase 1 Database Foundation
+# NgekosAja.com 3.0 — Phase 1 Database Foundation
 
 Fondasi database terpisah dari frontend versi 2. `index.html`, CSS, JavaScript, navigasi hash, dan LocalStorage tidak diintegrasikan atau diubah pada Phase 1. Setelah persetujuan pengguna, **12 migrasi** dan seed master telah diterapkan ke Supabase development; hasil terkini tersedia di [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md). Tidak ada git push atau reset remote.
 
@@ -56,7 +56,7 @@ Timestamp memakai timestamptz; pencatatan adalah instant yang sama walau sesi be
 
 Reminder H-3 pada jendela 1–3 hari sebelum jatuh tempo, hari H, dan overdue memakai kunci terpisah per invoice/penerima. Reminder manual unik per invoice/hari Jakarta. Pembayaran/pembatalan menandai notifikasi lama dibaca. Pemeriksaan reminder mengunci invoice agar tidak membuat reminder setelah pembayaran bersamaan. Tidak ada cron/background job di Phase 1.
 
-Recurring memakai agreement, nominal, payment_day 1–28, start_month dan cursor monotonic. Generator dipanggil eksplisit pemilik, hanya portofolio sendiri; bulan yang sama tidak dibuat ulang. Check-out mematikan jadwal. Generator tidak mengisi seluruh bulan yang terlewat secara otomatis; caller memilih satu bulan. Sewa berakhir berdasarkan status eksplisit, sama seperti prototype versi 2.
+Recurring memakai agreement, nominal, payment_day 1–28, start_month dan cursor monotonic. Generator dipanggil eksplisit pemilik, hanya portofolio sendiri; bulan yang sama tidak dibuat ulang. Check-out mematikan jadwal. Generator tidak mengisi seluruh bulan yang terlewat secara otomatis; caller memilih satu bulan. Sewa berakhir berdasarkan status eksplisit, sama seperti Demo Environment versi 2.
 
 ## Laporan dan definisi metrik
 

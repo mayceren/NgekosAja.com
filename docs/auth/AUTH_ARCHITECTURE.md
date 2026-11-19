@@ -27,7 +27,7 @@ Alur: SDK memulihkan session → **getUser** memverifikasi identitas terhadap Au
 
 Profil dibuat **hanya oleh trigger database** on_auth_user_created. Frontend tidak membuat/upsert profil, sehingga tidak ada jalur profil ganda atau penentuan UUID bebas. Mutasi profil selalu memperoleh ulang user dari Auth dan hanya mengirim display_name/phone, tanpa role, id, owner_id atau email PostgreSQL.
 
-Kebutuhan konfirmasi email ditentukan GoTrue melalui konfigurasi hosted, bukan flag/frontend. verifiedUser tetap meminta getUser ke Auth dan menolak identitas kosong/anonymous/tanpa email. Session yang sah tidak ditolak hanya karena frontend mengharuskan timestamp email_confirmed_at sendiri. Untuk UAS/development, Confirm Email OFF sudah dikonfirmasi melalui pemeriksaan read-only; konfigurasi ini bukan siap production dan tidak mengubah user existing.
+Kebutuhan konfirmasi email ditentukan GoTrue melalui konfigurasi hosted, bukan flag/frontend. verifiedUser tetap meminta getUser ke Auth dan menolak identitas kosong/anonymous/tanpa email. Session yang sah tidak ditolak hanya karena frontend mengharuskan timestamp email_confirmed_at sendiri. Untuk environment development, Confirm Email OFF sudah dikonfirmasi melalui pemeriksaan read-only; konfigurasi ini bukan siap production dan tidak mengubah user existing.
 
 Signup memiliki dua cabang: respons session aktif diverifikasi dan memuat profil/role sebelum navigasi sesuai hak efektif (prospect ke home); respons tanpa session mempertahankan halaman verifikasi. Role dari metadata/form tidak memberi akses. Respons email terdaftar atau identities kosong ditangani tanpa takeover. Profil/role gagal dimuat tidak menghasilkan akses workspace. Notifikasi berhasil diberikan sesudah identitas termuat.
 

@@ -1,8 +1,9 @@
 """NgekosAja 2.0 browser regression. No test packages are needed by the website itself."""
-import argparse, base64, json
+import argparse, base64, json, os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 ROOT=Path(__file__).resolve().parents[1]
+OUT=Path(os.environ.get('NGEKOSAJA_TEST_OUTPUT',str(ROOT/'tests')));OUT.mkdir(parents=True,exist_ok=True)
 parser=argparse.ArgumentParser()
 parser.add_argument('--url',default='http://127.0.0.1:5500')
 args=parser.parse_args()
@@ -92,7 +93,7 @@ with sync_playwright() as p:
  page.reload();expect(page.locator('.payment-result h1')).to_contain_text('Pembayaran berhasil')
  page.locator('[data-action=receipt]').click();expect(page.locator('.receipt-sheet')).to_contain_text('BUKTI PEMBAYARAN SIMULASI')
  # Exercise Chromium print output rather than a fake download button.
- page.pdf(path=str(ROOT/'screenshots/receipt-demo.pdf'),print_background=True,format='A4');close()
+ page.pdf(path=str(OUT/'receipt-demo.pdf'),print_background=True,format='A4');close()
  role('owner','o1');route('owner/payments');page.locator('#invoice-filter [name=query]').fill('Andi');page.locator('#invoice-filter [type=submit]').click();expect(page.locator(f'[data-action=receipt][data-id={invoice}]')).to_be_visible()
  passed.append('H-3 reminder, notification read state, failed/successful checkout, E-Wallet/QRIS, admin, reload, receipt/PDF and owner sync')
 
@@ -183,5 +184,5 @@ with sync_playwright() as p:
  assert not resources,resources
  assert not errors,errors
  result={'base_url':args.url,'passed':passed,'javascript_errors':errors,'failed_resources':resources}
- (ROOT/'tests/browser-results.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+ (OUT/'browser-results.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
  print(json.dumps(result,ensure_ascii=True,indent=2));browser.close()

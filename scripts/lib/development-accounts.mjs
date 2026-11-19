@@ -2,15 +2,15 @@ import {randomBytes} from 'node:crypto';
 import {fixtureId} from '../development-fixtures.mjs';
 import {validateRepairPassword, RepairError} from './owned-auth-account.mjs';
 
-export const fixtureTag = 'ngekosaja-uas-auth-v1';
+export const fixtureTag = 'ngekosaja-development-auth-v1';
 export const accounts = Object.freeze([
-  {key:'prospect', role:'prospect', name:'UAS Calon Penghuni'},
-  {key:'tenant-a', role:'tenant', name:'UAS Penghuni A'},
-  {key:'tenant-b', role:'tenant', name:'UAS Penghuni B'},
-  {key:'owner-a', role:'owner', name:'UAS Pemilik A'},
-  {key:'owner-b', role:'owner', name:'UAS Pemilik B'},
-  {key:'admin', role:'admin', name:'UAS Administrator'},
-].map(account => Object.freeze({...account,email:`uas-${account.key}@ngekosaja.test`})));
+  {key:'prospect', role:'prospect', name:'Development Calon Penghuni'},
+  {key:'tenant-a', role:'tenant', name:'Development Penghuni A'},
+  {key:'tenant-b', role:'tenant', name:'Development Penghuni B'},
+  {key:'owner-a', role:'owner', name:'Development Pemilik A'},
+  {key:'owner-b', role:'owner', name:'Development Pemilik B'},
+  {key:'admin', role:'admin', name:'Development Administrator'},
+].map(account => Object.freeze({...account,email:`dev-${account.key}@ngekosaja.test`})));
 export const resourceIds = Object.fromEntries(['property-a','property-b','room-a','room-b','agreement-a','agreement-b'].map(key=>[key,fixtureId(`${fixtureTag}:${key}`)]));
 const uuid = value => {if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||''))throw new RepairError('UUID fixture tidak valid.');return `'${value}'::uuid`;};
 
@@ -39,11 +39,11 @@ export async function provisionNewAccounts({admin,prompt,persistReceipt,writeRel
     await persistReceipt(receipt);
     for(const account of accounts) {
       const {data,error}=await admin.createUser({email:account.email,password:passwords.get(account.key),email_confirm:true,
-        user_metadata:{display_name:account.name},app_metadata:{uas_fixture:fixtureTag,uas_fixture_run:run}});
+        user_metadata:{display_name:account.name},app_metadata:{development_fixture:fixtureTag,development_fixture_run:run}});
       if(error||!data?.user?.id)throw new RepairError('Pembuatan Auth fixture berhenti. Akun existing tidak diubah; akun baru yang sudah tercatat dipertahankan. Periksa receipt lokal.');
       const user=data.user;
       uuid(user.id);
-      if(user.email?.toLowerCase()!==account.email || user.app_metadata?.uas_fixture_run!==run)throw new RepairError('Respons identitas Auth tidak cocok; tahap relasi dibatalkan.');
+      if(user.email?.toLowerCase()!==account.email || user.app_metadata?.development_fixture_run!==run)throw new RepairError('Respons identitas Auth tidak cocok; tahap relasi dibatalkan.');
       identities[account.key]=user.id;
       receipt.created.push({key:account.key,id:user.id});
       await persistReceipt(receipt);
@@ -65,7 +65,7 @@ export function preflightSQL() {
     'profile_trigger_present',exists(select 1 from pg_trigger where tgname='on_auth_user_created' and not tgisinternal),
     'rls_tables',(select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relrowsecurity),
     'auth_users',(select count(*) from auth.users)
-  ) as uas_preflight;`;
+  ) as development_preflight;`;
 }
 
 export function relationSQL(identities,run) {
@@ -73,12 +73,12 @@ export function relationSQL(identities,run) {
   const user=key=>uuid(identities[key]),id=key=>uuid(resourceIds[key]);
   const userIds=accounts.map(account=>user(account.key));
   if(new Set(userIds).size!==accounts.length)throw new RepairError('Identitas Auth fixture harus berbeda.');
-  const checks=accounts.map(account=>`if not exists(select 1 from auth.users where id=${user(account.key)} and lower(email)='${account.email}' and raw_app_meta_data->>'uas_fixture_run'='${run}' and raw_app_meta_data->>'uas_fixture'='${fixtureTag}') then raise exception 'Fixture Auth ownership mismatch'; end if;`).join('\n');
+  const checks=accounts.map(account=>`if not exists(select 1 from auth.users where id=${user(account.key)} and lower(email)='${account.email}' and raw_app_meta_data->>'development_fixture_run'='${run}' and raw_app_meta_data->>'development_fixture'='${fixtureTag}') then raise exception 'Fixture Auth ownership mismatch'; end if;`).join('\n');
   const grants=accounts.filter(account=>account.role!=='prospect').map(account=>`perform public.server_grant_role(${user(account.key)},'${account.role}');`).join('\n');
   return `begin;
 select pg_advisory_xact_lock(hashtextextended('${fixtureTag}',0));
 select set_config('request.jwt.claim.role','service_role',true),set_config('request.jwt.claim.sub','',true);
-do $uas$
+do $development$
 begin
 ${checks}
 if (select count(*) from public.profiles where id in (${userIds}))<>6 then raise exception 'Auth profile trigger incomplete'; end if;
@@ -88,15 +88,15 @@ ${grants}
 -- Check-in requires published property. Only NEW fixtures are temporarily published
 -- inside this transaction and returned to draft before commit; never public listings.
 insert into public.properties(id,owner_id,name,location,address,description,base_rent,gender_policy,publication_status) values
-(${id('property-a')},${user('owner-a')},'UAS TEST Kos A','Tanjung Duren','Alamat ilustrasi UAS A, Jakarta Barat','Properti testing development UAS, bukan penawaran kos sungguhan.',1500000,'mixed','published'),
-(${id('property-b')},${user('owner-b')},'UAS TEST Kos B','Grogol','Alamat ilustrasi UAS B, Jakarta Barat','Properti testing development UAS, bukan penawaran kos sungguhan.',1700000,'mixed','published');
+(${id('property-a')},${user('owner-a')},'DEVELOPMENT TEST Kos A','Tanjung Duren','Alamat ilustrasi Development A, Jakarta Barat','Properti testing development, bukan penawaran kos sungguhan.',1500000,'mixed','published'),
+(${id('property-b')},${user('owner-b')},'DEVELOPMENT TEST Kos B','Grogol','Alamat ilustrasi Development B, Jakarta Barat','Properti testing development, bukan penawaran kos sungguhan.',1700000,'mixed','published');
 insert into public.rooms(id,property_id,number,rent) values (${id('room-a')},${id('property-a')},'A-01',1500000),(${id('room-b')},${id('property-b')},'B-01',1700000);
 insert into public.tenants(id) values (${user('tenant-a')}),(${user('tenant-b')});
 insert into public.rental_agreements(id,tenant_id,room_id,start_date,end_date,rent,payment_day) values
 (${id('agreement-a')},${user('tenant-a')},${id('room-a')},private.today(),(private.today()+interval '1 year')::date,1500000,5),
 (${id('agreement-b')},${user('tenant-b')},${id('room-b')},private.today(),(private.today()+interval '1 year')::date,1700000,5);
 update public.properties set publication_status='draft' where id in (${id('property-a')},${id('property-b')});
-end $uas$;
+end $development$;
 commit;`;
 }
 
@@ -105,5 +105,5 @@ export function verificationSQL(identities) {
   return `select json_build_object('profiles',(select count(*) from public.profiles where id in (${ids})),
   'roles',(select coalesce(json_agg(json_build_object('user_id',user_id,'role',role)),'[]') from public.user_roles where user_id in (${ids})),
   'agreements',(select count(*) from public.rental_agreements where id in (${uuid(resourceIds['agreement-a'])},${uuid(resourceIds['agreement-b'])}) and status='active'),
-  'draft_properties',(select count(*) from public.properties where id in (${uuid(resourceIds['property-a'])},${uuid(resourceIds['property-b'])}) and publication_status='draft')) as uas_verification;`;
+  'draft_properties',(select count(*) from public.properties where id in (${uuid(resourceIds['property-a'])},${uuid(resourceIds['property-b'])}) and publication_status='draft')) as development_verification;`;
 }

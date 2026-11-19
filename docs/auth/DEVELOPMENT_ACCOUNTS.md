@@ -1,15 +1,15 @@
-# Akun development UAS tanpa email
+# Akun development tanpa email
 
 Status: **plan diperiksa, belum diterapkan ke Cloud, menunggu persetujuan pengguna**. Target dikunci ke `ngekosaja-development` (`wfmhsbdfdcugxblqsaob`). Tidak ada migration baru, reset, penghapusan akun atau perubahan password akun existing.
 
 | Email testing | Akses tambahan |
 | --- | --- |
-| uas-prospect@ngekosaja.test | Calon penghuni |
-| uas-tenant-a@ngekosaja.test | Penghuni A |
-| uas-tenant-b@ngekosaja.test | Penghuni B |
-| uas-owner-a@ngekosaja.test | Pemilik A |
-| uas-owner-b@ngekosaja.test | Pemilik B |
-| uas-admin@ngekosaja.test | Administrator platform |
+| dev-prospect@ngekosaja.test | Calon penghuni |
+| dev-tenant-a@ngekosaja.test | Penghuni A |
+| dev-tenant-b@ngekosaja.test | Penghuni B |
+| dev-owner-a@ngekosaja.test | Pemilik A |
+| dev-owner-b@ngekosaja.test | Pemilik B |
+| dev-admin@ngekosaja.test | Administrator platform |
 
 Semua akun mempertahankan role dasar prospect dari trigger. Domain `.test` hanya identitas development dan tidak menerima email. Admin API createUser memakai email_confirm:true pada **akun baru ini saja**, tanpa email. Bukan mekanisme reset password website.
 
@@ -20,7 +20,7 @@ Relasi baru: enam profil dari trigger, lima grant tambahan melalui fungsi server
 ## Plan tanpa perubahan remote
 
 ```powershell
-npm run auth:provision-uas
+npm run auth:provision-development
 ```
 
 CLI harus sudah login dan linked ke project development. Script memverifikasi ref lokal, nama/ref remote, collision dan Confirm Email melalui operasi read-only. Tahap ini tidak mengambil key administratif atau mengubah konfigurasi hosted.
@@ -30,7 +30,7 @@ CLI harus sudah login dan linked ke project development. Script memverifikasi re
 Jalankan apply_command dari JSON plan **di terminal interaktif pribadi**. Bentuk perintah:
 
 ```text
-npm run auth:provision-uas -- --apply --approve-remote=<fingerprint-plan-yang-disetujui>
+npm run auth:provision-development -- --apply --approve-remote=<fingerprint-plan-yang-disetujui>
 ```
 
 Flag harus cocok dengan fingerprint manifest. Tanpa flag tepat atau terminal TTY, script berhenti sebelum network. Persetujuan percakapan diperlukan sebelum menjalankannya. Jangan menjalankan dua provisioning bersamaan.
@@ -47,7 +47,7 @@ Setelah commit, script memeriksa profil, role, dua agreement aktif, dua properti
 
 ## Jika terjadi kegagalan parsial
 
-Auth Admin HTTP tidak berada dalam transaksi SQL. Akun baru yang sempat dibuat tetap dipertahankan; script tidak menghapus atau mengambil alih akun. Receipt lokal .database-test/uas-accounts/receipt.json menyimpan UUID/marker run dan status commit, tanpa password, serta diabaikan Git. Kegagalan receipt/verifikasi menghentikan script tanpa klaim sukses. Periksa Auth dan receipt secara administratif sebelum langkah berikutnya; jangan rerun untuk mengganti akun existing.
+Auth Admin HTTP tidak berada dalam transaksi SQL. Akun baru yang sempat dibuat tetap dipertahankan; script tidak menghapus atau mengambil alih akun. Receipt lokal .database-test/development-accounts/receipt.json menyimpan UUID/marker run dan status commit, tanpa password, serta diabaikan Git. Kegagalan receipt/verifikasi menghentikan script tanpa klaim sukses. Periksa Auth dan receipt secara administratif sebelum langkah berikutnya; jangan rerun untuk mengganti akun existing.
 
 Sebelum tahap relasi, akun parsial hanya memiliki prospect. Kegagalan SQL me-rollback seluruh relasi/grant. Jika verifikasi sesudah commit gagal, relasi tetap ada; receipt relations_committed:true membedakan kondisi itu. Tidak ada cleanup remote otomatis.
 
@@ -55,9 +55,9 @@ Sebelum tahap relasi, akun parsial hanya memiliki prospect. Kegagalan SQL me-rol
 
 ```powershell
 npm run test:auth-provision
-npm run db:test -- --native --postflight --uas-fixtures --output=tests/database-auth-uas-results.json
+npm run db:test -- --native --postflight --development-accounts --output=tests/branding-database-results.json
 ```
 
 Unit test tidak menyentuh network. Suite SQL membuat database acak di PostgreSQL loopback, menguji migrasi/fixture/RLS, lalu membuang database sementara tersebut. Tidak mereset input database atau Cloud. Cluster PostgreSQL test lokal harus sudah aktif pada port 55432. Adapter Auth bukan GoTrue.
 
-Confirm Email OFF hanya untuk UAS/development; prototype ini **belum siap production**. Rujukan: [Auth Admin createUser](https://supabase.com/docs/reference/javascript/auth-admin-createuser).
+Confirm Email OFF hanya untuk environment development; produk ini **belum siap production**. Rujukan: [Auth Admin createUser](https://supabase.com/docs/reference/javascript/auth-admin-createuser).

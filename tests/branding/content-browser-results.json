@@ -1,0 +1,646 @@
+{
+  "mode": "chromium-public-and-demo-with-intercepted-supabase",
+  "route_viewport_checks": 110,
+  "checks": [
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "home"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "marketplace"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "fitur"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "tentang"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "untuk-pemilik"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "help"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "privacy"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "login"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "register"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "forgot"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "verify"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 1440,
+      "route": "reset"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "home"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "marketplace"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "fitur"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "tentang"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "untuk-pemilik"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "help"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "privacy"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "login"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "register"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "forgot"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "verify"
+    },
+    {
+      "environment": "connected-anonymous",
+      "width": 390,
+      "route": "reset"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "home"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "marketplace"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "property/p1"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "favorites"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "compare"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "fitur"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "tentang"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "untuk-pemilik"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "help"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "privacy"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "login"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "register"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "forgot"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "account/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 1440,
+      "route": "chat"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/properties"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/rooms"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/tenants"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/payments"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/transactions"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/reports"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/complaints"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/chat"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/boost"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/notifications"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 1440,
+      "route": "owner/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/home"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/bills"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/history"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/complaints"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/chat"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/notifications"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "tenant/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 1440,
+      "route": "checkout/inv-0-0"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin/users"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin/listings"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin/transactions"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin/complaints"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin/campaigns"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 1440,
+      "route": "admin/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "home"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "marketplace"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "property/p1"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "favorites"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "compare"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "fitur"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "tentang"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "untuk-pemilik"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "help"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "privacy"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "login"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "register"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "forgot"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "account/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "guest",
+      "width": 390,
+      "route": "chat"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/properties"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/rooms"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/tenants"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/payments"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/transactions"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/reports"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/complaints"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/chat"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/boost"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/notifications"
+    },
+    {
+      "environment": "demo",
+      "role": "owner",
+      "width": 390,
+      "route": "owner/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/home"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/bills"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/history"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/complaints"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/chat"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/notifications"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "tenant/settings"
+    },
+    {
+      "environment": "demo",
+      "role": "tenant",
+      "width": 390,
+      "route": "checkout/inv-0-0"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin/users"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin/listings"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin/transactions"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin/complaints"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin/campaigns"
+    },
+    {
+      "environment": "demo",
+      "role": "admin",
+      "width": 390,
+      "route": "admin/settings"
+    }
+  ],
+  "javascript_errors": [],
+  "cloud_mutations": 0,
+  "sandbox_disclosures_preserved": true,
+  "academic_matches": 0
+}

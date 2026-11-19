@@ -2,15 +2,15 @@
   "name": "ngekosaja-database-foundation",
   "version": "3.0.0-phase.2",
   "private": true,
-  "description": "Optional database development tools; the frontend still runs without npm.",
+  "description": "NgekosAja.com - property marketplace, rental payments and property management; optional development tooling.",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "dev": "node scripts/serve-auth.mjs",
     "auth:configure": "node scripts/configure-auth.mjs",
-    "auth:provision-uas": "node scripts/provision-uas-accounts.mjs",
-    "test:auth-provision": "node --test tests/uas-provision.test.mjs",
+    "auth:provision-development": "node scripts/provision-development-accounts.mjs",
+    "test:auth-provision": "node --test tests/development-provision.test.mjs",
     "auth:repair-test-account": "node scripts/repair-test-account.mjs",
     "test:auth-repair": "node --test tests/auth-repair.test.mjs",
     "db:start": "supabase start",
@@ -19,6 +19,7 @@
     "db:test": "node scripts/database-test.mjs --extended",
     "db:fixtures": "node scripts/provision-fixtures.mjs",
     "db:docs": "node scripts/database-docs.mjs",
+    "test:content": "node scripts/content-audit.mjs",
     "test:frontend": "node tests/domain.cjs",
     "test:database-tooling": "node --test tests/database-tooling.test.mjs"
   },

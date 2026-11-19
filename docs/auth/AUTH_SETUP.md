@@ -1,6 +1,6 @@
-# Menjalankan Auth Phase 2 untuk UAS/development
+# Menjalankan Auth Phase 2 untuk environment development
 
-Penyederhanaan ini khusus project UAS Technopreneurship beranggaran Rp0. Supabase Auth, PostgreSQL, RLS, session, role dan UI existing dipertahankan. Konfigurasi ini **belum siap production**.
+Pengaturan ini digunakan pada environment development NgekosAja.com. Supabase Auth, PostgreSQL, RLS, session, role dan UI existing dipertahankan. Konfigurasi ini **belum siap production**.
 
 ## Workspace saat ini
 
@@ -24,9 +24,9 @@ Server npm run dev hanya melayani index/config publik/js/css/assets. .env, supab
 
 ## Pengaturan Dashboard
 
-Email/password provider tetap aktif. Pemilik project mengatur **Authentication > Sign In / Providers > Email > Confirm email: OFF** secara manual untuk UAS/development (label Dashboard dapat berubah). Pemeriksaan read-only 19 November 2026 memastikan remote **false** pada **ngekosaja-development**; bukti [development-account-plan.json](development-account-plan.json). Script dan aplikasi tidak mengubah konfigurasi hosted. Pertahankan secure email change/double confirmation, RLS dan MFA configuration.
+Email/password provider tetap aktif. Pemilik project mengatur **Authentication > Sign In / Providers > Email > Confirm email: OFF** secara manual untuk environment development (label Dashboard dapat berubah). Pemeriksaan read-only 19 November 2026 memastikan remote **false** pada **ngekosaja-development**; bukti [development-account-plan.json](development-account-plan.json). Script dan aplikasi tidak mengubah konfigurasi hosted. Pertahankan secure email change/double confirmation, RLS dan MFA configuration.
 
-Confirm Email OFF membuat Supabase memperlakukan email akun baru sebagai terkonfirmasi tanpa membuktikan kepemilikan inbox. Ini hanya keputusan untuk UAS/development; akun existing tidak diubah dan tidak diasumsikan otomatis terkonfirmasi. Jika fitur diaktifkan kembali, alur verifikasi sebelumnya tetap didukung.
+Confirm Email OFF membuat Supabase memperlakukan email akun baru sebagai terkonfirmasi tanpa membuktikan kepemilikan inbox. Ini hanya keputusan untuk environment development; akun existing tidak diubah dan tidak diasumsikan otomatis terkonfirmasi. Jika fitur diaktifkan kembali, alur verifikasi sebelumnya tetap didukung.
 
 Authentication > URL Configuration > Redirect URLs sudah memuat tepat:
 
@@ -57,7 +57,7 @@ Lupa kata sandi tetap memerlukan email resmi dan callback/recovery session yang 
 
 Enam akun testing baru dan relasi owner/tenant disiapkan melalui [DEVELOPMENT_ACCOUNTS.md](DEVELOPMENT_ACCOUNTS.md). Plan default hanya membaca remote. **Pembuatan akun remote belum dilakukan dan menunggu persetujuan**; password dimasukkan sendiri melalui terminal tersembunyi. Tidak ada perubahan akun existing pada pekerjaan ini.
 
-Paragraf pemulihan berikut merupakan histori insiden QA sebelumnya, bukan langkah setup normal. Utilitas perbaikan tersebut tidak dijalankan oleh perubahan UAS ini. Jangan mengulang Cloud QA pada alamat pribadi.
+Paragraf pemulihan berikut merupakan histori insiden QA sebelumnya, bukan langkah setup normal. Utilitas perbaikan tersebut tidak dijalankan oleh penyederhanaan Auth ini. Jangan mengulang Cloud QA pada alamat pribadi.
 
 Pengujian awal secara keliru memakai alamat pengguna sebagai identitas QA: konfirmasi dikonsumsi tes, password diganti acak, lalu recovery diminta dari browser QA yang ditutup. Dua email tersebut bukan hasil satu submit pendaftaran biasa. Pemeriksaan read-only berikutnya memastikan akun itu **sudah terverifikasi**, tetapi password pilihan pengguna belum dipasang. Akun tersebut sekarang dilindungi dari QA; jangan daftar ulang atau memakai dua tautan lama.
 

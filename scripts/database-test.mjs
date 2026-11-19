@@ -37,9 +37,9 @@ try {
   await runFinalContracts(client,dbConfig,results);
   if(results.failed.length)process.exitCode=1;
  }
- if(process.argv.includes('--uas-fixtures')) {
-  const {runUasContracts}=await import('../supabase/tests/uas-fixtures.mjs');
-  await runUasContracts(client,results);
+ if(process.argv.includes('--development-accounts')) {
+  const {runDevelopmentAccountContracts}=await import('../supabase/tests/development-accounts.mjs');
+  await runDevelopmentAccountContracts(client,results);
  }
  if(option('catalogue-output')) {
   const path=option('catalogue-output');

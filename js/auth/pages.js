@@ -167,7 +167,7 @@
     const section = accountSections.find(item => item.id === page) || accountSections[0];
     const privateBody = isAccount
         ? A.profilePage(section.id)
-        : `${N.heading("WORKSPACE / " + label.toUpperCase(), `Halo, ${e(A.profile.display_name.split(" ")[0])}.`, "Identitas terhubung. Ruang yang tepat untuk langkah berikutnya.")}<section class="panel connected-welcome"><span class="connected-icon">${N.icon(role === "owner" ? "building" : role === "tenant" ? "home" : role === "admin" ? "shield" : "search")}</span><div><span class="eyebrow">${e(label)}</span><h2>${role === "prospect" ? "Akunmu siap untuk menemukan tempat pulang." : "Akses akunmu sudah terverifikasi."}</h2><p>${role === "prospect" ? "Jelajahi listing publik. Ketika penempatan sewa disepakati dengan pemilik, identitas yang sama akan mendapatkan akses penghuni." : "Workspace ini mengikuti hak akses dari database. Profil dan keamanan akun sudah dapat dikelola."}</p><a class="btn btn-primary" href="#/account">Kelola profil</a><a class="btn btn-outline" href="#/marketplace">Jelajahi kos</a></div></section><section class="panel connected-phase"><h2>${page ? "Fitur ini belum terhubung." : "Operasional menyusul di Phase 3."}</h2><p>Properti, tagihan, transaksi, keluhan, dan pesan belum diintegrasikan ke workspace ini. Tidak ada data demo yang ditampilkan sebagai milik akunmu, dan aksi bisnis belum dibuka.</p>${role === "prospect" ? "<p>Butuh akses pemilik? Hubungi administrator platform. Pilihan tujuan registrasi tidak otomatis memberikan hak pemilik.</p>" : ""}${A.roles.includes("tenant") && !A.hasAgreement ? "<p>Role penghuni belum mempunyai relasi sewa. Minta pemilik menghubungkan penempatan yang sah.</p>" : ""}${action("Periksa pembaruan akses", "refresh-rights")}</section>`;
+        : `${N.heading("WORKSPACE / " + label.toUpperCase(), `Halo, ${e(A.profile.display_name.split(" ")[0])}.`, "Identitas terhubung. Ruang yang tepat untuk langkah berikutnya.")}<section class="panel connected-welcome"><span class="connected-icon">${N.icon(role === "owner" ? "building" : role === "tenant" ? "home" : role === "admin" ? "shield" : "search")}</span><div><span class="eyebrow">${e(label)}</span><h2>${role === "prospect" ? "Akunmu siap untuk menemukan tempat pulang." : "Akses akunmu sudah terverifikasi."}</h2><p>${role === "prospect" ? "Jelajahi listing publik. Ketika penempatan sewa disepakati dengan pemilik, identitas yang sama akan mendapatkan akses penghuni." : "Akses pengelolaan mengikuti peran akunmu. Profil dan keamanan akun sudah dapat dikelola."}</p><a class="btn btn-primary" href="#/account">Kelola profil</a><a class="btn btn-outline" href="#/marketplace">Jelajahi kos</a></div></section><section class="panel connected-phase"><h2>${page ? "Fitur ini belum terhubung." : "Fitur operasional sedang dikembangkan."}</h2><p>Pengelolaan properti, tagihan, transaksi, keluhan, dan pesan belum tersedia pada akun terhubung. Demo Produk menyediakan simulasi terpisah untuk mencoba alurnya.</p>${role === "prospect" ? "<p>Butuh akses pemilik? Hubungi administrator platform. Pilihan tujuan registrasi tidak otomatis memberikan hak pemilik.</p>" : ""}${A.roles.includes("tenant") && !A.hasAgreement ? "<p>Role penghuni belum mempunyai relasi sewa. Minta pemilik menghubungkan penempatan yang sah.</p>" : ""}${action("Periksa pembaruan akses", "refresh-rights")}</section>`;
     const workspaceLinks = isAccount ? "" : `<a href="#/${A.defaultPath()}" aria-current="page">${N.icon("grid")}Ringkasan Workspace</a>${A.effectiveRoles
       .filter((r) => r !== "prospect")
       .map((r) => `<a href="#/${r}">${N.icon("grid")}${e(A.roleLabels[r])}</a>`)
@@ -194,8 +194,8 @@
     const proof = template.content.querySelector(".hero-proof small");
     if (proof)
       proof.textContent = A.user
-        ? "Akunmu terhubung. Temukan ruang untuk cerita berikutnya."
-        : "Identitas terhubung. Demo tersedia sebagai ruang terpisah.";
+        ? "Temukan kos dan kelola akunmu dalam satu tempat."
+        : "Cari kos sesuai lokasi, fasilitas, dan kebutuhanmu.";
     const counter = template.content.querySelector(".photo-editorial-number");
     if (counter) counter.textContent = "RUANG UNTUK CERITA BARU";
     template.content
@@ -214,7 +214,7 @@
       faqs.innerHTML = [
         [
           "Bagaimana cara mulai menggunakan akun?",
-          "Daftar dengan email milikmu, verifikasi pada browser yang sama, lalu masuk. Profilmu tersimpan pada server.",
+          "Daftar dengan email milikmu dan buat kata sandi. Jika diminta, konfirmasikan email pada browser tempat mendaftar. Profil dan akses tersedia setelah kamu masuk.",
         ],
         [
           "Apakah pencarian kos memerlukan akun?",
@@ -226,7 +226,7 @@
         ],
         [
           "Apakah pembayaran sudah terhubung?",
-          "Belum. Integrasi bisnis dilakukan pada Phase 3. Kamu dapat mencoba seluruh alur pembayaran simulasi melalui Demo Mode yang terpisah.",
+          "Pembayaran akun terhubung masih dalam pengembangan. Kamu dapat mencoba alur pembayaran simulasi di Demo Produk; tidak ada uang yang diproses.",
         ],
       ]
         .map(
@@ -286,7 +286,7 @@
         A.catalogue ? "Kos belum ditemukan." : "Memuat detail kos…",
         A.catalogue
           ? "Listing mungkin belum dipublikasikan atau telah diarsipkan."
-          : "Detail hanya diambil dari katalog publik Supabase.",
+          : "Detail properti sedang dimuat dari katalog publik.",
       );
     return `${A.navbar()}<main id="main" class="container section"><div class="detail-breadcrumb"><a href="#/marketplace">Cari kos</a> / ${e(p.location)}</div><div class="detail-top"><div><span class="eyebrow">KATALOG PUBLIK</span><h1>${e(p.name)}</h1><p>${e(p.address)}</p></div><strong class="detail-price">${N.money(p.base_rent)} <small>/ bulan</small></strong></div><div class="connected-gallery">${(p
       .images?.length
@@ -300,7 +300,7 @@
       )
       .join(
         "",
-      )}</div><div class="detail-grid"><div><section class="detail-section"><h2>Tentang tempat ini</h2><p>${e(p.description)}</p></section><section class="detail-section"><h2>Fasilitas</h2><div class="facility-grid">${p.facilities.map((f) => `<span>${N.icon("check")}${e(f)}</span>`).join("")}</div></section></div><aside class="panel contact-card"><h2>${Number(p.available_rooms)} kamar tersedia</h2><p>Hubungi pemilik dan proses penempatan akan diintegrasikan pada Phase 3. Tidak ada booking otomatis.</p><a class="btn btn-primary btn-full" href="#/${A.user ? "workspace" : "login"}">${A.user ? "Ke workspace" : "Masuk ke akun"}</a></aside></div></main>${A.footer()}`;
+      )}</div><div class="detail-grid"><div><section class="detail-section"><h2>Tentang tempat ini</h2><p>${e(p.description)}</p></section><section class="detail-section"><h2>Fasilitas</h2><div class="facility-grid">${p.facilities.map((f) => `<span>${N.icon("check")}${e(f)}</span>`).join("")}</div></section></div><aside class="panel contact-card"><h2>${Number(p.available_rooms)} kamar tersedia</h2><p>Fitur menghubungi pemilik dan penempatan kamar pada akun terhubung masih dalam pengembangan. Pemesanan otomatis belum tersedia.</p><a class="btn btn-primary btn-full" href="#/${A.user ? "workspace" : "login"}">${A.user ? "Ke workspace" : "Masuk ke akun"}</a></aside></div></main>${A.footer()}`;
   };
   A.fetchListings = async () => {
     if (A.loadingListings || A.catalogue !== undefined) return;
@@ -366,27 +366,28 @@
       const notice = template.content.querySelector(".notice");
       if (notice)
         notice.textContent =
-          "Akun dan profil sudah dapat digunakan. Fitur pengelolaan kos lainnya sedang disiapkan. Tidak ada pembayaran nyata pada prototype ini.";
+          "Akun dan profil sudah tersedia. Fitur operasional pada akun terhubung masih dikembangkan. Alur pembayaran dapat dicoba melalui demo terpisah, tanpa uang sungguhan.";
       body = template.innerHTML;
     } else if (route === "privacy")
       body = A.publicNotice(
-        "Privasi dimulai dari kendali.",
-        "Pendaftaran mengirim email, kata sandi, dan profil ke Supabase. Email dan kata sandi dikelola Supabase Auth; nama dan kontak disimpan di profil dengan RLS. Tujuan pendaftaran tidak memberi hak akses. Data demo tersimpan terpisah di browser. Tidak ada pembayaran nyata. Untuk perubahan atau penghapusan akun, hubungi administrator platform.",
+        "Privasi & ketentuan penggunaan",
+        "Gunakan informasi yang benar saat membuat akun dan jaga kerahasiaan kata sandi. Supabase Auth menangani autentikasi; nama dan kontak disimpan di PostgreSQL dengan pembatasan akses berdasarkan identitas dan peran. Akun tidak otomatis memperoleh akses pemilik atau administrator. Data Demo Produk disimpan terpisah di browser dan dapat dikembalikan melalui Reset Data Demo tanpa menghapus akun Supabase. Pembayaran masih berupa simulasi dan tidak memindahkan uang. Jangan memasukkan informasi keuangan sensitif pada demo. Perubahan profil dapat dilakukan di pengaturan akun; permintaan penghapusan akun ditangani administrator platform.",
       );
     else if (route === "help")
       body = A.publicNotice(
         "Ada yang ingin kamu tanyakan?",
-        "Daftar, verifikasi email di browser yang sama, lalu masuk. Gunakan Lupa kata sandi untuk pemulihan. Pemilik perlu persetujuan administrator; penghuni dihubungkan melalui penempatan sah. Coba Demo tersedia terpisah tanpa akses backend.",
+        "Daftar dengan email dan kata sandi, lalu ikuti petunjuk akun. Jika diminta, buka tautan verifikasi di browser tempat mendaftar. Gunakan Lupa kata sandi untuk pemulihan; pengiriman email mengikuti kuota layanan. Akses pemilik memerlukan persetujuan administrator, sedangkan penghuni dihubungkan ke penempatan sewa. Coba Demo tersedia sebelum login untuk mengeksplorasi fitur dengan data ilustrasi.",
       );
     else
       body = A.publicNotice(
         "Ruang ini belum terhubung.",
-        "Fitur bisnis akan diintegrasikan pada Phase 3. Data akun dan data ilustrasi demo tersimpan secara terpisah.",
+        "Fitur ini masih dalam pengembangan. Data akun dan data ilustrasi demo tersimpan secara terpisah.",
       );
     root.innerHTML = body;
     if (A.user) root.querySelectorAll('[data-auth-action="demo"],[data-action="roles"],[data-action="guide"],.auth-divider').forEach(node => node.remove());
     const accountTitle = (accountSections.find(item => item.id === page) || accountSections[0]).title;
-    document.title = `${route === "login" ? "Masuk" : route === "register" ? "Daftar" : route === "account" ? accountTitle : !route ? "Beranda" : "Ruang terhubung"} · NgekosAja.com`;
+    const titles = {login:"Masuk",register:"Daftar",forgot:"Lupa Kata Sandi",verify:"Verifikasi Email",reset:"Atur Ulang Kata Sandi","session-expired":"Tautan Kedaluwarsa",marketplace:"Cari Kos",property:A.catalogue?.find(item => item.id === page)?.name || "Detail Kos",fitur:"Fitur Platform",tentang:"Tentang Kami","untuk-pemilik":"Untuk Pemilik Kos",privacy:"Privasi & Ketentuan",help:"Pusat Bantuan",owner:"Dashboard Pemilik",tenant:"Dashboard Penghuni",admin:"Dashboard Administrator","access-denied":"Akses Dibatasi"};
+    document.title = `${route === "account" ? accountTitle : !route ? "Beranda" : titles[route] || "Informasi Layanan"} \u00b7 NgekosAja.com`;
     if (["", "marketplace", "property"].includes(route) && !A.configError())
       A.fetchListings();
     return true;

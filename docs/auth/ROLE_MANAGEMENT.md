@@ -36,6 +36,6 @@ Role/profile dimuat ulang saat login, reload, event Auth, tombol Periksa pembaru
 
 ## Pembuktian keamanan
 
-Pengujian historis Cloud menolak self-admin INSERT, server_grant_role RPC oleh user biasa, UPDATE invoice menjadi paid, dan UPDATE id profil dengan kode 42501. Metadata role=admin/is_admin=true tidak mengubah role database. Pemeriksaan UAS terbaru tidak mengubah akun existing atau mengulang QA pada alamat pribadi; enam akun development baru masih menunggu persetujuan. Lihat [DEVELOPMENT_ACCOUNTS.md](DEVELOPMENT_ACCOUNTS.md).
+Pengujian historis Cloud menolak self-admin INSERT, server_grant_role RPC oleh user biasa, UPDATE invoice menjadi paid, dan UPDATE id profil dengan kode 42501. Metadata role=admin/is_admin=true tidak mengubah role database. Pemeriksaan Auth development terbaru tidak mengubah akun existing atau mengulang QA pada alamat pribadi; enam akun development baru masih menunggu persetujuan. Lihat [DEVELOPMENT_ACCOUNTS.md](DEVELOPMENT_ACCOUNTS.md).
 
 Cross-owner/cross-tenant serta privasi chat, keluhan dan notifikasi diuji pada PostgreSQL nyata dengan fixture berbeda identitas. Cloud tidak diisi properti/penghuni bisnis hanya untuk mengklaim tes lintas pemilik; batas bukti dijelaskan pada [AUTH_TESTING.md](AUTH_TESTING.md).
