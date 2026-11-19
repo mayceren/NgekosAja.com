@@ -115,7 +115,7 @@ try:
   page.locator('[name=password]').fill(newpassword);page.locator('[name=confirmation]').fill(newpassword);page.locator('[type=submit]').click();expect(page.locator('#auth-login-form')).to_be_visible(timeout=30000)
   passed('Real one-time recovery session updates password via Auth; reset signs out')
   login(newpassword);page.wait_for_function('NA.user && NA.profile',timeout=30000);passed('New password successfully logs in through real GoTrue')
-  page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.wait_for_function('!NA.user');passed('Actual signOut clears app authorization and browser session')
+  page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');passed('Actual signOut clears app authorization and browser session')
   # No final recovery email: its PKCE verifier would belong to this closed context.
   assert not errors
   context.close();browser.close()

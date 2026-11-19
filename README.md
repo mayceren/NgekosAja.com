@@ -1,18 +1,22 @@
-# NgekosAja.com 3.0 — Phase 2
+# NgekosAja.com 3.0 - Authentication UAS
 
-**Authentication & Authorization sudah diimplementasikan:** Supabase Auth nyata, verifikasi email, recovery/reset password, session, profil PostgreSQL, role database dan protected routes. UI premium versi 2 dipertahankan. Connected Mode adalah default; Coba Demo membuka data simulasi terpisah tanpa akses backend.
+Supabase Auth dan PostgreSQL tetap digunakan, dengan RLS, session persistence, profil dan pembatasan role. **Confirm Email dinonaktifkan khusus UAS/development** beranggaran Rp0; pemeriksaan read-only Cloud 19 November 2026 memastikan setting remote false. Tidak memakai layanan email tambahan/berbayar. Prototype ini **belum siap production**.
 
 ```powershell
 npm run dev
 ```
 
-Buka **http://127.0.0.1:5500/#/register** atau **http://127.0.0.1:5500/#/login**. SDK lokal dan konfigurasi URL/Publishable Key sudah tersedia; tidak ada service/secret key di frontend. Jika node_modules belum ada untuk tooling, jalankan npm ci. Live Server port 5500 didukung; file:// untuk Demo saja. Buka link verifikasi/pemulihan pada browser tempat permintaan dibuat.
+Buka **http://127.0.0.1:5500/#/register** atau **http://127.0.0.1:5500/#/login**. Live Server port 5500 juga didukung; Auth memerlukan HTTP dan internet. SDK resmi disertakan lokal. Jika dependency tooling belum tersedia, jalankan npm ci. config/runtime.js hanya berisi URL dan Publishable Key publik; secret/server key tidak masuk frontend.
 
-Dokumentasi: [arsitektur Auth](docs/auth/AUTH_ARCHITECTURE.md), [setup dan callback/SMTP](docs/auth/AUTH_SETUP.md), [role management](docs/auth/ROLE_MANAGEMENT.md), [hasil pengujian aktual](docs/auth/AUTH_TESTING.md).
+Registrasi dengan session aktif langsung memuat profil/role database, masuk sesuai hak efektif dan menampilkan notifikasi berhasil. Pendaftaran publik tetap prospect; tujuan pemilik bukan pemberian role. Jika Confirm Email diaktifkan lagi dan session tidak tersedia, halaman verifikasi tetap bekerja. Login biasa tetap menuju home; logout berada di menu profil paling bawah dengan konfirmasi. UI existing dipertahankan.
 
-Hasil: **33 kelompok browser Auth, 14 test pemulihan administratif, 3 guard QA offline**, serta pemeriksaan sebelumnya (52 SQL/RLS, 30 domain demo dan 11 kelompok browser bisnis demo). Hasil 13 Cloud Auth awal adalah historis; pengujian tersebut keliru memakai alamat pribadi dan meninggalkan password acak. Akun sudah terverifikasi dan dilindungi dari QA. **Jalankan npm run auth:repair-test-account dan isi password sendiri pada terminal tersembunyi**, lalu login; tidak memerlukan email atau quota. [Perbaikan dan status aktual](docs/auth/AUTH_RECOVERY_FIX.md). Penerimaan inbox dan konfirmasi dua alamat saat email change belum diverifikasi.
+Lupa/reset password tetap menggunakan email Supabase dan recovery session yang valid. Form menjelaskan batas kuota; tidak ada bypass reset. Coba Demo hanya tersedia sebelum login dan memakai data lokal terpisah. Workspace bisnis terhubung tetap tahap Phase 3, bukan data demo yang disamarkan menjadi data akun.
 
-Pendaftaran publik memberi prospect. Tujuan pemilik memerlukan grant administratif; tenant mengikuti rental agreement yang sah. Tidak ada schema migration baru, reset remote atau git push. Connected workspace bisnis menampilkan state Phase 3, tanpa menampilkan data demo sebagai data akun sungguhan.
+**Hasil perubahan UAS:** 51 kelompok browser terkontrol lulus tanpa error JavaScript; 60 kelompok SQL/RLS lokal + postflight lulus; 27 unit test tooling/pemulihan/provisioning lulus; 30 domain demo dan 3 guard QA offline lulus. Audit Cloud read-only: 12 migrasi cocok, 31 tabel RLS, 45 policy, nol temuan pola credential. Browser memakai API mock dan SQL memakai adapter Auth lokal: signup Cloud tanpa verifikasi belum diuji ulang.
+
+**Enam akun development disiapkan, belum dibuat di Cloud.** Plan read-only dan script administratif menunggu persetujuan. Pengguna memasukkan enam password sendiri melalui terminal tersembunyi; akun existing tidak diubah. Tidak ada migration baru, reset remote atau git push.
+
+Dokumentasi: [setup Auth](docs/auth/AUTH_SETUP.md), [akun development dan persetujuan](docs/auth/DEVELOPMENT_ACCOUNTS.md), [plan aktual](docs/auth/development-account-plan.json), [arsitektur](docs/auth/AUTH_ARCHITECTURE.md), [role management](docs/auth/ROLE_MANAGEMENT.md), [hasil pengujian](docs/auth/AUTH_TESTING.md).
 
 ## Fondasi database dan referensi Demo 2.0
 

@@ -37,6 +37,10 @@ try {
   await runFinalContracts(client,dbConfig,results);
   if(results.failed.length)process.exitCode=1;
  }
+ if(process.argv.includes('--uas-fixtures')) {
+  const {runUasContracts}=await import('../supabase/tests/uas-fixtures.mjs');
+  await runUasContracts(client,results);
+ }
  if(option('catalogue-output')) {
   const path=option('catalogue-output');
   if(!/^tests\/[a-z0-9-]+\.json$/.test(path))throw new Error('Invalid catalogue output path.');

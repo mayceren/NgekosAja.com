@@ -27,6 +27,10 @@ Alur: SDK memulihkan session → **getUser** memverifikasi identitas terhadap Au
 
 Profil dibuat **hanya oleh trigger database** on_auth_user_created. Frontend tidak membuat/upsert profil, sehingga tidak ada jalur profil ganda atau penentuan UUID bebas. Mutasi profil selalu memperoleh ulang user dari Auth dan hanya mengirim display_name/phone, tanpa role, id, owner_id atau email PostgreSQL.
 
+Kebutuhan konfirmasi email ditentukan GoTrue melalui konfigurasi hosted, bukan flag/frontend. verifiedUser tetap meminta getUser ke Auth dan menolak identitas kosong/anonymous/tanpa email. Session yang sah tidak ditolak hanya karena frontend mengharuskan timestamp email_confirmed_at sendiri. Untuk UAS/development, Confirm Email OFF sudah dikonfirmasi melalui pemeriksaan read-only; konfigurasi ini bukan siap production dan tidak mengubah user existing.
+
+Signup memiliki dua cabang: respons session aktif diverifikasi dan memuat profil/role sebelum navigasi sesuai hak efektif (prospect ke home); respons tanpa session mempertahankan halaman verifikasi. Role dari metadata/form tidak memberi akses. Respons email terdaftar atau identities kosong ditangani tanpa takeover. Profil/role gagal dimuat tidak menghasilkan akses workspace. Notifikasi berhasil diberikan sesudah identitas termuat.
+
 Pendaftaran mengirim display_name dan signup_intent sebagai metadata informasi. Trigger selalu memberi **prospect**. Pilihan ingin mengelola kos tidak memberi owner. Tenant berasal dari check-in atomik yang sudah tersedia pada Phase 1. [Role management](ROLE_MANAGEMENT.md) menjelaskan proses administratif dan kesinambungan identitas.
 
 Guard merupakan perlindungan UI; setiap akses data tetap memakai JWT pengguna dan **RLS**. Bahkan jika seseorang mengubah JavaScript/hash/mode di browser, JWT tidak menjadi owner/admin. JWT admin aplikasi juga tidak mempunyai EXECUTE server_grant_role atau pencatat payment. Prinsipnya mengikuti [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).

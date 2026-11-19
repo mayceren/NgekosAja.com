@@ -1,6 +1,9 @@
 /* Phase 2 keeps the existing editorial design and isolates connected identity UI. */
 .connected-layout .sidebar nav a[aria-current="page"]{background:var(--mint);color:var(--forest);font-weight:650;box-shadow:inset 3px 0 var(--primary)}
 .connected-layout .sidebar nav{align-content:start;flex:0 0 auto}
+.connected-layout .sidebar nav .account-logout-menu{display:flex;align-items:center;gap:12px;grid-column:1/-1;width:100%;margin-top:12px;padding:18px 12px 12px;border-top:1px solid var(--border);background:transparent;color:var(--danger);text-align:left;font-size:14px;border-radius:0 0 8px 8px}
+.connected-layout .sidebar nav .account-logout-menu:hover{background:#fbf1ee}
+.connected-layout .sidebar nav .account-logout-menu .icon{flex-shrink:0}
 .connected-account-layout{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);min-height:calc(100vh - 82px)}
 .connected-layout.connected-account-layout .sidebar{position:static;inset:auto;width:auto;min-height:100%;z-index:1}
 .connected-account-layout .sidebar-workspace{margin-top:0}

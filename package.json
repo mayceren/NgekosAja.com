@@ -9,6 +9,8 @@
   "scripts": {
     "dev": "node scripts/serve-auth.mjs",
     "auth:configure": "node scripts/configure-auth.mjs",
+    "auth:provision-uas": "node scripts/provision-uas-accounts.mjs",
+    "test:auth-provision": "node --test tests/uas-provision.test.mjs",
     "auth:repair-test-account": "node scripts/repair-test-account.mjs",
     "test:auth-repair": "node --test tests/auth-repair.test.mjs",
     "db:start": "supabase start",

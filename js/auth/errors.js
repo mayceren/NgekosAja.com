@@ -13,11 +13,13 @@
         "Email belum diverifikasi. Buka email verifikasi atau kirim ulang dari halaman verifikasi.",
       user_already_exists:
         "Jika alamat ini sudah terdaftar, gunakan Masuk atau Lupa kata sandi.",
+      email_exists:
+        "Jika alamat ini sudah terdaftar, gunakan Masuk atau Lupa kata sandi.",
       weak_password:
         "Kata sandi terlalu lemah. Gunakan sedikitnya 12 karakter dengan huruf besar, huruf kecil, angka, dan simbol.",
       same_password: "Gunakan kata sandi baru yang berbeda.",
       over_email_send_rate_limit:
-        "Batas email project tercapai. Tunggu sebelum meminta email lagi. Jika email sudah terverifikasi, Anda tetap bisa masuk dengan kata sandi yang benar.",
+        "Batas pengiriman email project tercapai. Permintaan email belum berhasil. Tunggu sebelum meminta tautan baru; jangan kirim ulang berulang kali.",
       over_request_rate_limit:
         "Terlalu banyak percobaan. Tunggu sebentar sebelum mencoba lagi.",
       otp_expired:

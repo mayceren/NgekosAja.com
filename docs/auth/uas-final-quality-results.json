@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-11-19T07:10:52.793Z",
+  "syntax_files": 55,
+  "local_document_links": 51,
+  "lockfile_consistent": true,
+  "ignored_private_paths": [
+    ".database-test/uas-accounts/receipt.json",
+    ".database-test/uas-accounts/apply.sql",
+    ".env.local",
+    "supabase/.temp/project-ref"
+  ],
+  "credential_findings": 0,
+  "temporary_databases_remaining": 0,
+  "remote_mutations": 0,
+  "cloud_accounts_created": 0,
+  "production_ready": false,
+  "credential_files_scanned": 144,
+  "approval_guard_cases": 3
+}

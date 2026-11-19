@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-19T03:59:07.772Z",
+  "checked_at": "2026-11-19T07:04:33.405Z",
   "project": "ngekosaja-development",
   "remote_sql_read_only": true,
   "schema_changes_applied": false,
@@ -428,7 +428,7 @@
   "credential_scan": {
     "scope": "Tracked and non-ignored working-tree text; server secrets are never expected in browser files.",
     "findings": [],
-    "files": 134
+    "files": 142
   },
   "private_paths_ignored": true,
   "verified": true

@@ -12,6 +12,8 @@ Supabase menjalankannya setelah reset lokal sesuai config.toml. Pengujian menjal
 
 ## Fixture Auth lokal
 
+Untuk enam akun UAS yang dapat login dengan password pilihan pengguna, tersedia mekanisme baru terpisah: [DEVELOPMENT_ACCOUNTS.md](../auth/DEVELOPMENT_ACCOUNTS.md). Plan default hanya membaca project development Cloud; apply memerlukan persetujuan terlebih dahulu, terminal interaktif, dan menolak semua alamat existing. Mekanisme tersebut tidak menjalankan seed penuh/reset di bawah ini. Akun remote belum dibuat pada pemeriksaan penyederhanaan Auth.
+
 ```powershell
 npm ci
 npx supabase start

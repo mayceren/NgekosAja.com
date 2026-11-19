@@ -1,0 +1,81 @@
+{
+  "checked_at": "2026-11-19T07:04:01.549Z",
+  "manifest": {
+    "project": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob",
+    "fixture": "ngekosaja-uas-auth-v1",
+    "accounts": [
+      {
+        "key": "prospect",
+        "role": "prospect",
+        "name": "UAS Calon Penghuni",
+        "email": "uas-prospect@ngekosaja.test"
+      },
+      {
+        "key": "tenant-a",
+        "role": "tenant",
+        "name": "UAS Penghuni A",
+        "email": "uas-tenant-a@ngekosaja.test"
+      },
+      {
+        "key": "tenant-b",
+        "role": "tenant",
+        "name": "UAS Penghuni B",
+        "email": "uas-tenant-b@ngekosaja.test"
+      },
+      {
+        "key": "owner-a",
+        "role": "owner",
+        "name": "UAS Pemilik A",
+        "email": "uas-owner-a@ngekosaja.test"
+      },
+      {
+        "key": "owner-b",
+        "role": "owner",
+        "name": "UAS Pemilik B",
+        "email": "uas-owner-b@ngekosaja.test"
+      },
+      {
+        "key": "admin",
+        "role": "admin",
+        "name": "UAS Administrator",
+        "email": "uas-admin@ngekosaja.test"
+      }
+    ],
+    "resources": {
+      "property-a": "e77df99e-75f4-43a8-a43d-a0df105aae19",
+      "property-b": "7cecd419-f91f-496d-a5a6-34b170ba17f5",
+      "room-a": "f91b82c2-d25b-44fd-a23b-6556dab7f1c2",
+      "room-b": "c7ed473f-9679-4417-a6be-cda2cddee1b1",
+      "agreement-a": "f3e2e283-39d8-4d30-a99d-d28734532e8a",
+      "agreement-b": "b7efb903-75b0-4db2-a17d-c9ed66e0ed7c"
+    },
+    "final_publication_status": "draft"
+  },
+  "fingerprint": "2fe7c5dcbafc07e7ff25c2cbda34438cfb6218023497944a49064a1ef4d07d4d",
+  "remote_read_only": true,
+  "remote_applied": false,
+  "confirm_email_enabled": false,
+  "configuration_changed": false,
+  "production_ready": false,
+  "preflight": {
+    "auth_users": 1,
+    "existing_target_accounts": 0,
+    "fixture_id_collisions": 0,
+    "profile_trigger_present": true,
+    "rls_tables": 31
+  },
+  "changes": {
+    "auth_users": 6,
+    "profiles_from_trigger": 6,
+    "additional_role_grants": 5,
+    "properties_draft": 2,
+    "rooms": 2,
+    "tenants": 2,
+    "active_agreements": 2
+  },
+  "protected_existing_accounts": true,
+  "password_delivery": "User enters six private passwords in interactive terminal; no password is logged, saved, or shared with the agent.",
+  "apply_command": "npm run auth:provision-uas -- --apply --approve-remote=2fe7c5dcbafc07e7ff25c2cbda34438cfb6218023497944a49064a1ef4d07d4d",
+  "status": "awaiting-explicit-remote-approval"
+}

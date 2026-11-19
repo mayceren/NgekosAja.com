@@ -1,4 +1,6 @@
-# Menjalankan Auth Phase 2
+# Menjalankan Auth Phase 2 untuk UAS/development
+
+Penyederhanaan ini khusus project UAS Technopreneurship beranggaran Rp0. Supabase Auth, PostgreSQL, RLS, session, role dan UI existing dipertahankan. Konfigurasi ini **belum siap production**.
 
 ## Workspace saat ini
 
@@ -22,7 +24,9 @@ Server npm run dev hanya melayani index/config publik/js/css/assets. .env, supab
 
 ## Pengaturan Dashboard
 
-Email/password provider harus aktif dan **Confirm email tetap aktif**. Pertahankan secure email change/double confirmation serta pengaturan keamanan hosted lainnya. Pengujian saat ini tidak menonaktifkan RLS, konfirmasi email atau MFA.
+Email/password provider tetap aktif. Pemilik project mengatur **Authentication > Sign In / Providers > Email > Confirm email: OFF** secara manual untuk UAS/development (label Dashboard dapat berubah). Pemeriksaan read-only 19 November 2026 memastikan remote **false** pada **ngekosaja-development**; bukti [development-account-plan.json](development-account-plan.json). Script dan aplikasi tidak mengubah konfigurasi hosted. Pertahankan secure email change/double confirmation, RLS dan MFA configuration.
+
+Confirm Email OFF membuat Supabase memperlakukan email akun baru sebagai terkonfirmasi tanpa membuktikan kepemilikan inbox. Ini hanya keputusan untuk UAS/development; akun existing tidak diubah dan tidak diasumsikan otomatis terkonfirmasi. Jika fitur diaktifkan kembali, alur verifikasi sebelumnya tetap didukung.
 
 Authentication > URL Configuration > Redirect URLs sudah memuat tepat:
 
@@ -41,11 +45,19 @@ scripts/configure-auth-callbacks.mjs menyiapkan konfigurasi terpisah ignored, me
 
 ## Email verifikasi dan pemulihan
 
-Daftar dengan nama, email milik sendiri, password min 12 karakter (besar/kecil/angka/simbol), konfirmasi dan persetujuan ketentuan. Buka email verifikasi **pada browser yang sama**. Login setelah email terkonfirmasi. Jika ingin menjadi pemilik, pilih tujuan akun tersebut lalu minta administrator memberi akses; status awal tetap calon penghuni.
+Daftar dengan nama, email, password 12–128 karakter (besar/kecil/angka/simbol), konfirmasi dan persetujuan ketentuan. Auth membuat akun; trigger PostgreSQL membuat profil dan prospect. Jika signup mengembalikan session aktif, aplikasi memverifikasi user melalui getUser, memuat profil/role database, lalu masuk sesuai hak efektif dan menampilkan notifikasi berhasil. Prospect menuju home; memilih tujuan pemilik tidak memberi owner/admin. Jika tidak ada session, halaman verifikasi tetap digunakan: buka email pada browser tempat mendaftar. Email existing ditangani tanpa mengganti password, mengambil alih akun, atau retry email otomatis.
+
+Login biasa tetap menuju home. Logout tetap di menu profil paling bawah dengan konfirmasi; session persistence, protected routes dan pengaturan profil dipertahankan.
 
 Untuk pemulihan, buka #/forgot di browser yang akan dipakai, minta email, lalu buka tautannya pada browser tersebut. Jangan mulai permintaan kedua sebelum menyelesaikan yang pertama. Sesudah password diganti, masuk kembali. Tautan hanya dapat dipakai sesuai validitas Auth; route #/reset saja tidak cukup.
 
-Supabase built-in email memiliki batas rendah, saat ini **dua email per jam per project**, dan pembatasan penerima. Untuk pengujian banyak pengguna atau alamat di luar team, konfigurasikan SMTP sendiri di Dashboard. Credential SMTP tetap di Supabase/secret manager, bukan frontend. Lihat [rate limits](https://supabase.com/docs/guides/auth/rate-limits) dan [custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp).
+Lupa kata sandi tetap memerlukan email resmi dan callback/recovery session yang valid. Form menjelaskan batas kuota dan memberi pesan aman jika pengiriman ditolak. Tunggu sebelum mencoba lagi; tidak ada reset berdasarkan email saja, kode buatan atau jalur publik Auth Admin. Confirm Email OFF tidak menghilangkan kuota recovery. Tidak memakai Gmail SMTP, Resend, Mailtrap atau layanan tambahan/berbayar. Lihat [rate limits](https://supabase.com/docs/guides/auth/rate-limits) dan [pengaturan Auth](https://supabase.com/docs/guides/auth/general-configuration).
+
+## Akun development dan histori insiden
+
+Enam akun testing baru dan relasi owner/tenant disiapkan melalui [DEVELOPMENT_ACCOUNTS.md](DEVELOPMENT_ACCOUNTS.md). Plan default hanya membaca remote. **Pembuatan akun remote belum dilakukan dan menunggu persetujuan**; password dimasukkan sendiri melalui terminal tersembunyi. Tidak ada perubahan akun existing pada pekerjaan ini.
+
+Paragraf pemulihan berikut merupakan histori insiden QA sebelumnya, bukan langkah setup normal. Utilitas perbaikan tersebut tidak dijalankan oleh perubahan UAS ini. Jangan mengulang Cloud QA pada alamat pribadi.
 
 Pengujian awal secara keliru memakai alamat pengguna sebagai identitas QA: konfirmasi dikonsumsi tes, password diganti acak, lalu recovery diminta dari browser QA yang ditutup. Dua email tersebut bukan hasil satu submit pendaftaran biasa. Pemeriksaan read-only berikutnya memastikan akun itu **sudah terverifikasi**, tetapi password pilihan pengguna belum dipasang. Akun tersebut sekarang dilindungi dari QA; jangan daftar ulang atau memakai dua tautan lama.
 

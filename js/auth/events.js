@@ -48,12 +48,31 @@
           } else if (action === "demo") await switchMode("demo");
           else if (action === "connected") await switchMode("connected");
           else if (action === "logout") {
+            if (!A.user) return;
+            N.modal(
+              "Yakin ingin keluar?",
+              '<p class="modal-description">Kamu perlu masuk kembali untuk mengakses akunmu.</p><div class="modal-actions"><button type="button" class="btn btn-outline" data-auth-action="logout-cancel">Batal</button><button type="button" class="btn btn-primary" data-auth-action="logout-confirm">Ya, keluar</button></div>',
+            );
+            const close = document.querySelector('.modal [data-action="close-modal"]');
+            close?.removeAttribute("data-action");
+            if (close) close.dataset.authAction = "logout-cancel";
+          } else if (action === "logout-cancel") {
+            N.closeModal();
+          } else if (action === "logout-confirm") {
+            if (!A.user || el.disabled || !el.closest(".modal")) return;
             el.disabled = true;
-            await A.authService.logout();
-            A.nextPath = "";
-            A.notice = "Kamu sudah keluar dari akun.";
-            N.navigate("login");
-            N.render();
+            el.textContent = "Sedang keluar…";
+            try {
+              await A.authService.logout();
+              A.nextPath = "";
+              A.notice = "Kamu sudah keluar dari akun.";
+            } finally {
+              if (!A.user) {
+                N.closeModal();
+                N.navigate("login");
+                N.render();
+              }
+            }
           } else if (action === "refresh-rights") {
             el.disabled = true;
             await A.refreshIdentity();
@@ -128,8 +147,12 @@
           });
           A.pendingEmail = data.email;
           if (result.session) {
-            await A.resolveIdentity(true);
-            N.navigate("");
+            const resolved = await A.resolveIdentity(true);
+            if (!resolved || !A.user) throw A.fail("Akun telah dibuat. Silakan masuk kembali untuk memuat profil dan hak aksesmu.");
+            A.pendingEmail = "";
+            A.notice = "Registrasi berhasil. Akunmu siap digunakan.";
+            N.navigate(A.registrationPath());
+            N.toast(A.notice);
           } else {
             A.notice =
               "Periksa email untuk melanjutkan. Jika akun sudah ada, gunakan Masuk atau Lupa kata sandi.";

@@ -1,63 +1,67 @@
-# Hasil pengujian aktual Phase 2 — 19 November 2026
+# Hasil pemeriksaan Authentication UAS
 
-**Perbaikan penerimaan akun pengguna masih menunggu password yang dipilih pengguna sendiri.** Pengujian Cloud awal memakai alamat pribadi dan meninggalkan password acak; hasil historis tersebut tidak membuktikan pengguna bisa memakai password pendaftaran ulang. [Perbaikan dan langkah tanpa email](AUTH_RECOVERY_FIX.md). Tidak ada reset, git push, penonaktifan RLS atau schema migration tambahan.
+Pemeriksaan 19 November 2026 tidak membuat/mengubah akun Cloud, tidak mengirim email, tidak mengubah schema/RLS atau konfigurasi hosted, dan tidak mereset remote. UI existing dipertahankan. Konfigurasi ini khusus UAS/development, **belum siap production**.
 
-| Lapisan | Hasil aktual | Bukti |
+## Hasil aktual perubahan ini
+
+| Lapisan | Hasil | Bukti |
 | --- | --- | --- |
-| Browser Chromium + SDK resmi, HTTP Auth/PostgREST terkontrol | **45 kelompok lulus**, 0 error JavaScript; termasuk penyederhanaan profil, dashboard sesuai peran dan PKCE lintas tab, bukan klaim Cloud | [auth-browser-results.json](../../tests/auth-browser-results.json) |
-| Pemulihan administratif terbatas | **14 test lulus**, Auth di memori dan terminal terkontrol, tanpa perubahan Cloud | tests/auth-repair.test.mjs; npm run test:auth-repair |
-| Guard QA Cloud | **3 test lulus**, semua koneksi dicegat, tanpa email | [auth-cloud-safety-results.json](../../tests/auth-cloud-safety-results.json) |
-| Chromium + GoTrue/PostgREST Cloud development nyata | **13 kelompok lulus historis**, tetapi handoff akun pengguna gagal; jangan ulangi pada alamat pribadi | [auth-cloud-results.json](../../tests/auth-cloud-results.json) |
-| PostgreSQL native 16.3, adapter Auth, 12 migrasi | **52 kelompok lulus** + postflight; multi-owner/tenant dengan fixture nyata SQL | [database-auth-phase2-results.json](../../tests/database-auth-phase2-results.json) |
-| Domain bisnis demo | **30 skenario lulus** | tests/domain.cjs, output terminal |
-| Browser bisnis Demo Mode | **11 kelompok lulus**, 0 JS/resource errors | [browser-results.json](../../tests/browser-results.json) |
-| Demo upgrade HTTP dan file:// | **2 konteks lulus**, masing-masing 5 kelompok | [upgrade-results.json](../../tests/upgrade-results.json) |
-| Audit Cloud read-only + file credential | **Verified**, 12 migrasi tidak berubah, 31 tabel RLS aktif, 45 policy, 0 temuan pola secret | [security-audit-results.json](security-audit-results.json) |
-| Callback allowlist | Enam URL lokal applied; hanya satu path konfigurasi berubah | [callback-config-results.json](callback-config-results.json) |
-| Kualitas artefak akhir | **43 file syntax-check**, bundle SDK sama dengan paket resmi, konfigurasi publik valid, seluruh referensi dokumen lokal valid, lockfile konsisten, 0 database sementara tersisa | [final-quality-results.json](final-quality-results.json) |
+| Chromium + SDK resmi, HTTP Auth/PostgREST mock | **51 kelompok lulus**, 0 error JavaScript | [auth-browser-results.json](../../tests/auth-browser-results.json) |
+| Unit test provisioning UAS | **10 lulus**, Admin API mock, tidak ada network | [uas-provision.test.mjs](../../tests/uas-provision.test.mjs) |
+| Unit pemulihan administratif lama + terminal tersembunyi | **14 lulus**, seluruhnya mock/offline | [auth-repair.test.mjs](../../tests/auth-repair.test.mjs) |
+| Unit guard tooling database | **3 lulus**, menolak host remote | [database-tooling.test.mjs](../../tests/database-tooling.test.mjs) |
+| PostgreSQL native 16.3 + adapter Auth, 12 migrasi | **60 kelompok lulus**, 0 gagal, postflight lulus, database sementara dibuang | [database-auth-uas-results.json](../../tests/database-auth-uas-results.json) |
+| Domain demo | **30 skenario lulus** | [domain.cjs](../../tests/domain.cjs) |
+| Guard QA Cloud | **3 lulus**, koneksi dicegat, 0 email/mutasi remote | [auth-cloud-safety-results.json](../../tests/auth-cloud-safety-results.json) |
+| Cloud audit read-only | **Verified**, 12 migrasi cocok, 31 tabel RLS, 45 policy, 0 temuan pola credential | [security-audit-results.json](security-audit-results.json) |
+| Plan provisioning Cloud read-only | Project/ref cocok, Confirm Email **false**, 1 akun existing, 0 target existing, 0 collision | [development-account-plan.json](development-account-plan.json) |
+| Artefak lokal | **55 file syntax-check**, 51 link lokal valid, 3 guard approval lulus, lockfile cocok, path privat diabaikan Git, 0 database sementara tersisa | [uas-final-quality-results.json](uas-final-quality-results.json) |
 
-npm audit --omit=dev melaporkan **0 vulnerabilities** pada dependency runtime saat pemeriksaan. Password uji Cloud maupun mock dibuat acak di RAM; tidak ada password akun uji yang ditulis pada tracked files.
+## Cakupan browser
 
-## Cakupan browser terkontrol
+Signup dengan respons session aktif langsung menuju home sebagai prospect dan memberi toast berhasil, tanpa INSERT/upsert profil atau permintaan recover/resend tambahan. Session signup bertahan setelah reload dan identitas dimuat ulang lewat SDK getUser/profil/role database. Tujuan owner-request dan metadata admin tidak mengangkat hak akses.
 
-Form email/password, visibility, consent, allowed intents, password strength/confirmation, invalid credentials, unverified redirect, resend page, signup response, guard anonymous/403, DB role mengalahkan metadata, sessionStorage vs localStorage, reload, profile UPDATE, email confirmation request, current-password check, trusted role redirects untuk owner/tenant/admin, blocking mutasi demo saat Connected, zero backend request saat demo, return-mode identity, logout, callback PKCE recovery, reset dan error URL sanitization lulus.
+Signup tanpa session tetap membuka verifikasi. Error duplicate email serta respons identitas kosong GoTrue ditangani tanpa auto-login, penggantian password atau takeover. Form forgot menjelaskan kuota; respons rate limit tidak membuka reset atau melewati validasi recovery.
 
-Viewport **390, 768 dan 1440 px** tidak menghasilkan overflow horizontal. Screenshot aktual tanpa data pribadi: [desktop](../../tests/auth-desktop.png), [mobile](../../tests/auth-mobile.png). File internal .env, supabase/.temp, node_modules dan script administratif ditolak dev server.
+Regresi login/logout, dialog logout dan pembatalannya, remember/sessionStorage vs localStorage, protected routes, profil, email/password settings, role owner/tenant/admin, pemisahan Demo, callback PKCE lintas tab dan reset terverifikasi lulus. Route reset palsu ditolak. Viewport 390/768/1440 px tidak overflow; navbar/menu akun tetap dapat dipakai. File privat ditolak dev server. Screenshot memakai identitas mock, bukan akun pribadi.
 
-## Cakupan Cloud nyata
+## Cakupan SQL dan provisioning
 
-Pengujian berlangsung pada **ngekosaja-development**, selesai `2026-11-19T02:32:36.905994Z` (**09:32:36 WIB**). Public signup dilakukan melalui form yang sebenarnya; login sebelum verifikasi ditolak GoTrue. Signup token satu kali diverifikasi menggunakan Auth nyata, profil dari trigger dimuat lewat PostgREST, login/reload/profile update berfungsi, dan role tetap prospect meskipun memilih tujuan pemilik atau mengubah metadata menjadi admin.
+Seluruh 52 kontrak database sebelumnya dijalankan ulang, termasuk isolasi antar-pemilik/penghuni, role grant terlarang, constraint PK/FK, views keuangan, pencegahan pembayaran/penempatan ganda, dan tes konkurensi. Delapan pemeriksaan tambahan menggunakan SQL relasi yang sama dengan provisioning UAS: enam profil trigger, sebelas role dasar/tambahan, dua agreement aktif, dua properti draft, isolasi owner A/B dan tenant A/B, penolakan self-grant prospect, akses admin serta penolakan replay tanpa mengubah agreement.
 
-Empat mutasi ilegal ditolak dengan **42501**: INSERT admin role, RPC server_grant_role oleh pengguna, UPDATE invoice paid, UPDATE UUID profil. Route owner/tenant/admin ditolak. Recovery token nyata membuka reset; password acak baru diterima login, dan logout menghapus identitas aplikasi. API permintaan recovery email terakhir diterima.
+Unit provisioning menguji pembuatan hanya akun baru, password tersembunyi tidak masuk receipt/SQL, inventaris berhalaman, penolakan akun existing sebelum prompt, mismatch/cancel sebelum penulisan, kegagalan Auth parsial, rollback relasi, respons identitas tidak cocok dan penolakan UUID/run tidak valid. Tidak ada delete/update akun existing pada mekanisme baru.
 
-Key server QA hanya di memori proses Python, tidak diinjeksi browser, ditulis file, dicetak atau dipakai runtime website. Password acak dan link/token hanya di RAM. Harness lama mengizinkan resume identitas pada marker; perilaku tersebut sudah dihapus. Harness sekarang menolak **semua akun existing**, memblokir email pada marker lama, mensyaratkan opt-in akun disposable baru dan memakai marker ignored .database-test/auth-qa-disposable.json. Akun pengguna tidak boleh lagi dipakai QA. Tidak ada grant owner/admin atau data bisnis yang dibuat.
+## Batas bukti
 
-Admin-generated one-time links dipakai untuk menguji konsumsi token tanpa membaca inbox. **Penerimaan email oleh inbox, klik dari email asli, konfirmasi dua alamat saat email change, dan live account dengan owner/tenant/admin bukan hasil yang diklaim lulus.** Role redirect diuji pada kontrak browser dan SQL multi-identitas. Callback PKCE code diuji SDK/browser terkontrol, termasuk tab baru; Cloud callback token_hash diuji end-to-end secara historis. Email terakhir dari browser QA yang ditutup tidak dapat menjadi handoff. Akun pengguna kini memakai [pemulihan terminal tanpa email](AUTH_SETUP.md), dengan password yang dipilih pengguna sendiri.
+**Signup publik Cloud dengan Confirm Email OFF, login enam akun development nyata, dan isolasi enam JWT Cloud belum dijalankan.** Akun remote belum diprovisikan karena menunggu persetujuan. Script siap memeriksa login/profil/role/isolation sesudah pembuatan yang disetujui; hasilnya belum boleh diklaim lulus. [Panduan dan plan](DEVELOPMENT_ACCOUNTS.md).
 
-## Audit database dan keterbatasan
+Browser menggunakan SDK nyata dengan mock HTTP, bukan GoTrue Cloud. SQL native memakai adapter UUID/claim dan PostgreSQL 16.3, bukan GoTrue/JWT/PostgREST atau stack Cloud PostgreSQL 17.12. Audit Cloud hanya membaca katalog/count. Secret scan berbasis pola bukan jaminan seluruh Git history bebas secret.
 
-RLS profiles, user_roles, properties, tenants, rental_agreements, invoices, transactions, complaints, conversations, messages dan notifications diperiksa. Seluruh definisi tabel/kolom/constraint/index/policy/function/trigger/view/ACL dibandingkan dengan snapshot Phase 1 yang sudah applied dan cocok. SHA-256 12 file migrasi tidak berubah. Audit sesudah QA menunjukkan Auth/profil **1**, fasilitas **7**, data bisnis **0**; keadaan Phase 1 sebelum QA tetap tersimpan historis pada dokumen database.
+Penerimaan inbox, email change dua inbox, produksi, MFA end-to-end dan integrasi bisnis Phase 3 belum diverifikasi oleh perubahan ini. Kuota recovery tetap berlaku. Tidak memakai SMTP tambahan.
 
-SQL tests menjalankan role anon/authenticated/service_role dengan UUID fixture berbeda: owner A tidak membaca/mengubah data owner B; tenant A tidak melihat profil/invoice/room/keluhan/chat/notifikasi tenant B; metadata signup tidak memberi admin; payment/grant RPC tidak tersedia untuk JWT pengguna/admin aplikasi; PK/FK/constraints dan uji konkurensi tetap lulus. Adapter Auth lokal bukan GoTrue, sedangkan tes Cloud di atas memakai GoTrue/JWT/PostgREST nyata.
+Histori Cloud awal pada [auth-cloud-results.json](../../tests/auth-cloud-results.json) tidak dihitung sebagai pengujian perubahan UAS. QA lama keliru memakai alamat pribadi dan menyebabkan masalah handoff; jangan diulang. [Histori insiden](AUTH_RECOVERY_FIX.md) dipertahankan untuk audit, bukan instruksi mengubah akun existing sekarang.
 
-Custom SMTP, inbox delivery, MFA enrollment/challenge UI, upload/avatar Storage, production hardening/deployment, business adapter penuh, realtime, pembayaran nyata dan scheduler belum dikerjakan. Email bawaan Supabase memiliki pembatasan penerima dan quota rendah; perhatikan [AUTH_SETUP.md](AUTH_SETUP.md). Tidak ada perubahan password user existing lain.
+## Reproduksi aman
 
-## Reproduksi
-
-Dengan npm run dev aktif:
+Dengan server lokal aktif:
 
 ```powershell
 python tests/auth_browser.py
-python tests/browser_check.py
-python tests/upgrade_check.py
+npm run test:auth-provision
+npm run test:auth-repair
+npm run test:database-tooling
 npm run test:frontend
+python tests/auth_cloud_safety.py
 node scripts/auth-audit.mjs
+npm run auth:provision-uas
 ```
 
-Jika cluster PostgreSQL test lokal aktif:
+Dua perintah terakhir hanya membaca Cloud. Untuk port QA 5501, tetapkan NGEKOSAJA_TEST_ORIGIN=http://127.0.0.1:5501. Jangan menghentikan server pengguna di port 5500.
+
+Jika cluster PostgreSQL test loopback sudah aktif pada port 55432:
 
 ```powershell
-npm run db:test -- --native --postflight --output=tests/database-auth-phase2-results.json
+npm run db:test -- --native --postflight --uas-fixtures --output=tests/database-auth-uas-results.json
 ```
 
-**Jangan mengulang Cloud QA pada alamat pribadi.** Harness memerlukan NGEKOSAJA_QA_DISPOSABLE_ACCOUNT=yes dan NGEKOSAJA_TEST_EMAIL untuk identitas disposable yang belum terdaftar, CLI development dan persetujuan pengujian akun disposable tersebut. Semua akun existing dan alamat QA lama ditolak; tidak ada resume atau recovery email penutup. Uji browser terkontrol/guard offline cukup untuk regresi ini dan tidak memakai quota email. Jalankan npm run test:auth-repair serta python tests/auth_cloud_safety.py untuk pemeriksaan tambahan tanpa Cloud.
+Tidak perlu menjalankan Cloud signup QA atau provisioning apply untuk mereproduksi tes lokal ini. Jangan memakai alamat pribadi untuk QA, melakukan remote reset atau menaruh password di repository.

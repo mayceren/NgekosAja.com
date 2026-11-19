@@ -12,6 +12,7 @@ PW,WRONG,UNVERIFIED,MISMATCH,UPDATED,RESET=[secrets.token_urlsafe(24)+'Qa1!' for
 uid='11111111-1111-4111-8111-111111111111'
 user={'id':uid,'aud':'authenticated','role':'authenticated','email':'qa@example.invalid','email_confirmed_at':'2026-01-01T00:00:00Z','user_metadata':{'display_name':'Metadata Bukan Profil','role':'admin'}}
 rights=['prospect'];profile={'id':uid,'display_name':'Ruang QA','phone':None,'created_at':'2026-01-01T00:00:00Z'}
+signup_mode='verify';mail_limited=False
 def token():
  import base64
  enc=lambda v:base64.urlsafe_b64encode(json.dumps(v).encode()).decode().rstrip('=')
@@ -22,13 +23,18 @@ def handle(route):
  headers={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'GET,POST,PATCH,DELETE,OPTIONS','content-type':'application/json','x-supabase-api-version':'2024-01-01'}
  status=200;data={}
  if req.method=='OPTIONS':pass
- elif '/auth/v1/signup' in url:data={'user':user,'session':None}
+ elif '/auth/v1/signup' in url:
+  if signup_mode=='session':data=session()
+  elif signup_mode=='duplicate':status=422;data={'error_code':'user_already_exists','msg':'User already registered'}
+  elif signup_mode=='obfuscated':data={'user':{**user,'identities':[]},'session':None}
+  else:data={'user':user,'session':None}
  elif '/auth/v1/token' in url:
   if 'grant_type=pkce' in url:assert body.get('code_verifier'),'PKCE must use the verifier from the initiating tab'
   if body.get('password')==WRONG:status=400;data={'code':400,'error_code':'invalid_credentials','msg':'Invalid login credentials'}
   elif body.get('password')==UNVERIFIED:status=400;data={'code':400,'error_code':'email_not_confirmed','msg':'Email not confirmed'}
   else:data=session()
  elif '/auth/v1/user' in url:data={**user,**({'new_email':body['email']} if body.get('email') else {})}
+ elif '/auth/v1/recover' in url and mail_limited:status=429;data={'error_code':'over_email_send_rate_limit','msg':'Email rate limit exceeded'}
  elif '/auth/v1/logout' in url or '/auth/v1/recover' in url or '/auth/v1/resend' in url:data={}
  elif '/rest/v1/profiles' in url:
   if req.method=='PATCH':profile.update(body)
@@ -60,6 +66,22 @@ with sync_playwright() as p:
  signup_calls=calls[signup_start:];assert sum(method=='POST' and url.endswith('/auth/v1/signup') for method,url in signup_calls)==1
  assert not any(url.endswith('/auth/v1/recover') or url.endswith('/auth/v1/resend') for _,url in signup_calls)
  passed.append('One registration sends only one signup request and never auto-sends recovery/resend email')
+ def register():
+  page.goto(ORIGIN+'/#/register');page.wait_for_function('NA.ready')
+  for name,value in [('name','Pengguna QA'),('email',user['email']),('password',PW),('confirmation',PW)]:page.locator(f'[name={name}]').fill(value)
+  page.locator('[name=intent]').select_option('owner-request');page.locator('[name=consent]').check();page.locator('[type=submit]').click()
+ signup_mode='session';signup_start=len(calls);register();page.wait_for_function('NA.user && NA.profile');expect(page).to_have_url(ORIGIN+'/#/');expect(page.locator('#toast-root')).to_contain_text('Registrasi berhasil')
+ assert page.evaluate('NA.effectiveRoles.includes("prospect") && !NA.effectiveRoles.includes("owner") && !NA.effectiveRoles.includes("admin")')
+ assert not any(url.endswith('/auth/v1/recover') or url.endswith('/auth/v1/resend') or (method=='POST' and '/rest/v1/profiles' in url) for method,url in calls[signup_start:])
+ passed.append('Confirm Email off: signup session enters home with DB prospect role, success toast and no extra email/profile insert')
+ page.reload();page.wait_for_function('NA.user && NA.profile');passed.append('Session returned directly by signup survives reload and reloads verified DB identity')
+ page.evaluate('NK.navigate("account/profile")');page.locator('[data-auth-action=logout]').click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user')
+ for mode in ['duplicate','obfuscated']:
+  signup_mode=mode;register();expect(page.locator('.auth-form-error')).to_contain_text('terdaftar');assert page.evaluate('!NA.user');expect(page.locator('#auth-register-form')).to_be_visible()
+ passed.append('Registered email errors and GoTrue obfuscated identities are handled without account takeover or auto-login')
+ signup_mode='verify';mail_limited=True;page.goto(ORIGIN+'/#/forgot');page.wait_for_function('NA.ready');expect(page.locator('.field-help').first).to_contain_text('kuota')
+ page.locator('[name=email]').fill(user['email']);page.locator('[type=submit]').click();expect(page.locator('.auth-form-error')).to_contain_text('Batas pengiriman email project tercapai');expect(page.locator('#auth-reset-form')).to_have_count(0)
+ passed.append('Forgot password explains email quota and a quota rejection cannot open reset or bypass recovery validation');mail_limited=False
  page.goto(ORIGIN+'/#/owner');page.wait_for_function('NA.ready');expect(page.locator('#auth-login-form')).to_be_visible();passed.append('Anonymous private route renders login without workspace flash')
  def login(remember=False,route='login'):
   page.goto(ORIGIN+'/#/'+route);page.wait_for_function('NA.ready');page.locator('[name=email]').fill(user['email']);page.locator('[name=password]').fill(PW)
@@ -75,9 +97,9 @@ with sync_playwright() as p:
   assert 'connected mode' not in page.locator('body').inner_text().lower()
   if route.startswith('account/'):
    expect(page.locator('.connected-profile-card,.connected-profile-grid')).to_have_count(0)
-   expect(page.locator('.public-header [data-auth-action=logout]')).to_be_visible()
+   expect(page.locator('.public-header [data-auth-action=logout]')).to_have_count(0);expect(page.locator('.sidebar nav > :last-child')).to_have_attribute('data-auth-action','logout')
  passed.append('Signed-in home, public pages and all account menus have no Demo action')
- passed.append('All account menus remove the identity card and retain logout in the main navbar')
+ passed.append('All account menus remove the identity card and place logout last in the settings menu')
  for route in ['login','register']:
   page.evaluate('(route)=>NK.navigate(route)',route);expect(page).to_have_url(ORIGIN+'/#/');expect(page.locator('.public-nav a[aria-current=page]')).to_have_text('Beranda')
  passed.append('An already signed-in user opening login or register returns to home')
@@ -93,6 +115,17 @@ with sync_playwright() as p:
   expect(page.locator('#auth-'+form_id+'-form')).to_be_visible();expect(page.locator('[data-auth-form]')).to_have_count(1)
  page.locator('.sidebar nav a[href="#/account/access"]').click();expect(page.locator('.connected-access-list')).to_contain_text('Calon penghuni');expect(page.locator('[data-auth-form]')).to_have_count(0)
  passed.append('Account menus navigate to separate forms and access information with correct active state')
+ logout_requests=lambda:sum(method=='POST' and url.endswith('/auth/v1/logout') for method,url in calls)
+ before_logout=logout_requests();page.locator('[data-auth-action=logout]').click();expect(page.get_by_role('dialog')).to_be_visible();expect(page.get_by_role('heading',name='Yakin ingin keluar?')).to_be_visible();assert page.evaluate('!!NA.user');assert logout_requests()==before_logout
+ passed.append('Logout opens a confirmation dialog without signing out or calling Auth')
+ page.get_by_role('button',name='Batal',exact=True).click();expect(page.get_by_role('dialog')).to_have_count(0);assert page.evaluate('!!NA.user')
+ for dismiss in ['close','escape','overlay']:
+  page.locator('[data-auth-action=logout]').click();expect(page.get_by_role('dialog')).to_be_visible()
+  if dismiss=='close':page.get_by_role('button',name='Tutup dialog').click()
+  elif dismiss=='escape':page.keyboard.press('Escape')
+  else:page.locator('.modal-overlay').click(position={'x':2,'y':2})
+  expect(page.get_by_role('dialog')).to_have_count(0);assert page.evaluate('!!NA.user');assert logout_requests()==before_logout
+ passed.append('Cancel, close icon, Escape and backdrop preserve the account session')
  assert page.evaluate('localStorage.getItem("ngekosaja.auth.v3")') is None;assert page.evaluate('sessionStorage.getItem("ngekosaja.auth.v3")') is not None;passed.append('Non-remembered session stays out of localStorage')
  page.reload();page.wait_for_function('NA.user && NA.profile');passed.append('Session restoration verifies user and reloads DB profile/roles')
  for role in ['owner','tenant','admin']:
@@ -107,12 +140,12 @@ with sync_playwright() as p:
  page.evaluate('NK.navigate("owner")');rights[:]=['owner'];page.evaluate('NA.refreshIdentity()');page.wait_for_function('NA.effectiveRoles.includes("owner")');page.evaluate('NK.navigate("owner")');expect(page.locator('.connected-phase')).to_be_visible();expect(page.locator('.connected-phase')).to_contain_text('Phase 3');passed.append('Trusted owner role enables scoped workspace with explicit unintegrated state')
  assert page.evaluate('(()=>{try{NK.setRole("admin");return false}catch{return true}})()');passed.append('Connected mode blocks legacy demo mutation/role switching')
  page.evaluate('document.body.insertAdjacentHTML("beforeend",\'<button id="injected-demo" data-auth-action="demo">Injected demo</button>\')');page.locator('#injected-demo').dispatch_event('click');assert page.evaluate('NA.mode==="connected" && !!NA.user');page.locator('#injected-demo').evaluate('(el)=>el.remove()');passed.append('Signed-in demo mode switch is refused even if a stale action is triggered')
- page.evaluate('NK.navigate("account/security")');page.locator('[data-auth-action=logout]').first.click();page.wait_for_function('!NA.user');assert page.evaluate('sessionStorage.getItem("ngekosaja.auth.v3")') is None;expect(page.locator('[data-auth-action=demo]')).not_to_have_count(0);passed.append('Logout clears authorization and makes Demo available again')
+ page.evaluate('NK.navigate("account/security")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');assert page.evaluate('sessionStorage.getItem("ngekosaja.auth.v3")') is None;expect(page.locator('[data-auth-action=demo]')).not_to_have_count(0);passed.append('Logout clears authorization and makes Demo available again')
  page.wait_for_timeout(150);before=len(calls);page.locator('[data-auth-action=demo]').first.click();page.locator('[data-action=role][data-role=admin]').click();page.wait_for_timeout(200);assert len(calls)==before;assert page.evaluate('NA.client===null');assert page.evaluate('(()=>{try{NA.createClient();return false}catch{return true}})()');passed.append('Anonymous Demo admin selection uses local data, refuses client creation and makes no backend request')
  expect(page.locator('.demo-mode-bar')).to_be_visible();page.locator('[data-auth-action=connected]').first.click();page.wait_for_function('NA.mode==="connected" && NA.ready');assert page.evaluate('NA.user===null');passed.append('Return from anonymous demo does not adopt a demo role or restore a logged-out identity')
  rights[:]=['prospect'];login(True,'account/security');assert page.evaluate('localStorage.getItem("ngekosaja.auth.v3")') is not None;passed.append('Login from a protected settings URL opens home and remembered session uses persistent storage')
  for role in ['owner','tenant','admin']:
-  page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.wait_for_function('!NA.user');rights[:]=[role];login();assert page.evaluate('(role)=>NA.effectiveRoles.includes(role)',role);expect(page.locator('.public-nav a[href="#/'+role+'"]')).to_have_text('Dashboard');page.locator('.public-nav a[href="#/'+role+'"]').click();expect(page.locator('.connected-phase')).to_be_visible()
+  page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');rights[:]=[role];login();assert page.evaluate('(role)=>NA.effectiveRoles.includes(role)',role);expect(page.locator('.public-nav a[href="#/'+role+'"]')).to_have_text('Dashboard');page.locator('.public-nav a[href="#/'+role+'"]').click();expect(page.locator('.connected-phase')).to_be_visible()
  passed.append('Owner, tenant and admin all land on home after login and retain their authorized workspace access')
  for width in [390,768,1440]:
   page.set_viewport_size({'width':width,'height':900});page.evaluate('NK.navigate("account/profile")');page.wait_for_timeout(100);assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
@@ -126,6 +159,10 @@ with sync_playwright() as p:
   page.evaluate('window.scrollTo(0,0)');page.wait_for_timeout(60)
   for bounds in page.locator('.sidebar nav a').evaluate_all('(links)=>links.map(link=>{const box=link.getBoundingClientRect();return {left:box.left,right:box.right,height:box.height}})'):
    assert bounds['left']>=0 and bounds['right']<=width+1 and bounds['height']<=70,'All account menus must fit visibly with compact rows'
+  expect(page.locator('.account-logout-menu')).to_be_visible();page.locator('.account-logout-menu').click();expect(page.get_by_role('dialog')).to_be_visible()
+  assert page.get_by_role('dialog').evaluate('(el)=>{const box=el.getBoundingClientRect();return box.left>=0 && box.right<=innerWidth+1 && box.height<=innerHeight}')
+  if width==1440:page.screenshot(path=str(ROOT/'tests/logout-confirmation.png'),full_page=True,animations='disabled')
+  page.get_by_role('button',name='Batal',exact=True).click();assert page.evaluate('!!NA.user')
   page.screenshot(path=str(ROOT/('tests/account-mobile.png' if width==390 else 'tests/account-desktop.png' if width==1440 else 'tests/account-tablet.png')),full_page=True)
   for route in ['login','forgot','verify','reset','account','account/profile','account/email','account/security','account/access','workspace','owner','marketplace','access-denied']:
    page.evaluate('(route)=>NK.navigate(route)',route);page.wait_for_timeout(60);assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),f'Overflow: {route} at {width}'
@@ -133,7 +170,7 @@ with sync_playwright() as p:
  passed.append('Account menus have compact desktop rows and all four remain visible on mobile/tablet')
  passed.append('Main navbar works on desktop/tablet/mobile and never overlaps the account sidebar')
  passed.append('Main navbar remains accessible above account settings while scrolling')
- page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.wait_for_function('!NA.user')
+ page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user')
  page.evaluate('(email)=>NA.authService.recover(email)',user['email'])
  assert page.evaluate('localStorage.getItem("ngekosaja.auth.v3-code-verifier")!==null && sessionStorage.getItem("ngekosaja.auth.v3-code-verifier")===null')
  page.evaluate('NA.setRemember(true);NA.setRemember(false)');assert page.evaluate('localStorage.getItem("ngekosaja.auth.v3-code-verifier")!==null')
@@ -157,6 +194,6 @@ with sync_playwright() as p:
  blocked_page=blocked.new_page();blocked_page.on('pageerror',lambda error:blocked_errors.append(str(error)));blocked_page.goto(ORIGIN+'/#/login');blocked_page.wait_for_function('NA.ready');expect(blocked_page.locator('.auth-config-warning')).to_contain_text('memblokir');assert blocked_page.evaluate('NA.client===undefined');blocked_page.locator('[data-auth-action=demo]').first.click();expect(blocked_page.locator('.modal')).to_be_visible();assert not blocked_errors;blocked.close();passed.append('Blocked storage fails closed for Connected Mode while explicit volatile Demo remains available')
  context.close();browser.close()
 assert not errors,errors
-report={'mode':'real-chromium-sdk-with-mocked-http-auth-boundary','passed':passed,'count':len(passed),'javascript_errors':errors,'limitations':['No real email, GoTrue or Cloud account is created by this browser suite. See separate live-cloud results.']}
+report={'mode':'real-chromium-sdk-with-mocked-http-auth-boundary','passed':passed,'count':len(passed),'javascript_errors':errors,'limitations':['No real email, GoTrue or Cloud account is created by this browser suite. Public Cloud signup with Confirm Email off has not been rerun. Historical live-cloud results do not verify this change.']}
 (ROOT/'tests/auth-browser-results.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 print(json.dumps({'passed':len(passed),'javascript_errors':len(errors),'mode':report['mode']}))

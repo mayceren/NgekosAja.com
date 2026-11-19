@@ -9,5 +9,6 @@ A.roleService={async load(uid){
  return {roles,effectiveRoles:roles.filter(role=>role!=='tenant'||hasAgreement),hasAgreement};
 }};
 A.defaultPath=()=>A.effectiveRoles?.includes('admin')?'admin':A.effectiveRoles?.includes('owner')?'owner':A.effectiveRoles?.includes('tenant')?'tenant':'workspace';
+A.registrationPath=()=>A.defaultPath()==='workspace'?'':A.defaultPath();
 A.allowed=role=>A.user&&A.effectiveRoles?.includes(role);
 })(window.NA);

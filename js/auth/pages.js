@@ -37,7 +37,7 @@
       )
       .join(
         "",
-      )}</nav><div class="nav-actions">${A.user ? `<a class="connected-account-link" href="#/account/profile" aria-label="Buka profil akun">${N.avatar(A.profile?.display_name)}<span>${e(A.profile?.display_name)}</span></a><button type="button" class="icon-btn" data-auth-action="logout" aria-label="Keluar dari akun" title="Keluar dari akun">${N.icon("logout")}</button>` : '<a class="login-btn" href="#/login">Masuk</a><a class="btn btn-primary btn-sm" href="#/register">Daftar</a><button class="demo-pill" data-auth-action="demo">Coba Demo</button>'}<button class="icon-btn mobile-menu" data-auth-action="menu" aria-label="Buka menu navigasi" aria-expanded="false">${N.icon("menu")}</button></div></div></header>`;
+      )}</nav><div class="nav-actions">${A.user ? `<a class="connected-account-link" href="#/account/profile" aria-label="Buka profil akun">${N.avatar(A.profile?.display_name)}<span>${e(A.profile?.display_name)}</span></a>` : '<a class="login-btn" href="#/login">Masuk</a><a class="btn btn-primary btn-sm" href="#/register">Daftar</a><button class="demo-pill" data-auth-action="demo">Coba Demo</button>'}<button class="icon-btn mobile-menu" data-auth-action="menu" aria-label="Buka menu navigasi" aria-expanded="false">${N.icon("menu")}</button></div></div></header>`;
   A.footer = () =>
     `<footer class="footer connected-footer"><div class="container"><div>${N.logo()}<p>Cari kos, bayar sewa, kelola semua dalam satu tempat.</p></div><div><a href="#/privacy">Privasi & ketentuan</a><a href="#/help">Bantuan</a>${A.user ? "" : '<button class="text-btn" data-auth-action="demo">Jelajahi demo terpisah</button>'}</div><small>© ${new Date().getFullYear()} NgekosAja.com</small></div></footer>`;
   A.authPage = (page) => {
@@ -86,6 +86,7 @@
       body = form(
         "forgot",
         input("email", "Email akun", "email", 'required autocomplete="email"') +
+          '<p class="field-help">Tautan pemulihan tetap dikirim melalui email. Pengiriman dibatasi kuota layanan project; jika kuota penuh, tunggu sebelum mencoba lagi.</p>' +
           end("Kirim tautan pemulihan"),
       );
     } else if (page === "verify") {
@@ -174,7 +175,7 @@
         "",
       )}`;
     const accountLinks = accountSections.map(item => `<a href="#/account/${item.id}" ${isAccount && section.id === item.id ? 'aria-current="page"' : ""}>${N.icon(item.icon)}${item.title}</a>`).join("");
-    const shell = `<div class="dashboard-layout connected-layout${isAccount ? " connected-account-layout" : ""}"><aside class="sidebar">${isAccount ? "" : N.logo()}<span class="sidebar-workspace">${isAccount ? "PENGATURAN AKUN" : "WORKSPACE KOS"}</span><nav aria-label="${isAccount ? "Pengaturan akun" : "Workspace"}">${workspaceLinks}${accountLinks}</nav>${isAccount ? "" : `<div class="connected-sidebar-bottom">${action("Keluar", "logout")}</div>`}</aside><div class="dashboard-area">${isAccount ? "" : `<header class="dashboard-header"><div class="breadcrumb">Workspace ${N.icon("chevron")} ${e(label)}</div><div class="dashboard-header-actions"><a href="#/account/profile" aria-label="Buka profil">${N.avatar(A.profile.display_name)}</a></div></header>`}<main class="dashboard-main" id="main" tabindex="-1">${A.notice ? `<div class="notice" role="status">${e(A.notice)}</div>` : ""}${privateBody}</main><footer class="dashboard-footnote">${isAccount ? "Pengaturan akun · Perubahan profil tersimpan pada akunmu." : "NgekosAja.com · Ruang untuk cerita berikutnya."}</footer></div></div>`;
+    const shell = `<div class="dashboard-layout connected-layout${isAccount ? " connected-account-layout" : ""}"><aside class="sidebar">${isAccount ? "" : N.logo()}<span class="sidebar-workspace">${isAccount ? "PENGATURAN AKUN" : "WORKSPACE KOS"}</span><nav aria-label="${isAccount ? "Pengaturan akun" : "Workspace"}">${workspaceLinks}${accountLinks}${isAccount ? `<button type="button" class="account-logout-menu" data-auth-action="logout">${N.icon("logout")}<span>Keluar dari Akun</span></button>` : ""}</nav>${isAccount ? "" : `<div class="connected-sidebar-bottom">${action("Keluar", "logout")}</div>`}</aside><div class="dashboard-area">${isAccount ? "" : `<header class="dashboard-header"><div class="breadcrumb">Workspace ${N.icon("chevron")} ${e(label)}</div><div class="dashboard-header-actions"><a href="#/account/profile" aria-label="Buka profil">${N.avatar(A.profile.display_name)}</a></div></header>`}<main class="dashboard-main" id="main" tabindex="-1">${A.notice ? `<div class="notice" role="status">${e(A.notice)}</div>` : ""}${privateBody}</main><footer class="dashboard-footnote">${isAccount ? "Pengaturan akun · Perubahan profil tersimpan pada akunmu." : "NgekosAja.com · Ruang untuk cerita berikutnya."}</footer></div></div>`;
     return isAccount ? A.navbar() + shell : shell;
   };
   A.denied = () =>
