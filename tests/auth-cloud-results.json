@@ -1,0 +1,46 @@
+{
+  "checked_at": "2026-11-19T02:32:10.842020+00:00",
+  "mode": "live-supabase-cloud-development-real-chromium",
+  "project": "ngekosaja-development",
+  "passed": [
+    "Public signUp through actual form accepted by Cloud; verification email requested",
+    "Real GoTrue rejects password login before email confirmation",
+    "One-time signup token verified by real GoTrue, callback sanitized, session and DB profile loaded",
+    "Actual login redirects using DB prospect role; owner registration intent grants no owner/admin",
+    "Real session restored after reload and revalidated through getUser/PostgREST",
+    "Real profile UPDATE and reload succeed through RLS; no browser profile INSERT/upsert",
+    "Real PostgREST denies self-admin insert, server_grant_role RPC, invoice paid mutation and profile ID mutation",
+    "Editable user metadata cannot elevate the actual database role",
+    "Live account is refused owner, tenant and administrator UI routes",
+    "Real one-time recovery session updates password via Auth; reset signs out",
+    "New password successfully logs in through real GoTrue",
+    "Actual signOut clears app authorization and browser session",
+    "Real public recovery email request accepted for the supplied address; inbox receipt not claimed"
+  ],
+  "limitations": [
+    "Inbox receipt is not independently verified. Admin-generated one-time links exercise real GoTrue verification/recovery without reading the inbox.",
+    "No schema changes, role grants, existing-account password changes, or business fixtures."
+  ],
+  "permission_denials": [
+    {
+      "denied": true,
+      "code": "42501"
+    },
+    {
+      "denied": true,
+      "code": "42501"
+    },
+    {
+      "denied": true,
+      "code": "42501"
+    },
+    {
+      "denied": true,
+      "code": "42501"
+    }
+  ],
+  "status": "passed",
+  "count": 13,
+  "test_identity_retained": true,
+  "finished_at": "2026-11-19T02:32:36.905994+00:00"
+}

@@ -1,0 +1,109 @@
+{
+  "checked_at": "2026-11-19T01:55:23.358Z",
+  "credential_scan": {
+    "files_scanned": 104,
+    "findings": [],
+    "scope": "Tracked and non-ignored text files in the working tree; not a guarantee about deleted Git history or external secret stores."
+  },
+  "gitignore": [
+    {
+      "file": ".env",
+      "ignored": true
+    },
+    {
+      "file": ".env.local",
+      "ignored": true
+    },
+    {
+      "file": ".env.production",
+      "ignored": true
+    },
+    {
+      "file": "supabase/.temp/project-ref",
+      "ignored": true
+    },
+    {
+      "file": "supabase/.temp/pooler-url",
+      "ignored": true
+    },
+    {
+      "file": "node_modules/example",
+      "ignored": true
+    },
+    {
+      "file": "supabase/.branches/example",
+      "ignored": true
+    },
+    {
+      "file": ".local-db/data/example",
+      "ignored": true
+    },
+    {
+      "file": "private.pem",
+      "ignored": true
+    },
+    {
+      "file": "private.key",
+      "ignored": true
+    },
+    {
+      "file": "credentials-test.json",
+      "ignored": true
+    }
+  ],
+  "env_example_tracked": true,
+  "env_example_values_empty": true,
+  "frontend_diff": [],
+  "documentation": {
+    "stats": {
+      "tables": 31,
+      "columns": 236,
+      "foreign_keys": 48,
+      "policies": 45,
+      "public_functions": 24
+    },
+    "erd_entities": 32,
+    "erd_application_tables": [
+      "activity_logs",
+      "boost_campaigns",
+      "complaint_analyses",
+      "complaint_attachments",
+      "complaint_histories",
+      "complaint_notes",
+      "complaints",
+      "conversation_members",
+      "conversations",
+      "facilities",
+      "favorites",
+      "invoices",
+      "listing_analytics",
+      "message_attachments",
+      "messages",
+      "notifications",
+      "profiles",
+      "properties",
+      "property_facilities",
+      "property_images",
+      "property_landmarks",
+      "property_rules",
+      "recent_searches",
+      "recurring_invoices",
+      "rental_agreements",
+      "room_facilities",
+      "rooms",
+      "tenants",
+      "transactions",
+      "user_roles",
+      "user_settings"
+    ],
+    "dictionary_tables": 31,
+    "erd_foreign_keys": 48,
+    "all_erd_relationships_match": true,
+    "all_dictionary_constraints_present": true,
+    "all_dictionary_indexes_present": true,
+    "all_erd_tables_match": true,
+    "all_dictionary_tables_match": true,
+    "all_dictionary_columns_match": true
+  },
+  "passed": true
+}

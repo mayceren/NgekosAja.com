@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-11-19T02:57:59.467Z",
+  "syntax": {
+    "passed": true,
+    "count": 43
+  },
+  "sdk": {
+    "version": "2.99.3",
+    "official_bundle_matches": true
+  },
+  "public_config_valid": true,
+  "local_document_links": {
+    "passed": true,
+    "count": 34
+  },
+  "scratch_databases_remaining": 0,
+  "package_lock_consistent": true,
+  "cleanup": {
+    "postgresql_stopped": true,
+    "preview_server_stopped": true,
+    "checked_at": "2026-11-19T03:00:19.893Z"
+  }
+}

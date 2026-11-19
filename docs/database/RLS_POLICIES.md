@@ -1,6 +1,6 @@
 # Row Level Security dan izin aktual
 
-Snapshot 11 migrasi applied, dicocokkan ulang dengan Cloud pada 19 November 2026. Kandidat migrasi 12 tidak mengubah policy; hanya menambah EXECUTE private.today() untuk service_role serta memperbaiki checkout. Kandidat belum applied; lihat [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md).
+Snapshot **12 migrasi applied**. Policy tetap 45; EXECUTE private.today() untuk service_role sudah diberikan dan terverifikasi, authenticated tetap true dan anon false. Lihat [penutupan Phase 1](PHASE1_COMPLETION.md).
 
 Semua tabel public mengaktifkan RLS dalam transaksi pembuatannya. `private` tidak diekspos pada Data API. Migrasi awal menutup default grants; kebijakan akhir menambah akses yang sudah dibatasi. Tabel tanpa kebijakan tulis tetap tertutup. PUBLIC tidak mempunyai EXECUTE pada fungsi aplikasi.
 

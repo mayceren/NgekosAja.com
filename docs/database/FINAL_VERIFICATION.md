@@ -1,5 +1,9 @@
 # Final verification Phase 1 — 19 November 2026
 
+**Status terbaru: kedua temuan sudah diperbaiki di Cloud dan Phase 1 Database Foundation selesai.** Lihat [laporan penutupan](PHASE1_COMPLETION.md). Bagian di bawah adalah catatan historis sebelum penerapan migrasi 12; snapshot aslinya dipertahankan di [FINAL_VERIFICATION_BASELINE.md](FINAL_VERIFICATION_BASELINE.md).
+
+## Hasil sebelum perbaikan (historis)
+
 **Keputusan: belum siap dinyatakan selesai untuk melanjutkan integrasi Phase 2.** Dua masalah terbukti pada baseline yang sudah deployed. Perbaikan tersedia dan lulus pengujian lokal, tetapi migrasi tambahan **belum diterapkan ke Cloud dan memerlukan persetujuan baru**. Frontend/UI tidak diubah.
 
 Target live terkonfirmasi: **ngekosaja-development**, ref `wfmhsbdfdcugxblqsaob`, ACTIVE_HEALTHY, ap-northeast-1, PostgreSQL **17.12**, CLI **3.2.0**. Pemeriksaan Cloud selesai **19 November 2026 00:26:25 WIB** (`2026-11-18T17:26:25.030Z`). Label environment `production` dari CLI menunjuk main branch project development ini.

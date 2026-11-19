@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync,writeFileSync,existsSync } from 'node:fs';
 const git=args=>execFileSync('git',args,{encoding:'utf8',maxBuffer:16*1024*1024,stdio:['pipe','pipe','pipe']});
+const completed=process.argv.includes('--completed');
 const paths=git(['ls-files','--cached','--others','--exclude-standard','-z']).split('\0').filter(Boolean);
 const patterns=[
  ['Supabase personal access token',/\bsbp_[A-Za-z0-9_-]{20,}/],
@@ -24,7 +25,7 @@ report.env_example_tracked=git(['ls-files','.env.example']).trim()==='.env.examp
 report.env_example_values_empty=readFileSync('.env.example','utf8').split(/\r?\n/).filter(line=>line.trim()&&!line.trim().startsWith('#')).every(line=>/^[A-Z_]+=$/.test(line));
 report.frontend_diff=git(['diff','HEAD','--name-only','--','index.html','js','css','assets']).trim().split(/\r?\n/).filter(Boolean);
 const doc=JSON.parse(readFileSync('docs/database/schema-catalogue.json','utf8'));
-const remote=JSON.parse(readFileSync('docs/database/final-remote-verification.json','utf8'));
+const remote=JSON.parse(readFileSync(completed?'docs/database/phase1-completion-verification.json':'docs/database/final-remote-verification.json','utf8'));
 const erd=readFileSync('docs/database/ERD.md','utf8'),dictionary=readFileSync('docs/database/DATA_DICTIONARY.md','utf8');
 const entities=[...erd.matchAll(/^  ([a-z_]+) \{/gm)].map(m=>m[1]);
 const dictionaryTables=[...dictionary.matchAll(/^## ([a-z_]+)\r?$/gm)].map(m=>m[1]);
@@ -46,6 +47,6 @@ report.documentation={stats:doc.stats,erd_entities:entities.length,erd_applicati
  all_dictionary_tables_match:JSON.stringify(dictionaryTables.sort())===JSON.stringify(remote.catalogue.tables.map(t=>t.name).sort()),
  all_dictionary_columns_match:doc.tables.every(t=>JSON.stringify(t.columns.map(c=>({table:c.table_name,name:c.name,type:c.type,not_null:c.not_null})))===JSON.stringify(remote.catalogue.columns.filter(c=>c.table===t.name).map(c=>({table:c.table,name:c.name,type:c.type,not_null:c.not_null}))))};
 report.passed=report.credential_scan.findings.length===0&&report.gitignore.every(r=>r.ignored)&&report.env_example_tracked&&report.env_example_values_empty&&report.frontend_diff.length===0&&Object.entries(report.documentation).filter(([key])=>key.startsWith('all_')).every(([,value])=>value===true);
-writeFileSync('docs/database/final-artifact-audit.json',JSON.stringify(report,null,2)+'\n');
+writeFileSync(completed?'docs/database/phase1-completion-artifact-audit.json':'docs/database/final-artifact-audit.json',JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report));
 assert.equal(report.passed,true,'Inspect final-artifact-audit.json for failures; credential values are never printed.');

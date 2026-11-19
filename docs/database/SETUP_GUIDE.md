@@ -51,7 +51,7 @@ Untuk regenerasi dokumen dari database Supabase lokal yang sudah dimigrasi: `npm
 
 ## Koneksi cloud dan langkah manual lanjutan
 
-Project **ngekosaja-development** sudah dibuat dan workspace di-link oleh pengguna. Sebelas migrasi dan seed tujuh fasilitas telah diterapkan setelah persetujuan dan diverifikasi; lihat [REMOTE_DEPLOYMENT.md](REMOTE_DEPLOYMENT.md). Langkah pembuatan/login/link di bawah berlaku untuk setup baru, tidak perlu diulang pada workspace ini.
+Project **ngekosaja-development** sudah dibuat dan workspace di-link oleh pengguna. Dua belas migrasi dan seed tujuh fasilitas telah diterapkan setelah persetujuan dan diverifikasi; lihat [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md). Langkah pembuatan/login/link di bawah berlaku untuk setup baru, tidak perlu diulang pada workspace ini.
 
 1. Setelah siap untuk review remote, buat/pilih project **development** pada Supabase Dashboard dengan akun Anda. Jangan mengirim password database atau secret key kepada agen/chat.
 2. Periksa PostgreSQL version pada database target dan cocokkan config db.major_version sebelum tes stack final. Review kebijakan email Auth, redirect URL development, exposed schema public, dan akses anggota project. Jangan aktifkan registrasi owner/admin dari metadata.
@@ -64,7 +64,7 @@ npx supabase link --project-ref $env:SUPABASE_PROJECT_REF
 npx supabase db push --remote --dry-run --include-seed --skip-vault
 ```
 
-Dry-run tidak menerapkan migration/seed. Manifest awal 11 migrasi sudah diterapkan dengan persetujuan dan tidak perlu diulang. Untuk perubahan baru, review target dan migrasi yang pending terlebih dahulu. Jangan menjalankan reset terhadap remote. Fixture provisioner sengaja menolak URL nonloopback; seed cloud yang dimuat hanya master fasilitas, bukan fixture Auth penuh.
+Dry-run tidak menerapkan migration/seed. Manifest awal 11 migrasi dan migrasi perbaikan ke-12 sudah diterapkan dengan persetujuan dan tidak perlu diulang. Untuk perubahan baru, review target dan migrasi yang pending terlebih dahulu. Jangan menjalankan reset terhadap remote. Fixture provisioner sengaja menolak URL nonloopback; seed cloud yang dimuat hanya master fasilitas, bukan fixture Auth penuh.
 
 `.env.example` hanya nama variabel kosong. Ekspor variabel ke proses Node menggunakan terminal/secret manager; script tidak otomatis membaca file .env. Folder project dapat disajikan utuh oleh Live Server/python, sehingga file secret perlu berada di luar folder web yang disajikan. .gitignore juga menutup file environment lokal dari commit. Hindari menampilkan CLI status mentah karena dapat mengandung key development.
 

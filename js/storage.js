@@ -3,8 +3,8 @@
 const KEY='ngekosaja.demo.v2';let state,volatile=false;N.STORAGE_KEY=KEY;N.storageWarning='';
 try{const raw=localStorage.getItem(KEY),old=localStorage.getItem('ngekosaja.demo.v1');state=raw?N.migrate(JSON.parse(raw)):old?N.migrate(JSON.parse(old)):N.seed();N.migrated=!raw&&!!old;localStorage.setItem(KEY,JSON.stringify(state));}catch(e){state=state||N.seed();volatile=true;N.storageWarning='Penyimpanan tidak tersedia. Sesi memakai data sementara; data lama tidak dihapus.';}
 N.state=()=>state;
-N.update=fn=>{const next=JSON.parse(JSON.stringify(state)),result=fn(next);if(!volatile){try{localStorage.setItem(KEY,JSON.stringify(next));}catch(e){throw new Error('Penyimpanan penuh atau tidak tersedia. Perubahan dibatalkan; gunakan foto lebih kecil.');}}state=next;return result;};
-N.reset=()=>{const next=N.seed();if(!volatile)localStorage.setItem(KEY,JSON.stringify(next));state=next;};
+N.update=fn=>{if(window.NA?.mode==='connected')throw new Error('Aksi data demo tidak tersedia pada Connected Mode.');const next=JSON.parse(JSON.stringify(state)),result=fn(next);if(!volatile){try{localStorage.setItem(KEY,JSON.stringify(next));}catch(e){throw new Error('Penyimpanan penuh atau tidak tersedia. Perubahan dibatalkan; gunakan foto lebih kecil.');}}state=next;return result;};
+N.reset=()=>{if(window.NA?.mode==='connected')throw new Error('Reset hanya tersedia pada Demo Mode.');const next=N.seed();if(!volatile)localStorage.setItem(KEY,JSON.stringify(next));state=next;};
 N.property=id=>state.properties.find(p=>p.id===id);N.tenant=id=>state.tenants.find(t=>t.id===id);N.owner=id=>state.owners.find(o=>o.id===id);N.room=(pid,rid)=>N.property(pid)?.rooms.find(r=>r.id===rid);
 N.actorId=()=>state.role==='owner'?state.activeOwnerId:state.role==='tenant'?state.activeTenantId:state.role==='admin'?'admin':state.activeUserId||'guest';
 N.actor=()=>state.users.find(u=>u.id===N.actorId())||{id:'guest',name:'Pengunjung Demo',role:'guest'};N.activeTenant=()=>N.tenant(state.activeTenantId);N.activeOwner=()=>N.owner(state.activeOwnerId);N.isActive=t=>t?.leaseStatus==='Aktif';

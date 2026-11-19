@@ -1,0 +1,11 @@
+{
+  "mode": "offline-cloud-safety-boundaries",
+  "passed": [
+    "No disposable opt-in: stop before any CLI/network request",
+    "Protected original email: stop before CLI/network even with disposable opt-in",
+    "Any existing remote identity: refuse before login, password mutation, or link generation"
+  ],
+  "count": 3,
+  "real_emails_sent": 0,
+  "remote_mutations": 0
+}

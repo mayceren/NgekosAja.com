@@ -15,9 +15,9 @@ Semua file dijalankan menurut nama timestamp, masing-masing dalam transaksi. Tab
 | 9 | 20261118000900_public_catalogue_reports.sql | Katalog publik aman, invoice_statuses, laporan owner/platform |
 | 10 | 20261118001000_rls_and_audit.sql | Policy/grants terperinci dan trigger audit |
 | 11 | 20261118001100_integrity_hardening.sql | Cursor recurring, pesan berlampiran, penghapusan properti terotorisasi |
-| 12 — kandidat, belum applied | 20261119000100_final_verification_fixes.sql | CHECK tanggal checkout wajib, validasi RPC, EXECUTE helper tanggal untuk service_role |
+| 12 — applied | 20261119000100_final_verification_fixes.sql | CHECK tanggal checkout wajib, validasi RPC, EXECUTE helper tanggal untuk service_role |
 
-Sebelas migrasi pertama telah applied. Migrasi 12 masih menunggu persetujuan remote; hasil dry-run, reproduksi temuan dan uji upgrade aman tercatat di [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md). Jangan menjalankan db push tanpa dry-run sebelum persetujuan baru.
+Seluruh **12 migrasi telah applied**, setelah persetujuan pengguna, dengan **0 pending**. Hasil dry-run terakhir, uji upgrade dan bukti penerapan terdapat di [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md). Tidak perlu menjalankan ulang apply. Perubahan schema berikutnya memakai migrasi baru dan review terpisah.
 
 ## Development lokal
 
@@ -38,7 +38,7 @@ Alternatif tanpa Docker jika PostgreSQL tersedia: ikuti setup cluster loopback d
 
 ## Review remote dan batas persetujuan
 
-Workspace terhubung ke **ngekosaja-development**. Sebelas migrasi dan seed master telah **diterapkan setelah persetujuan pengguna** dan diverifikasi: [REMOTE_DEPLOYMENT.md](REMOTE_DEPLOYMENT.md). [REMOTE_REVIEW.md](REMOTE_REVIEW.md) menyimpan histori review awal. Perintah login/link di bawah hanya diperlukan pada workspace baru, bukan untuk mengulang koneksi yang sudah terverifikasi. Jangan menerapkan file bootstrap_native.sql ke cloud/Supabase: itu hanya adapter test pada database acak.
+Workspace terhubung ke **ngekosaja-development**. Dua belas migrasi dan seed master telah **diterapkan setelah persetujuan pengguna** dan diverifikasi: [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md). [REMOTE_REVIEW.md](REMOTE_REVIEW.md) menyimpan histori review awal. Perintah login/link di bawah hanya diperlukan pada workspace baru, bukan untuk mengulang koneksi yang sudah terverifikasi. Jangan menerapkan file bootstrap_native.sql ke cloud/Supabase: itu hanya adapter test pada database acak.
 
 ```powershell
 npx supabase login

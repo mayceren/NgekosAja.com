@@ -1,12 +1,28 @@
-# NgekosAja.com 2.0
+# NgekosAja.com 3.0 — Phase 2
 
-[Final verification Phase 1 — 19 November 2026](docs/database/FINAL_VERIFICATION.md): struktur Cloud cocok dengan baseline, tetapi dua perbaikan masih menunggu persetujuan migrasi tambahan. Kandidat lulus 52 kelompok tes fresh install dan 54 kelompok tes upgrade; frontend tetap versi 2.
+**Authentication & Authorization sudah diimplementasikan:** Supabase Auth nyata, verifikasi email, recovery/reset password, session, profil PostgreSQL, role database dan protected routes. UI premium versi 2 dipertahankan. Connected Mode adalah default; Coba Demo membuka data simulasi terpisah tanpa akses backend.
 
-Fondasi **3.0 Phase 1 — Database Foundation** tersedia terpisah di `supabase/` dan `scripts/`. Frontend versi 2 tetap memakai LocalStorage dan dapat dijalankan seperti sebelumnya. Sebelas migrasi dan seed master telah diterapkan ke project Supabase development setelah persetujuan pengguna; integrasi frontend dan UI tetap seperti versi 2.
+```powershell
+npm run dev
+```
+
+Buka **http://127.0.0.1:5500/#/register** atau **http://127.0.0.1:5500/#/login**. SDK lokal dan konfigurasi URL/Publishable Key sudah tersedia; tidak ada service/secret key di frontend. Jika node_modules belum ada untuk tooling, jalankan npm ci. Live Server port 5500 didukung; file:// untuk Demo saja. Buka link verifikasi/pemulihan pada browser tempat permintaan dibuat.
+
+Dokumentasi: [arsitektur Auth](docs/auth/AUTH_ARCHITECTURE.md), [setup dan callback/SMTP](docs/auth/AUTH_SETUP.md), [role management](docs/auth/ROLE_MANAGEMENT.md), [hasil pengujian aktual](docs/auth/AUTH_TESTING.md).
+
+Hasil: **33 kelompok browser Auth, 14 test pemulihan administratif, 3 guard QA offline**, serta pemeriksaan sebelumnya (52 SQL/RLS, 30 domain demo dan 11 kelompok browser bisnis demo). Hasil 13 Cloud Auth awal adalah historis; pengujian tersebut keliru memakai alamat pribadi dan meninggalkan password acak. Akun sudah terverifikasi dan dilindungi dari QA. **Jalankan npm run auth:repair-test-account dan isi password sendiri pada terminal tersembunyi**, lalu login; tidak memerlukan email atau quota. [Perbaikan dan status aktual](docs/auth/AUTH_RECOVERY_FIX.md). Penerimaan inbox dan konfirmasi dua alamat saat email change belum diverifikasi.
+
+Pendaftaran publik memberi prospect. Tujuan pemilik memerlukan grant administratif; tenant mengikuti rental agreement yang sah. Tidak ada schema migration baru, reset remote atau git push. Connected workspace bisnis menampilkan state Phase 3, tanpa menampilkan data demo sebagai data akun sungguhan.
+
+## Fondasi database dan referensi Demo 2.0
+
+[Phase 1 Database Foundation selesai — 19 November 2026](docs/database/PHASE1_COMPLETION.md): dua temuan telah diperbaiki di Cloud, 12 migrasi applied dan 0 pending. Tes fresh install 52 kelompok dan upgrade 54 kelompok lulus; frontend tetap versi 2. Auth/JWT/HTTP menjadi pemeriksaan awal integrasi Phase 2.
+
+Fondasi **3.0 Phase 1 — Database Foundation** tersedia terpisah di `supabase/` dan `scripts/`. Frontend versi 2 tetap memakai LocalStorage dan dapat dijalankan seperti sebelumnya. Dua belas migrasi dan seed master telah diterapkan ke project Supabase development setelah persetujuan pengguna; integrasi frontend dan UI tetap seperti versi 2.
 
 Mulai dari [setup database](docs/database/SETUP_GUIDE.md), [schema dan tabel](docs/database/DATABASE_SCHEMA.md), [ERD](docs/database/ERD.md), [Data Dictionary](docs/database/DATA_DICTIONARY.md), [RLS](docs/database/RLS_POLICIES.md), [migrasi](docs/database/MIGRATION_GUIDE.md), [seed/fixture Auth](docs/database/SEED_GUIDE.md), dan [hasil pengujian aktual](docs/database/VERIFICATION.md). Tool database opsional: `npm ci`; pengujian PostgreSQL native lokal: `npm run db:test -- --native`. Stack Supabase lengkap membutuhkan Docker/Podman.
 
-[Hasil penerapan remote](docs/database/REMOTE_DEPLOYMENT.md): 11 migrasi, 31 tabel dengan RLS aktif, 45 policy, serta 7 fasilitas master berhasil diverifikasi pada `ngekosaja-development`. [Review sebelum apply](docs/database/REMOTE_REVIEW.md) dipertahankan sebagai histori.
+[Hasil remote terkini](docs/database/PHASE1_COMPLETION.md): 12 migrasi, 31 tabel dengan RLS aktif, 45 policy, serta 7 fasilitas master terverifikasi pada `ngekosaja-development`. [Penerapan awal 11 migrasi](docs/database/REMOTE_DEPLOYMENT.md) dan [review sebelum apply](docs/database/REMOTE_REVIEW.md) dipertahankan sebagai histori.
 
 **Cari Kos, Bayar Sewa, Kelola Semua dalam Satu Tempat.**
 

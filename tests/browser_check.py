@@ -11,6 +11,7 @@ passed=[];errors=[];resources=[]
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True)
  context=browser.new_context(viewport={'width':1440,'height':900},locale='id-ID',timezone_id='Asia/Jakarta',accept_downloads=True)
+ context.add_init_script("localStorage.setItem('ngekosaja.mode.v3','demo')")
  page=context.new_page()
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('console',lambda m:errors.append(m.text) if m.type=='error' else None)

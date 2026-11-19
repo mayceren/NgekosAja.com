@@ -1,6 +1,6 @@
 # NgekosAja 3.0 — Phase 1 Database Foundation
 
-Fondasi database terpisah dari frontend versi 2. `index.html`, CSS, JavaScript, navigasi hash, dan LocalStorage tidak diintegrasikan atau diubah pada Phase 1. Setelah persetujuan pengguna, schema dan seed master telah diterapkan ke Supabase development; hasil aktual tersedia di [REMOTE_DEPLOYMENT.md](REMOTE_DEPLOYMENT.md). Tidak ada git push atau reset remote.
+Fondasi database terpisah dari frontend versi 2. `index.html`, CSS, JavaScript, navigasi hash, dan LocalStorage tidak diintegrasikan atau diubah pada Phase 1. Setelah persetujuan pengguna, **12 migrasi** dan seed master telah diterapkan ke Supabase development; hasil terkini tersedia di [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md). Tidak ada git push atau reset remote.
 
 Skema aktual terdiri dari **31 tabel aplikasi**, **236 kolom**, **48 foreign key**, **45 policy RLS**, satu view security-invoker, dan 24 fungsi public dengan izin EXECUTE eksplisit. Inventaris mesin: [schema-catalogue.json](schema-catalogue.json). Rincian kolom, constraint dan index: [DATA_DICTIONARY.md](DATA_DICTIONARY.md). Diagram seluruh relasi: [ERD.md](ERD.md).
 

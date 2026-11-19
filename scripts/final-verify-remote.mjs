@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 // Inspection only. There is deliberately no apply, reset, seed or config-push mode.
 const expected={name:'ngekosaja-development',ref:'wfmhsbdfdcugxblqsaob'};
 const cli=resolve('node_modules/supabase/dist/supabase.js');
+const completed=process.argv.includes('--completed');
 const scrub=s=>String(s).replace(/postgres(?:ql)?:\/\/[^\s"']+/gi,'[redacted database address]').replace(/\b(?:sbp_|sb_secret_)[A-Za-z0-9_-]+/g,'[redacted credential]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted token]');
 function run(args) {
  try{return execFileSync(process.execPath,[cli,...args],{encoding:'utf8',timeout:55000,stdio:['ignore','pipe','pipe']});}
@@ -28,16 +29,21 @@ try {
  if(!project)throw new Error('Live project identity could not be confirmed.');
  const version=run(['--version']).trim();
  if(version!=='3.2.0')throw new Error('Recheck read-only/dry-run syntax for the newly installed CLI version.');
- const approved=parse(readFileSync('docs/database/remote-apply-results.json','utf8')).approved_migrations;
+ let approved=parse(readFileSync('docs/database/remote-apply-results.json','utf8')).approved_migrations;
+ if(completed){
+  const correction=parse(readFileSync('docs/database/remote-fixes-apply-results.json','utf8'));
+  if(!correction.apply_completed)throw new Error('Correction has not been applied; use baseline verification.');
+  approved=[...approved,...correction.approved_migrations];
+ }
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort().map(file=>({file,sha256:createHash('sha256').update(readFileSync(`supabase/migrations/${file}`)).digest('hex')}));
  for(const old of approved)if(!migrations.some(m=>m.file===old.file&&m.sha256===old.sha256))throw new Error(`Applied migration was changed or removed: ${old.file}`);
- const report={checked_at:new Date().toISOString(),project:{...expected,status:project.status,region:project.region},cli_version:version,remote_mutations:false,applied_migration_hashes_unchanged:true,local_migrations:migrations};
+ const report={checked_at:new Date().toISOString(),comparison_target:completed?'all-12-applied-migrations':'11-migration-baseline',project:{...expected,status:project.status,region:project.region},cli_version:version,remote_mutations:false,applied_migration_hashes_unchanged:true,local_migrations:migrations};
  console.log(`Verified live project: ${project.name}; reading migration history and catalogue.`);
  report.history=query('supabase/review/migration-history.sql','migration_history');
  report.postflight=query('supabase/review/postflight.sql','postflight');
  report.structure=query('supabase/review/structure.sql','structure');
  report.catalogue=query('supabase/review/final-catalogue.sql','catalogue');
- const local=parse(readFileSync('tests/database-baseline-catalogue.json','utf8'));
+ const local=parse(readFileSync(completed?'tests/database-candidate-catalogue.json':'tests/database-baseline-catalogue.json','utf8'));
  report.baseline_comparison={};
  for(const section of ['tables','columns','constraints','indexes','policies','functions','triggers','views','api_privileges','api_roles','schema_access']) {
   const expectedRows=local[section],actualRows=report.catalogue[section];
@@ -60,11 +66,13 @@ try {
   return Array.isArray(value)?`[${value.length} values withheld]`:value===''?'[empty]':'[value withheld]';
  };
  report.config_diff={counts:config.counts,changes:(config.changes||[]).map(c=>{const path=c.path.join('.');return {path,classification:c.class,local:safeValue(path,c.local),remote:safeValue(path,c.remote)};}),masked_setting_names:(config.masked||[]).map(p=>p.join('.')),unmanaged_setting_names:(config.unmanaged||[]).map(p=>p.join('.')),raw_values_saved:false};
- report.history_matches_approved=stable(report.history.map(h=>h.version))===stable(approved.map(m=>m.file.slice(0,14)));
+ report.history_matches_approved=stable(report.history.map(h=>({version:h.version,name:h.name})))===stable(approved.map(m=>({version:m.file.slice(0,14),name:m.file.slice(15,-4)})));
  report.pending_local=migrations.filter(m=>!report.history.some(h=>h.version===m.file.slice(0,14)));
  const args=['db','push',`--remote=${ref}`,'--dry-run','--skip-vault','--output-format','json'];
  report.dry_run={command:`npx supabase ${args.join(' ')}`,result:parse(run(args)),applied:false};
  report.completed_at=new Date().toISOString();
- writeFileSync('docs/database/final-remote-verification.json',scrub(JSON.stringify(report,null,2))+'\n');
+ report.verified=report.history_matches_approved&&Object.values(report.baseline_comparison).every(c=>c.match)&&report.foreign_key_orphans.every(c=>c.orphan_count===0)&&Object.values(report.catalogue.integrity).every(c=>c===0);
+ writeFileSync(completed?'docs/database/phase1-completion-verification.json':'docs/database/final-remote-verification.json',scrub(JSON.stringify(report,null,2))+'\n');
+ if(completed&&(!report.verified||report.pending_local.length||!report.dry_run.result.upToDate))throw new Error('Completion verification failed; inspect saved read-only evidence.');
  console.log(JSON.stringify({history_count:report.history.length,history_matches_approved:report.history_matches_approved,pending:report.pending_local.map(m=>m.file),catalogue_sections:Object.fromEntries(Object.entries(report.baseline_comparison).map(([k,v])=>[k,{match:v.match,remote_count:v.remote_count,differences:v.differences.length}])),counts:report.catalogue.counts,integrity:report.catalogue.integrity,orphan_count:report.foreign_key_orphans.reduce((s,c)=>s+c.orphan_count,0),dry_run:report.dry_run.result}));
 }catch(e){console.error(scrub(e.message));process.exitCode=1;}

@@ -8,6 +8,7 @@ with sync_playwright() as p:
  browser=p.chromium.launch(headless=True)
  for url in ['http://127.0.0.1:5500',(ROOT/'index.html').as_uri()]:
   context=browser.new_context(viewport={'width':1440,'height':900},locale='id-ID',timezone_id='Asia/Jakarta')
+  context.add_init_script("localStorage.setItem('ngekosaja.mode.v3','demo')")
   page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.on('console',lambda m:errors.append(m.text) if m.type=='error' else None)
   page.goto(url);page.wait_for_function('window.NK');page.evaluate('localStorage.clear()');page.reload()
   def route(path):page.evaluate('(p)=>NK.navigate(p)',path);page.wait_for_timeout(90)

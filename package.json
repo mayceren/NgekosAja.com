@@ -1,12 +1,16 @@
 {
   "name": "ngekosaja-database-foundation",
-  "version": "3.0.0-phase.1",
+  "version": "3.0.0-phase.2",
   "private": true,
   "description": "Optional database development tools; the frontend still runs without npm.",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
+    "dev": "node scripts/serve-auth.mjs",
+    "auth:configure": "node scripts/configure-auth.mjs",
+    "auth:repair-test-account": "node scripts/repair-test-account.mjs",
+    "test:auth-repair": "node --test tests/auth-repair.test.mjs",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset:local": "supabase db reset",
@@ -19,5 +23,8 @@
   "devDependencies": {
     "pg": "8.23.1",
     "supabase": "3.2.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.99.3"
   }
 }

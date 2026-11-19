@@ -2463,6 +2463,11 @@
       ],
       "constraints": [
         {
+          "name": "agreement_closed_on_required",
+          "type": "c",
+          "definition": "CHECK ((((status = 'active'::text) AND (closed_on IS NULL)) OR ((status = ANY (ARRAY['checked_out'::text, 'transferred'::text])) AND (closed_on IS NOT NULL) AND ((closed_on >= start_date) AND (closed_on <= (end_date + 1))))))"
+        },
+        {
           "name": "rental_agreements_check",
           "type": "c",
           "definition": "CHECK ((end_date >= start_date))"

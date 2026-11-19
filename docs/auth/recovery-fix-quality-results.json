@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-11-19T03:59:36.505526+00:00",
+  "javascript_syntax_files": 13,
+  "python_syntax_files": 3,
+  "local_document_links": 23,
+  "browser_groups": 33,
+  "browser_javascript_errors": 0,
+  "repair_unit_tests": 14,
+  "offline_cloud_guards": 3,
+  "demo_domain_scenarios": 30,
+  "remote_emails_sent_by_fix": 0,
+  "remote_password_changed_by_fix": false,
+  "account_repair_pending_user_password": true,
+  "schema_changes": false
+}

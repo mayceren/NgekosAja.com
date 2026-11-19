@@ -1,6 +1,6 @@
 # Hasil pemeriksaan Phase 1
 
-**Pembaruan 19 November 2026:** final verification menemukan dua masalah baseline dan menyiapkan migrasi perbaikan yang **belum diterapkan ke Cloud**. Kandidat lulus 52 kelompok tes fresh install dan 54 kelompok tes upgrade. Keputusan kesiapan dan bukti terbaru ada di [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md). Angka 0 pending dan 43 kelompok pada catatan di bawah merupakan hasil historis 18 November.
+**Penutupan 19 November 2026:** dua masalah baseline sudah diperbaiki di Cloud setelah persetujuan pengguna. **12 migrasi applied, 0 pending**, 52 kelompok tes fresh install dan 54 kelompok tes upgrade lulus. **Phase 1 Database Foundation selesai.** Bukti terbaru ada di [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md); JWT/HTTP nyata menjadi pemeriksaan awal integrasi Phase 2. Catatan di bawah merupakan histori sebelum perbaikan.
 
 Pemeriksaan aktual dilakukan pada **18 November 2026** di workspace Windows. Hasil pengujian SQL lokal dan timestamp mesin tersedia di [tests/database-results.json](../../tests/database-results.json). Hasil penerapan dan inspeksi cloud dicatat terpisah di [REMOTE_DEPLOYMENT.md](REMOTE_DEPLOYMENT.md) dan [remote-apply-results.json](remote-apply-results.json).
 

@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-11-19T02:30:05.021Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "scope": "Append six exact development callbacks only; preserve all other hosted settings.",
+  "before": [],
+  "after": [
+    "http://127.0.0.1:5500/index.html?auth_flow=verify",
+    "http://127.0.0.1:5500/index.html?auth_flow=recovery",
+    "http://127.0.0.1:5500/index.html?auth_flow=email-change",
+    "http://localhost:5500/index.html?auth_flow=verify",
+    "http://localhost:5500/index.html?auth_flow=recovery",
+    "http://localhost:5500/index.html?auth_flow=email-change"
+  ],
+  "changes": [
+    {
+      "path": "auth.additional_redirect_urls",
+      "classification": "update"
+    }
+  ],
+  "default_alignment_paths": [
+    "auth.email.enable_confirmations",
+    "auth.email.max_frequency",
+    "auth.email.otp_length",
+    "auth.mfa.totp.enroll_enabled",
+    "auth.mfa.totp.verify_enabled",
+    "auth.site_url",
+    "auth.sms.enable_confirmations",
+    "db.pooler.default_pool_size",
+    "db.pooler.max_client_conn",
+    "storage.vector.enabled"
+  ],
+  "applied": true,
+  "result_summary": {
+    "completed": true
+  },
+  "verified": true,
+  "finished_at": "2026-11-19T02:30:09.284Z"
+}

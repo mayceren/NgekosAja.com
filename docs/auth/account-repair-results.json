@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-11-19T04:05:02.626Z",
+  "project": "ngekosaja-development",
+  "emails_sent": 0,
+  "schema_changes": false,
+  "password_changed": true,
+  "email_confirmed": true,
+  "qa_identity_matches": true,
+  "previous_repair_completed": false,
+  "repaired_at": "2026-11-19T04:06:09.769Z",
+  "status": "repaired-login-not-yet-verified"
+}

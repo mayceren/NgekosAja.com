@@ -7,6 +7,8 @@ N.refresh=message=>{N.closeModal();N.render();if(message)N.toast(message);};
 let cardObserver,revealObserver;
 N.observeCards=()=>{cardObserver?.disconnect();if(!('IntersectionObserver'in window))return;cardObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){N.recordInteraction(entry.target.dataset.propertyId,'views',N.sessionId);cardObserver.unobserve(entry.target);}}),{threshold:.35});document.querySelectorAll('.property-card[data-property-id]').forEach(el=>cardObserver.observe(el));};
 N.render=()=>{
+ if(window.NA?.render?.())return;
+ document.body.dataset.mode='demo';
  const [route,page]=N.route(),s=N.state();
  if(['owner','tenant','admin'].includes(route)&&s.role!==route){N.navigate(['owner','tenant','admin'].includes(s.role)?s.role:'login');N.toast('Halaman disesuaikan dengan peran demo aktif.');return;}
  try{
@@ -170,6 +172,6 @@ document.addEventListener('input',event=>{const el=event.target;if(el.matches('#
 document.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.target.matches('.chart-point'))event.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));const modal=document.querySelector('.modal');if(!modal)return;if(event.key==='Escape'){N.closeModal();return;}if(event.key==='Tab'){const controls=[...modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea')].filter(e=>e.offsetParent!==null),first=controls[0],last=controls.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}}});
 window.addEventListener('hashchange',()=>{N.closeModal();document.body.classList.remove('filter-is-open');N.render();window.scrollTo(0,0);document.getElementById('main')?.focus({preventScroll:true});});
 window.addEventListener('storage',event=>{if(event.key===N.STORAGE_KEY)location.reload();});
-try{N.runRecurring();N.syncReminders();}catch(error){N.storageWarning=error.message;}
-N.render();if(N.storageWarning)N.toast(N.storageWarning,true);if(N.migrated)N.toast('Data versi 1 berhasil dimigrasikan. Salinan lama tetap disimpan.');
+if(!window.NA||NA.mode==='demo'){try{N.runRecurring();N.syncReminders();}catch(error){N.storageWarning=error.message;}}
+N.render();if(window.NA)NA.start().then(()=>N.render());if(N.storageWarning)N.toast(N.storageWarning,true);if(N.migrated&&(!window.NA||NA.mode==='demo'))N.toast('Data versi 1 berhasil dimigrasikan. Salinan lama tetap disimpan.');
 })(window.NK);

@@ -1,6 +1,6 @@
 # Data Dictionary
 
-Snapshot baseline **11 migrasi applied** yang cocok dengan Cloud pada final verification 19 November 2026. CHECK agreement_closed_on_required pada migrasi 12 masih kandidat dan belum termasuk daftar constraint deployed di bawah. Temuan validasi NULL dan izin view dijelaskan di [FINAL_VERIFICATION.md](FINAL_VERIFICATION.md).
+Snapshot **12 migrasi applied**, termasuk CHECK agreement_closed_on_required yang sudah validated di Cloud. Lihat [penutupan Phase 1](PHASE1_COMPLETION.md).
 
 Dihasilkan dari katalog PostgreSQL yang menjalankan seluruh migrasi. Semua nilai uang disimpan sebagai bigint rupiah. Kolom nullable, default, PK/FK, constraint dan index di bawah sesuai database aktual.
 
@@ -724,6 +724,7 @@ Histori sewa/penempatan dengan snapshot harga, tanpa menyalin owner/property yan
 
 Constraint tabel (termasuk CHECK dan FK komposit):
 
+- **agreement_closed_on_required**: `CHECK ((((status = 'active'::text) AND (closed_on IS NULL)) OR ((status = ANY (ARRAY['checked_out'::text, 'transferred'::text])) AND (closed_on IS NOT NULL) AND ((closed_on >= start_date) AND (closed_on <= (end_date + 1))))))`
 - **rental_agreements_check**: `CHECK ((end_date >= start_date))`
 - **rental_agreements_check1**: `CHECK ((((status = 'active'::text) AND (closed_on IS NULL)) OR ((status <> 'active'::text) AND ((closed_on >= start_date) AND (closed_on <= (end_date + 1))))))`
 - **rental_agreements_payment_day_check**: `CHECK (((payment_day >= 1) AND (payment_day <= 28)))`
