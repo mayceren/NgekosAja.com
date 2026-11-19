@@ -8,5 +8,4 @@ A.guard=route=>{
  if(['owner','tenant','admin'].includes(route)&&!A.allowed(route))return 'access-denied';
  return 'allowed';
 };
-A.safeNext=path=>/^(?:owner|tenant|admin|workspace|account)(?:\/(?:settings|profile))?$/.test(path||'')?path:'';
 })(window.NA);

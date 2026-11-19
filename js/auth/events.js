@@ -10,6 +10,10 @@
     }
   }
   async function switchMode(mode) {
+    if (mode === "demo" && A.user) {
+      N.toast("Keluar dari akun terlebih dahulu untuk mencoba demo.");
+      return;
+    }
     N.closeModal();
     document.getElementById("toast-root").replaceChildren();
     A.setMode(mode);
@@ -46,6 +50,7 @@
           else if (action === "logout") {
             el.disabled = true;
             await A.authService.logout();
+            A.nextPath = "";
             A.notice = "Kamu sudah keluar dari akun.";
             N.navigate("login");
             N.render();
@@ -75,7 +80,7 @@
         event.stopImmediatePropagation();
         if (["roles", "guide"].includes(legacy.dataset.action))
           await switchMode("demo");
-        else N.toast("Fitur ini belum terhubung. Coba melalui Demo Mode.");
+        else N.toast(A.user ? "Fitur ini belum terhubung dengan akunmu." : "Fitur ini belum terhubung. Coba melalui Demo Mode.");
       }
     },
     true,
@@ -124,7 +129,7 @@
           A.pendingEmail = data.email;
           if (result.session) {
             await A.resolveIdentity(true);
-            N.navigate(A.defaultPath());
+            N.navigate("");
           } else {
             A.notice =
               "Periksa email untuk melanjutkan. Jika akun sudah ada, gunakan Masuk atau Lupa kata sandi.";
@@ -137,13 +142,8 @@
           });
           await A.resolveIdentity(true);
           A.notice = "";
-          const next = A.nextPath;
           A.nextPath = "";
-          N.navigate(
-            next && A.guard(next.split("/")[0]) === "allowed"
-              ? next
-              : A.defaultPath(),
-          );
+          N.navigate("");
         } else if (kind === "forgot" || kind === "resend") {
           const cooldown = Number(
             A.safeRead(sessionStorage, "ngekosaja.auth.mailCooldown") || 0,

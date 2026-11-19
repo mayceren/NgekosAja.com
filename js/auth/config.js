@@ -9,7 +9,7 @@ A.configError=()=>{
  try{void w.localStorage;void w.sessionStorage;}catch{return 'Browser memblokir penyimpanan sesi. Izinkan penyimpanan situs untuk masuk, atau gunakan Demo Mode.';}
  try{const u=new URL(A.config.supabaseUrl);if(!((u.protocol==='https:'&&u.hostname.endsWith('.supabase.co'))||(u.protocol==='http:'&&['localhost','127.0.0.1'].includes(u.hostname)))||u.username||u.password||u.search||u.hash||u.pathname!=='/')throw Error();}catch{return 'Alamat Supabase belum valid. Periksa config/runtime.js.';}
  if(!/^sb_publishable_[A-Za-z0-9_-]{12,}$/.test(A.config.publishableKey||''))return 'Publishable Key belum tersedia. Isi konfigurasi publik di config/runtime.js atau jalankan npm run auth:configure.';
- if(!/^https?:$/.test(location.protocol))return 'Connected Mode memerlukan HTTP. Buka melalui Live Server atau npm run dev. Demo tetap dapat dibuka langsung.';
+ if(!/^https?:$/.test(location.protocol))return 'Layanan akun memerlukan HTTP. Buka melalui Live Server atau npm run dev. Demo tetap dapat dibuka langsung.';
  if(!w.supabase?.createClient)return 'SDK Supabase belum tersedia. Jalankan npm run auth:configure.';
  return '';
 };

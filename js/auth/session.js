@@ -56,7 +56,7 @@ A.start=async()=>{
   if(data.session)await A.resolveIdentity();
   if(A.initialCallback.present){
    const recovery=A.recoveryUid&&A.user?.id===A.recoveryUid;
-   A.clearCallback();history.replaceState(null,'',location.pathname+location.search+'#/'+(recovery?'reset':A.user?A.defaultPath():'verify'));
+   A.clearCallback();history.replaceState(null,'',location.pathname+location.search+'#/'+(recovery?'reset':A.user?'':'verify'));
    if(A.user&&!recovery)A.notice='Email terverifikasi. Akunmu siap digunakan.';
   }
  }catch(e){

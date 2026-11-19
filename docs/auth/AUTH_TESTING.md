@@ -4,7 +4,7 @@
 
 | Lapisan | Hasil aktual | Bukti |
 | --- | --- | --- |
-| Browser Chromium + SDK resmi, HTTP Auth/PostgREST terkontrol | **33 kelompok lulus**, 0 error JavaScript; termasuk PKCE lintas tab, bukan klaim Cloud | [auth-browser-results.json](../../tests/auth-browser-results.json) |
+| Browser Chromium + SDK resmi, HTTP Auth/PostgREST terkontrol | **45 kelompok lulus**, 0 error JavaScript; termasuk penyederhanaan profil, dashboard sesuai peran dan PKCE lintas tab, bukan klaim Cloud | [auth-browser-results.json](../../tests/auth-browser-results.json) |
 | Pemulihan administratif terbatas | **14 test lulus**, Auth di memori dan terminal terkontrol, tanpa perubahan Cloud | tests/auth-repair.test.mjs; npm run test:auth-repair |
 | Guard QA Cloud | **3 test lulus**, semua koneksi dicegat, tanpa email | [auth-cloud-safety-results.json](../../tests/auth-cloud-safety-results.json) |
 | Chromium + GoTrue/PostgREST Cloud development nyata | **13 kelompok lulus historis**, tetapi handoff akun pengguna gagal; jangan ulangi pada alamat pribadi | [auth-cloud-results.json](../../tests/auth-cloud-results.json) |

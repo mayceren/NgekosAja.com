@@ -14,7 +14,7 @@ Implementasi 19 November 2026 mempertahankan HTML/CSS/Vanilla JavaScript, hash r
 | js/auth/session.js | Bootstrap sebelum router, getUser, pemuatan identitas, callback SDK dan pembatalan hasil request lama |
 | js/auth/profile-service.js | SELECT/UPDATE profil sendiri, whitelist display_name dan phone |
 | js/auth/role-service.js | Role database dan relasi agreement untuk hak penghuni |
-| js/auth/route-guard.js | Guard UI dan whitelist tujuan setelah login |
+| js/auth/route-guard.js | Guard UI untuk halaman privat dan workspace sesuai role |
 | js/auth/errors.js | Pesan aman bahasa Indonesia dan validasi password |
 | js/auth/pages.js, events.js | Halaman Auth/profil/workspace, form state dan pemisahan event demo |
 | css/auth.css | Desain halaman Auth dan workspace terhubung, responsive 390–1440px |
@@ -32,6 +32,10 @@ Pendaftaran mengirim display_name dan signup_intent sebagai metadata informasi. 
 Guard merupakan perlindungan UI; setiap akses data tetap memakai JWT pengguna dan **RLS**. Bahkan jika seseorang mengubah JavaScript/hash/mode di browser, JWT tidak menjadi owner/admin. JWT admin aplikasi juga tidak mempunyai EXECUTE server_grant_role atau pencatat payment. Prinsipnya mengikuti [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
 ## Session dan callback
+
+Sesudah login melalui form, pengguna selalu masuk ke halaman home #/, termasuk ketika form muncul dari URL privat. Halaman sebelum logout atau role workspace tidak mengganti tujuan ini. Pengguna yang sudah masuk dan membuka login/register juga kembali ke home. Menu Dashboard hanya tampil untuk role owner/tenant/admin yang efektif, dengan hak database yang sama. Calon penghuni tidak memerlukan workspace; URL workspace lama kembali ke home. Refresh halaman akun mempertahankan submenu yang sedang dibuka. Callback verifikasi berhasil menuju home, sedangkan recovery terverifikasi tetap menuju reset.
+
+Coba Demo hanya tersedia ketika belum login; navbar, footer, konten publik dan pengaturan akun menghapus aksi tersebut setelah identitas terverifikasi. Handler juga menolak pemicu demo yang tertinggal saat pengguna sudah masuk. Halaman akun memisahkan Informasi Pribadi, Alamat Email, Kata Sandi dan Hak Akses; sidebar akun tidak memuat Beranda/Cari Kos. [Rute dan pemeriksaan navigasi](NAVIGATION.md).
 
 Remember tidak dicentang: sessionStorage; dicentang: localStorage. Preferensi penyimpanan bukan otorisasi. SDK mengelola access/refresh token, refresh otomatis, dan signOut(scope: local). Password tidak disimpan aplikasi. Browser harus mengizinkan penyimpanan situs; sessionStorage bertahan saat reload pada tab yang sama, bukan jaminan browser menghapus session ketika fitur restore-tabs digunakan.
 

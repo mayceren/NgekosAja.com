@@ -28,7 +28,7 @@ A.setRemember=remember=>{
  for(const suffix of ['', '-user']){const name=key+suffix,value=A.safeRead(previous,name);if(previous!==next){if(value&&!A.safeWrite(next,name,value))throw A.fail('Penyimpanan sesi tidak tersedia.');A.safeWrite(previous,name,null);}}
 };
 A.createClient=()=>{
- if(A.mode!=='connected')throw A.fail('Layanan akun sungguhan hanya tersedia pada Connected Mode.');
+ if(A.mode!=='connected')throw A.fail('Keluar dari demo untuk menggunakan layanan akun sungguhan.');
  if(A.client)return A.client;
  const error=A.configError();if(error)throw A.fail(error);
  A.client=window.supabase.createClient(A.config.supabaseUrl,A.config.publishableKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:!A.initialCallback.code,storage:A.authStorage,storageKey:key},global:{headers:{'X-Client-Info':'ngekosaja-phase2'}}});

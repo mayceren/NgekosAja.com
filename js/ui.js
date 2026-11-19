@@ -5,6 +5,9 @@
   N.date = (value, opts) => value ? new Date(value.length === 10 ? value + 'T00:00:00' : value).toLocaleDateString('id-ID', opts || {day:'numeric', month:'short', year:'numeric'}) : '—';
   N.time = value => new Date(value).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
   const icons = {
+    user:'M20 21v-2a7 7 0 0 0-14 0v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
+    mail:'M3 5h18v14H3Zm0 0 9 7 9-7',
+    key:'M21 7a5 5 0 1 1-9.6 2L3 17v4h4v-3h3v-3l3.1-3.1A5 5 0 0 1 21 7ZM17 7h.01',
     sparkles:'m12 2 2.7 7.3L22 12l-7.3 2.7L12 22l-2.7-7.3L2 12l7.3-2.7ZM20 2v4m-2-2h4',
     compare:'M8 3v18M16 3v18M3 7h10M11 17h10', list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01', settings:'M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM9 2h6l1 4 4 1 2 5-2 5-4 1-1 4H9l-1-4-4-1-2-5 2-5 4-1Z', eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0', print:'M6 8V2h12v6M6 17H3V8h18v9h-3M6 14h12v8H6ZM17 11h1', copy:'M8 8h13v13H8ZM16 8V2H2v14h6', archive:'M3 3h18v5H3ZM5 8v13h14V8M9 12h6',
     home:'m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z',

@@ -53,6 +53,7 @@ try:
   page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(type(e).__name__))
   def goto(route):page.goto('http://127.0.0.1:5500/#/'+route);page.wait_for_function('NA.ready',timeout=30000)
   def login(secret,remember=False):
+   if page.evaluate('!!window.NA?.user'):page.evaluate('NA.authService.logout()')
    goto('login');page.locator('[name=email]').fill(EMAIL);page.locator('[name=password]').fill(secret)
    if remember:page.locator('[name=remember]').check()
    page.locator('[type=submit]').click()
@@ -82,7 +83,8 @@ try:
   login(password,True);page.wait_for_function('NA.user && NA.profile',timeout=30000)
   assert page.evaluate('NA.roles.join(",")')=='prospect';assert page.evaluate('NA.defaultPath()')=='workspace'
   assert page.evaluate('NA.profile.id===NA.user.id')
-  passed('Actual login redirects using DB prospect role; owner registration intent grants no owner/admin')
+  expect(page).to_have_url('http://127.0.0.1:5500/#/')
+  passed('Actual login opens home; DB prospect role grants no owner/admin from registration intent')
   page.reload();page.wait_for_function('NA.user && NA.profile',timeout=30000);passed('Real session restored after reload and revalidated through getUser/PostgREST')
   stage='profile-update'
   page.evaluate('NK.navigate("account")');page.locator('#auth-profile-form [name=name]').fill('Pengguna Uji NgekosAja');page.locator('#auth-profile-form [type=submit]').click();expect(page.locator('.notice').first).to_contain_text('server',timeout=20000)

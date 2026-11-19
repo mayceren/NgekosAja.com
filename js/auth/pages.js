@@ -14,28 +14,32 @@
     `<p class="auth-form-error" role="alert" tabindex="-1"></p><p class="auth-form-success" role="status"></p><button class="btn btn-primary btn-full" type="submit">${label}</button>`;
   const form = (name, body) =>
     `<form data-auth-form="${name}" id="auth-${name}-form">${body}</form>`;
-  const modeBadge = () =>
-    '<span class="connected-badge">' +
-    N.icon("shield") +
-    "CONNECTED MODE</span>";
   const action = (text, name, cls = "outline") =>
     `<button type="button" class="btn btn-${cls}" data-auth-action="${name}">${text}</button>`;
+  const hasDashboard = () => ["owner", "tenant", "admin"].some(role => A.allowed(role));
+  const accountSections = [
+    {id: "profile", title: "Informasi Pribadi", icon: "user", description: "Perbarui nama dan nomor kontak yang terhubung dengan akunmu."},
+    {id: "email", title: "Alamat Email", icon: "mail", description: "Kelola alamat email untuk masuk dan menerima konfirmasi akun."},
+    {id: "security", title: "Kata Sandi", icon: "shield", description: "Jaga keamanan akun dengan memperbarui kata sandi secara berkala."},
+    {id: "access", title: "Hak Akses", icon: "key", description: "Lihat akses yang tersedia untuk identitas akunmu."},
+  ];
   A.navbar = (active) =>
     `<header class="public-header"><div class="container nav-inner">${N.logo()}<nav class="public-nav" aria-label="Navigasi utama">${[
       ["", "Beranda"],
       ["marketplace", "Cari Kos"],
       ["fitur", "Fitur"],
       ["tentang", "Tentang"],
+      ...(hasDashboard() ? [[A.defaultPath(), "Dashboard"]] : []),
     ]
       .map(
         ([p, t]) =>
-          `<a href="#/${p}" ${active === p ? 'aria-current="page"' : ""}>${t}</a>`,
+          `<a href="#/${p}" ${active === p || (active === "home" && !p) ? 'aria-current="page"' : ""}>${t}</a>`,
       )
       .join(
         "",
-      )}</nav><div class="nav-actions">${A.user ? `<a class="connected-account-link" href="#/account">${N.avatar(A.profile?.display_name)}<span>${e(A.profile?.display_name)}</span></a><a class="btn btn-primary btn-sm" href="#/${A.defaultPath()}">Workspace</a>` : '<a class="login-btn" href="#/login">Masuk</a><a class="btn btn-primary btn-sm" href="#/register">Daftar</a>'}<button class="demo-pill" data-auth-action="demo">Coba Demo</button><button class="icon-btn mobile-menu" data-auth-action="menu" aria-label="Buka menu navigasi" aria-expanded="false">${N.icon("menu")}</button></div></div></header>`;
+      )}</nav><div class="nav-actions">${A.user ? `<a class="connected-account-link" href="#/account/profile" aria-label="Buka profil akun">${N.avatar(A.profile?.display_name)}<span>${e(A.profile?.display_name)}</span></a><button type="button" class="icon-btn" data-auth-action="logout" aria-label="Keluar dari akun" title="Keluar dari akun">${N.icon("logout")}</button>` : '<a class="login-btn" href="#/login">Masuk</a><a class="btn btn-primary btn-sm" href="#/register">Daftar</a><button class="demo-pill" data-auth-action="demo">Coba Demo</button>'}<button class="icon-btn mobile-menu" data-auth-action="menu" aria-label="Buka menu navigasi" aria-expanded="false">${N.icon("menu")}</button></div></div></header>`;
   A.footer = () =>
-    `<footer class="footer connected-footer"><div class="container"><div>${N.logo()}<p>Cari kos, bayar sewa, kelola semua dalam satu tempat.</p></div><div><a href="#/privacy">Privasi & ketentuan</a><a href="#/help">Bantuan</a><button class="text-btn" data-auth-action="demo">Jelajahi demo terpisah</button></div><small>Connected Mode · Identitas akun tersimpan pada Supabase. Transaksi belum terhubung.</small></div></footer>`;
+    `<footer class="footer connected-footer"><div class="container"><div>${N.logo()}<p>Cari kos, bayar sewa, kelola semua dalam satu tempat.</p></div><div><a href="#/privacy">Privasi & ketentuan</a><a href="#/help">Bantuan</a>${A.user ? "" : '<button class="text-btn" data-auth-action="demo">Jelajahi demo terpisah</button>'}</div><small>© ${new Date().getFullYear()} NgekosAja.com</small></div></footer>`;
   A.authPage = (page) => {
     let title = "Senang bertemu lagi.",
       intro = "Masuk ke akunmu dan lanjutkan cerita yang lebih tertata.",
@@ -134,11 +138,22 @@
         '<a class="auth-forgot" href="#/verify">Email belum diverifikasi?</a>';
     }
     const config = A.configurationError || A.configError();
-    return `<main class="auth-layout auth-connected" id="main" tabindex="-1"><section class="auth-story"><img src="assets/images/room-2.jpg" alt="Kamar nyaman bernuansa natural"><div class="auth-story-overlay"></div>${N.logo()}<div class="auth-story-copy"><span class="eyebrow">RUANG BARU. CERITA BARU.</span><h2>Pulang ke tempat<br>yang terasa <em>seperti rumah.</em></h2><p>Satu identitas, akses yang sesuai, dan urusan kos yang lebih tenang.</p></div><span class="auth-story-foot">NgekosAja.com · Ruang untuk cerita berikutnya.</span></section><section class="auth-form-area"><a class="auth-back text-btn" href="#/">Kembali ke beranda</a><div class="auth-form-wrap">${modeBadge()}<h1>${title}</h1><p>${intro}</p>${config ? `<div class="notice auth-config-warning" role="status">${e(config)}</div>` : ""}${A.notice ? `<div class="notice" role="status">${e(A.notice)}</div>` : ""}${body}<p class="auth-switch">${page === "register" ? 'Sudah punya akun? <a href="#/login">Masuk</a>' : 'Belum punya akun? <a href="#/register">Daftar sekarang</a>'}</p><div class="auth-divider"><span>ingin melihat alurnya dulu?</span></div>${action("Coba demo tanpa akun", "demo")}<small class="auth-disclaimer">Demo memakai data simulasi terpisah. Kata sandi akun sungguhan hanya dikirim ke Supabase Auth.</small></div></section></main>`;
+    return `<main class="auth-layout auth-connected" id="main" tabindex="-1"><section class="auth-story"><img src="assets/images/room-2.jpg" alt="Kamar nyaman bernuansa natural"><div class="auth-story-overlay"></div>${N.logo()}<div class="auth-story-copy"><span class="eyebrow">RUANG BARU. CERITA BARU.</span><h2>Pulang ke tempat<br>yang terasa <em>seperti rumah.</em></h2><p>Satu identitas, akses yang sesuai, dan urusan kos yang lebih tenang.</p></div><span class="auth-story-foot">NgekosAja.com · Ruang untuk cerita berikutnya.</span></section><section class="auth-form-area"><a class="auth-back text-btn" href="#/">Kembali ke beranda</a><div class="auth-form-wrap"><h1>${title}</h1><p>${intro}</p>${config ? `<div class="notice auth-config-warning" role="status">${e(config)}</div>` : ""}${A.notice ? `<div class="notice" role="status">${e(A.notice)}</div>` : ""}${body}<p class="auth-switch">${page === "register" ? 'Sudah punya akun? <a href="#/login">Masuk</a>' : 'Belum punya akun? <a href="#/register">Daftar sekarang</a>'}</p><div class="auth-divider"><span>ingin melihat alurnya dulu?</span></div>${action("Coba demo tanpa akun", "demo")}<small class="auth-disclaimer">Demo memakai data simulasi terpisah. Kata sandi akun sungguhan hanya dikirim ke Supabase Auth.</small></div></section></main>`;
   };
-  A.profilePage = () => {
+  A.profilePage = (section = "profile") => {
     const p = A.profile;
-    return `${N.heading("AKUN / PROFIL", "Ruangmu, identitasmu.", "Profil ini terhubung dengan identitas Supabase milikmu.")}<div class="connected-profile-grid"><aside class="panel connected-profile-card">${N.avatar(p.display_name, "avatar-xl")}<h2>${e(p.display_name)}</h2><p>${e(A.user.email)}</p><div class="connected-roles">${A.roles.map((r) => `<span class="badge">${e(A.roleLabels[r])}</span>`).join("")}</div><p class="field-help">Hak akses berasal dari database. Foto profil tersedia pada Phase 4.</p>${action("Muat ulang akses", "refresh-rights")}${action("Keluar dari akun", "logout")}</aside><div class="connected-profile-forms"><section class="panel"><h2>Informasi pribadi</h2>${form("profile", input("name", "Nama lengkap", "text", 'required maxlength="70" autocomplete="name"', p.display_name) + input("phone", "Nomor kontak", "tel", 'maxlength="18" autocomplete="tel" placeholder="0812 3456 7890"', p.phone || "") + end("Simpan profil"))}</section><section class="panel"><h2>Alamat email</h2><p>Perubahan perlu dikonfirmasi melalui email sesuai kebijakan project. Email lama tetap berlaku sampai proses selesai.</p>${form("email", input("email", "Email baru", "email", 'required autocomplete="email"') + end("Kirim konfirmasi email"))}</section><section class="panel"><h2>Ganti kata sandi</h2>${form("password", password("current", "Kata sandi saat ini", "current-password") + password("password", "Kata sandi baru", "new-password", true) + password("confirmation", "Konfirmasi kata sandi baru") + end("Perbarui kata sandi"))}</section></div></div>`;
+    const current = accountSections.find(item => item.id === section) || accountSections[0];
+    let content;
+    if (current.id === "email") {
+      content = `<section class="panel"><h2>Email untuk masuk</h2><p>Email saat ini: <strong>${e(A.user.email)}</strong>. Alamat lama tetap berlaku sampai perubahan dikonfirmasi melalui email.</p>${form("email", input("email", "Email baru", "email", 'required autocomplete="email"') + end("Kirim konfirmasi email"))}</section>`;
+    } else if (current.id === "security") {
+      content = `<section class="panel"><h2>Ganti kata sandi</h2><p>Masukkan kata sandi saat ini, lalu pilih kata sandi baru yang hanya kamu ketahui.</p>${form("password", password("current", "Kata sandi saat ini", "current-password") + password("password", "Kata sandi baru", "new-password", true) + password("confirmation", "Konfirmasi kata sandi baru") + end("Perbarui kata sandi"))}</section>`;
+    } else if (current.id === "access") {
+      content = `<section class="panel"><h2>Akses akunmu</h2><p>Hak akses mengikuti persetujuan pengelola dan penempatan sewa. Perubahan diperiksa ulang dari akunmu.</p><ul class="connected-access-list">${A.roles.map(role => `<li><span>${N.icon("shield")}${e(A.roleLabels[role])}</span><span class="badge">${A.effectiveRoles.includes(role) ? "Aktif" : "Menunggu penempatan"}</span></li>`).join("")}</ul>${A.roles.includes("tenant") && !A.hasAgreement ? '<p>Akses penghuni memerlukan penempatan sewa yang sah. Hubungi pengelola kos untuk melanjutkan.</p>' : ""}${action("Muat ulang akses", "refresh-rights")}</section>`;
+    } else {
+      content = `<section class="panel"><h2>Identitas dan kontak</h2>${form("profile", input("name", "Nama lengkap", "text", 'required maxlength="70" autocomplete="name"', p.display_name) + input("phone", "Nomor kontak", "tel", 'maxlength="18" autocomplete="tel" placeholder="0812 3456 7890"', p.phone || "") + end("Simpan profil"))}</section>`;
+    }
+    return `${N.heading("AKUN / " + current.title.toUpperCase(), current.title, current.description)}<div class="connected-profile-forms connected-account-content">${content}</div>`;
   };
   A.workspace = (route, page) => {
     const role = ["owner", "tenant", "admin"].includes(route)
@@ -147,21 +162,25 @@
           ? A.defaultPath()
           : "prospect",
       label = A.roleLabels[role];
-    const privateBody =
-      ["account", "settings", "profile"].includes(page) || route === "account"
-        ? A.profilePage()
+    const isAccount = ["account", "settings", "profile"].includes(page) || route === "account";
+    const section = accountSections.find(item => item.id === page) || accountSections[0];
+    const privateBody = isAccount
+        ? A.profilePage(section.id)
         : `${N.heading("WORKSPACE / " + label.toUpperCase(), `Halo, ${e(A.profile.display_name.split(" ")[0])}.`, "Identitas terhubung. Ruang yang tepat untuk langkah berikutnya.")}<section class="panel connected-welcome"><span class="connected-icon">${N.icon(role === "owner" ? "building" : role === "tenant" ? "home" : role === "admin" ? "shield" : "search")}</span><div><span class="eyebrow">${e(label)}</span><h2>${role === "prospect" ? "Akunmu siap untuk menemukan tempat pulang." : "Akses akunmu sudah terverifikasi."}</h2><p>${role === "prospect" ? "Jelajahi listing publik. Ketika penempatan sewa disepakati dengan pemilik, identitas yang sama akan mendapatkan akses penghuni." : "Workspace ini mengikuti hak akses dari database. Profil dan keamanan akun sudah dapat dikelola."}</p><a class="btn btn-primary" href="#/account">Kelola profil</a><a class="btn btn-outline" href="#/marketplace">Jelajahi kos</a></div></section><section class="panel connected-phase"><h2>${page ? "Fitur ini belum terhubung." : "Operasional menyusul di Phase 3."}</h2><p>Properti, tagihan, transaksi, keluhan, dan pesan belum diintegrasikan ke workspace ini. Tidak ada data demo yang ditampilkan sebagai milik akunmu, dan aksi bisnis belum dibuka.</p>${role === "prospect" ? "<p>Butuh akses pemilik? Hubungi administrator platform. Pilihan tujuan registrasi tidak otomatis memberikan hak pemilik.</p>" : ""}${A.roles.includes("tenant") && !A.hasAgreement ? "<p>Role penghuni belum mempunyai relasi sewa. Minta pemilik menghubungkan penempatan yang sah.</p>" : ""}${action("Periksa pembaruan akses", "refresh-rights")}</section>`;
-    return `<div class="dashboard-layout connected-layout"><aside class="sidebar">${N.logo()}<span class="sidebar-workspace">CONNECTED WORKSPACE</span><nav aria-label="Workspace"><a href="#/${A.defaultPath()}">${N.icon("home")}Beranda</a>${A.effectiveRoles
+    const workspaceLinks = isAccount ? "" : `<a href="#/${A.defaultPath()}" aria-current="page">${N.icon("grid")}Ringkasan Workspace</a>${A.effectiveRoles
       .filter((r) => r !== "prospect")
       .map((r) => `<a href="#/${r}">${N.icon("grid")}${e(A.roleLabels[r])}</a>`)
       .join(
         "",
-      )}<a href="#/account">${N.icon("settings")}Profil & keamanan</a><a href="#/marketplace">${N.icon("search")}Cari kos</a></nav><div class="connected-sidebar-bottom">${modeBadge()}${action("Keluar", "logout")}</div></aside><div class="dashboard-area"><header class="dashboard-header"><div class="breadcrumb">Workspace ${N.icon("chevron")} ${e(label)}</div><div class="dashboard-header-actions">${modeBadge()}<a href="#/account" aria-label="Buka profil">${N.avatar(A.profile.display_name)}</a>${action("Coba demo", "demo")}</div></header><main class="dashboard-main" id="main" tabindex="-1">${A.notice ? `<div class="notice" role="status">${e(A.notice)}</div>` : ""}${privateBody}</main><footer class="dashboard-footnote">Connected Mode · Profil tersimpan pada server · Modul bisnis menyusul di Phase 3.</footer></div></div>`;
+      )}`;
+    const accountLinks = accountSections.map(item => `<a href="#/account/${item.id}" ${isAccount && section.id === item.id ? 'aria-current="page"' : ""}>${N.icon(item.icon)}${item.title}</a>`).join("");
+    const shell = `<div class="dashboard-layout connected-layout${isAccount ? " connected-account-layout" : ""}"><aside class="sidebar">${isAccount ? "" : N.logo()}<span class="sidebar-workspace">${isAccount ? "PENGATURAN AKUN" : "WORKSPACE KOS"}</span><nav aria-label="${isAccount ? "Pengaturan akun" : "Workspace"}">${workspaceLinks}${accountLinks}</nav>${isAccount ? "" : `<div class="connected-sidebar-bottom">${action("Keluar", "logout")}</div>`}</aside><div class="dashboard-area">${isAccount ? "" : `<header class="dashboard-header"><div class="breadcrumb">Workspace ${N.icon("chevron")} ${e(label)}</div><div class="dashboard-header-actions"><a href="#/account/profile" aria-label="Buka profil">${N.avatar(A.profile.display_name)}</a></div></header>`}<main class="dashboard-main" id="main" tabindex="-1">${A.notice ? `<div class="notice" role="status">${e(A.notice)}</div>` : ""}${privateBody}</main><footer class="dashboard-footnote">${isAccount ? "Pengaturan akun · Perubahan profil tersimpan pada akunmu." : "NgekosAja.com · Ruang untuk cerita berikutnya."}</footer></div></div>`;
+    return isAccount ? A.navbar() + shell : shell;
   };
   A.denied = () =>
-    `${A.navbar()}<main id="main" class="container section connected-denied"><span class="connected-icon">${N.icon("shield")}</span><span class="eyebrow">AKSES DIBATASI</span><h1>Ruang ini punya akses tersendiri.</h1><p>Akunmu tidak mempunyai hak untuk membuka workspace ini. Mengganti tautan atau peran demo tidak mengubah hak akses database.</p><a class="btn btn-primary" href="#/${A.defaultPath()}">Ke workspace saya</a><a class="btn btn-outline" href="#/account">Lihat profil</a></main>${A.footer()}`;
+    `${A.navbar()}<main id="main" class="container section connected-denied"><span class="connected-icon">${N.icon("shield")}</span><span class="eyebrow">AKSES DIBATASI</span><h1>Ruang ini punya akses tersendiri.</h1><p>Akunmu tidak mempunyai hak untuk membuka dashboard ini. Hak akses mengikuti peran akunmu.</p><a class="btn btn-primary" href="#/${hasDashboard() ? A.defaultPath() : ""}">${hasDashboard() ? "Buka Dashboard" : "Kembali ke Beranda"}</a><a class="btn btn-outline" href="#/account">Lihat profil</a></main>${A.footer()}`;
   A.publicNotice = (title, description) =>
-    `${A.navbar()}<main id="main" class="container section connected-denied"><span class="eyebrow">CONNECTED MODE</span><h1>${title}</h1><p>${description}</p><a class="btn btn-primary" href="#/marketplace">Jelajahi kos</a></main>${A.footer()}`;
+    `${A.navbar()}<main id="main" class="container section connected-denied"><span class="eyebrow">PUSAT INFORMASI</span><h1>${title}</h1><p>${description}</p><a class="btn btn-primary" href="#/marketplace">Jelajahi kos</a></main>${A.footer()}`;
   // Preserve the existing marketing composition and styling, without demo recommendations.
   A.home = () => {
     const template = document.createElement("template");
@@ -173,16 +192,22 @@
     if (grid) grid.innerHTML = A.listingsMarkup(true);
     const proof = template.content.querySelector(".hero-proof small");
     if (proof)
-      proof.textContent =
-        "Identitas terhubung. Demo tersedia sebagai ruang terpisah.";
+      proof.textContent = A.user
+        ? "Akunmu terhubung. Temukan ruang untuk cerita berikutnya."
+        : "Identitas terhubung. Demo tersedia sebagai ruang terpisah.";
     const counter = template.content.querySelector(".photo-editorial-number");
     if (counter) counter.textContent = "RUANG UNTUK CERITA BARU";
     template.content
       .querySelectorAll('[data-action="roles"]')
       .forEach((node) => {
+        if (A.user) {node.remove();return;}
         node.removeAttribute("data-action");
         node.dataset.authAction = "demo";
       });
+    if (A.user) template.content.querySelectorAll('a[href="#/register"]').forEach(node => {
+      node.setAttribute("href", "#/" + (hasDashboard() ? A.defaultPath() : "account/profile"));
+      node.textContent = hasDashboard() ? "Buka Dashboard" : "Kelola Akun";
+    });
     const faqs = template.content.querySelector(".faq-section>div:last-child");
     if (faqs)
       faqs.innerHTML = [
@@ -192,7 +217,7 @@
         ],
         [
           "Apakah pencarian kos memerlukan akun?",
-          "Katalog dan detail listing yang dipublikasikan dapat dibaca tanpa login. Connected Mode hanya menampilkan listing dari database.",
+          "Katalog dan detail listing yang dipublikasikan dapat dibaca tanpa login. Katalog menampilkan kos yang sudah dipublikasikan oleh pengelola.",
         ],
         [
           "Bagaimana memperoleh akses pemilik atau penghuni?",
@@ -228,8 +253,8 @@
     if (A.configurationError || A.configError())
       return N.empty(
         "Katalog belum terhubung.",
-        "Connected Mode memerlukan konfigurasi dan koneksi Supabase. Kamu tetap bisa mencoba data ilustrasi melalui Demo Mode.",
-        action("Jelajahi demo", "demo"),
+        A.user ? "Katalog belum tersedia. Periksa koneksi lalu muat ulang halaman." : "Katalog belum dapat dimuat. Periksa koneksi internetmu. Kamu tetap bisa mencoba data ilustrasi melalui Demo Mode.",
+        A.user ? "" : action("Jelajahi demo", "demo"),
       );
     if (A.catalogueError)
       return N.empty(
@@ -247,12 +272,12 @@
       ? (short ? listings.slice(0, 3) : listings).map(A.listingCard).join("")
       : N.empty(
           "Belum ada kos yang dipublikasikan.",
-          "Listing Connected Mode dibaca dari database. Jelajahi data ilustrasi melalui Coba Demo.",
+          "Kos yang sudah dipublikasikan oleh pengelola akan tampil di sini.",
           action("Lihat demo marketplace", "demo"),
         );
   };
   A.marketplace = () =>
-    `${A.navbar("marketplace")}<main id="main" class="container section"><div class="marketplace-banner"><div><span class="eyebrow">PILIHAN DARI KATALOG PUBLIK</span><h1>Kos yang pas, <em>rasanya beda.</em></h1><p>Listing yang dipublikasikan di Supabase, tanpa data demo.</p></div>${modeBadge()}</div>${form("search", input("query", "Cari nama atau lokasi", "search", 'placeholder="Coba Grogol"', A.search || "") + '<button class="btn btn-primary" type="submit">Cari kos</button>')}<div class="property-grid connected-listings">${A.listingsMarkup(false)}</div></main>${A.footer()}`;
+    `${A.navbar("marketplace")}<main id="main" class="container section"><div class="marketplace-banner"><div><span class="eyebrow">PILIHAN DARI KATALOG PUBLIK</span><h1>Kos yang pas, <em>rasanya beda.</em></h1><p>Temukan pilihan kos berdasarkan nama dan lokasi.</p></div></div>${form("search", input("query", "Cari nama atau lokasi", "search", 'placeholder="Coba Grogol"', A.search || "") + '<button class="btn btn-primary" type="submit">Cari kos</button>')}<div class="property-grid connected-listings">${A.listingsMarkup(false)}</div></main>${A.footer()}`;
   A.detail = (id) => {
     const p = A.catalogue?.find((p) => p.id === id);
     if (!p)
@@ -303,8 +328,15 @@
     let [route, page] = A.route();
     const guard = A.guard(route);
     if (["login", "session-expired"].includes(guard)) {
-      A.nextPath = A.safeNext([route, page].filter(Boolean).join("/"));
       route = guard;
+    }
+    if (A.user && ["login", "register"].includes(route)) {
+      N.navigate("");
+      return true;
+    }
+    if (A.user && route === "workspace") {
+      N.navigate(["profile", "settings"].includes(page) ? "account/profile" : hasDashboard() ? A.defaultPath() : "");
+      return true;
     }
     if (guard === "access-denied") route = "access-denied";
     let body;
@@ -333,12 +365,12 @@
       const notice = template.content.querySelector(".notice");
       if (notice)
         notice.textContent =
-          "Identitas dan profil Connected Mode sudah terhubung. Operasional bisnis menyusul di Phase 3; coba alurnya melalui Demo Mode. Tidak ada pembayaran nyata.";
+          "Akun dan profil sudah dapat digunakan. Fitur pengelolaan kos lainnya sedang disiapkan. Tidak ada pembayaran nyata pada prototype ini.";
       body = template.innerHTML;
     } else if (route === "privacy")
       body = A.publicNotice(
         "Privasi dimulai dari kendali.",
-        "Connected Mode mengirim email, kata sandi, dan profil ke Supabase. Email dan kata sandi dikelola Supabase Auth; nama dan kontak disimpan di profil dengan RLS. Tujuan pendaftaran tidak memberi hak akses. Data demo tersimpan terpisah di browser. Tidak ada pembayaran nyata. Untuk perubahan atau penghapusan akun, hubungi administrator platform.",
+        "Pendaftaran mengirim email, kata sandi, dan profil ke Supabase. Email dan kata sandi dikelola Supabase Auth; nama dan kontak disimpan di profil dengan RLS. Tujuan pendaftaran tidak memberi hak akses. Data demo tersimpan terpisah di browser. Tidak ada pembayaran nyata. Untuk perubahan atau penghapusan akun, hubungi administrator platform.",
       );
     else if (route === "help")
       body = A.publicNotice(
@@ -348,10 +380,12 @@
     else
       body = A.publicNotice(
         "Ruang ini belum terhubung.",
-        "Fitur bisnis akan diintegrasikan pada Phase 3. Tidak ada perubahan yang disimpan ke data demo dari Connected Mode.",
+        "Fitur bisnis akan diintegrasikan pada Phase 3. Data akun dan data ilustrasi demo tersimpan secara terpisah.",
       );
     root.innerHTML = body;
-    document.title = `${route === "login" ? "Masuk" : route === "register" ? "Daftar" : route === "account" ? "Profil & keamanan" : "Ruang terhubung"} · NgekosAja.com`;
+    if (A.user) root.querySelectorAll('[data-auth-action="demo"],[data-action="roles"],[data-action="guide"],.auth-divider').forEach(node => node.remove());
+    const accountTitle = (accountSections.find(item => item.id === page) || accountSections[0]).title;
+    document.title = `${route === "login" ? "Masuk" : route === "register" ? "Daftar" : route === "account" ? accountTitle : !route ? "Beranda" : "Ruang terhubung"} · NgekosAja.com`;
     if (["", "marketplace", "property"].includes(route) && !A.configError())
       A.fetchListings();
     return true;
