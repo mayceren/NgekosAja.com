@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-11-19T16:49:40.265Z",
+  "script_syntax_passed": 4,
+  "documentation_links_checked": 64,
+  "cloud_postflight_checks_passed": 33,
+  "migration_fingerprint_unchanged": true,
+  "remote_mutations": false
+}

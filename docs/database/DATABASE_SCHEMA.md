@@ -2,6 +2,8 @@
 
 Fondasi database terpisah dari frontend versi 2. `index.html`, CSS, JavaScript, navigasi hash, dan LocalStorage tidak diintegrasikan atau diubah pada Phase 1. Setelah persetujuan pengguna, **12 migrasi** dan seed master telah diterapkan ke Supabase development; hasil terkini tersedia di [PHASE1_COMPLETION.md](PHASE1_COMPLETION.md). Tidak ada git push atau reset remote.
 
+Tambahan Phase 4 applied tersedia di [schema media](../storage/DATABASE_EXTENSION.md) dan [postflight Cloud aktual](../phase4/cloud-postflight-results.json). [Preflight](../phase4/cloud-preflight-results.json) tetap merekam kondisi sebelum approval. Bagian Phase 1 di bawah adalah baseline historis.
+
 Skema aktual terdiri dari **31 tabel aplikasi**, **236 kolom**, **48 foreign key**, **45 policy RLS**, satu view security-invoker, dan 24 fungsi public dengan izin EXECUTE eksplisit. Inventaris mesin: [schema-catalogue.json](schema-catalogue.json). Rincian kolom, constraint dan index: [DATA_DICTIONARY.md](DATA_DICTIONARY.md). Diagram seluruh relasi: [ERD.md](ERD.md).
 
 ## Tabel yang dibuat

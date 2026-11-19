@@ -1,0 +1,13 @@
+# Storage architecture
+
+Migration `20261119000300_realtime_storage.sql` has been applied to Supabase development after approval. [Cloud postflight](../phase4/cloud-postflight-results.json) confirms five **private** buckets: property-images, room-images, avatars, complaint-attachments, chat-attachments. Limits are 512,000 bytes for avatars and 1,048,576 for others; allowed MIME types are JPEG, PNG and WebP. Actual authenticated upload/signing E2E remains pending. Conflicting bucket configurations cause migration failure for review, rather than silently overriding privacy/limits.
+
+`NP` media service uses the singleton SDK. An authenticated RPC first creates a self-owned staging record tied to a database-authorized resource. The server generates `{scope_uuid}/{file_uuid}.{webp|png|jpg}`. Original filenames and owner names are never used. Property scope is property ID, room scope room ID, avatar scope own user ID, chat scope conversation ID, complaint scope active agreement ID (allows selecting photos before the complaint exists).
+
+Gallery/avatar metadata uses `cloud:<bucket>/<object_path>`; historic complaint/message tables retain their existing path-only fields with bucket determined by table. No Base64 or signed URLs are stored in PostgreSQL. Existing safe local illustration references continue to work. Signed URLs are only cached in memory, partitioned by identity, capped to 200 references; TTL is 60 s for property images, 300 s for other images. Client verifies the returned Storage URL's origin/path. Failed photos use the existing local fallback and can be retried in the viewer.
+
+New tables are `media_uploads` (staging, ownership, exact metadata, finalization/reference state) and `room_images` (ordered max-four gallery). Existing profiles gain nullable `avatar_path`; messages gain nullable `client_key` and a sender/key unique index. New RPCs stage/finalize uploads, set the current avatar, create complaint+attachment records atomically, send message+attachment records idempotently and project participant avatars only to legitimate conversation members.
+
+Property/room save RPCs retain the preserved Phase 3 implementations privately and extend them with transactional cloud-reference validation. The previous 13 migration files remain unchanged. Financial functions, role assignment, user accounts and passwords are not changed. See [schema extension](DATABASE_EXTENSION.md) and [file lifecycle](FILE_LIFECYCLE.md).
+
+No image transformation subscription or external storage service is required. Canvas handles compression in the browser. References: [Supabase private buckets](https://supabase.com/docs/guides/storage/buckets/fundamentals), [Storage access control](https://supabase.com/docs/guides/storage/security/access-control).

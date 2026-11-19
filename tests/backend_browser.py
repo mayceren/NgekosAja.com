@@ -6,7 +6,7 @@ from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 from playwright.sync_api import sync_playwright, expect
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'tests/backend'; OUT.mkdir(exist_ok=True)
+OUT=Path(os.environ.get('NGEKOSAJA_TEST_OUTPUT',str(ROOT/'tests/backend'))); OUT.mkdir(parents=True,exist_ok=True)
 ORIGIN=os.environ.get('NGEKOSAJA_TEST_ORIGIN','http://127.0.0.1:5501')
 UID='11111111-1111-4111-8111-111111111111'; PID='22222222-2222-4222-8222-222222222222'; RID='33333333-3333-4333-8333-333333333333'; AID='44444444-4444-4444-8444-444444444444'; IID='55555555-5555-4555-8555-555555555555'; CID='66666666-6666-4666-8666-666666666666'; TID='77777777-7777-4777-8777-777777777777'; MID='88888888-8888-4888-8888-888888888888'
 PW=secrets.token_urlsafe(24)+'Q1!'; rights=['prospect','owner']; errors=[]; passed=[]; calls=[]; unavailable=False

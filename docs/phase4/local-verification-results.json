@@ -1,0 +1,73 @@
+{
+  "executed_at": "2026-11-19T16:25:31.970Z",
+  "remote_mutations": false,
+  "checks": {
+    "syntax": {
+      "files": 37,
+      "passed": true
+    },
+    "unit": {
+      "passed": 55,
+      "failed": 0
+    },
+    "demo_domain": {
+      "passed": 30
+    },
+    "applied_migrations": {
+      "unchanged": 13
+    },
+    "historical_evidence": {
+      "unchanged": 4
+    },
+    "frontend_credentials": {
+      "findings": 0
+    },
+    "html_assets": {
+      "passed": true
+    },
+    "documentation_links": {
+      "passed": true
+    },
+    "gitignore": {
+      "protected_paths": 6
+    },
+    "sql_upgrade": {
+      "passed": 98,
+      "failed": 0,
+      "evidence": "tests/phase4-upgrade-results.json"
+    },
+    "sql_fresh": {
+      "passed": 15,
+      "failed": 0,
+      "evidence": "tests/phase4-fresh-results.json"
+    },
+    "phase4_browser": {
+      "passed": 18,
+      "failed": 0,
+      "evidence": "tests/phase4/browser/results.json"
+    },
+    "backend_browser": {
+      "passed": 30,
+      "failed": 0,
+      "evidence": "tests/phase4/regression-backend/results.json"
+    },
+    "auth_browser": {
+      "passed": 51,
+      "failed": 0,
+      "evidence": "tests/phase4/regression-auth/auth-browser-results.json"
+    },
+    "demo_browser": {
+      "passed": 11,
+      "failed": 0,
+      "evidence": "tests/phase4/regression-demo/browser-results.json"
+    }
+  },
+  "limitations": [
+    "Unit/mock/native SQL results do not prove Cloud JWT/WebSocket/Storage service behavior."
+  ],
+  "migration": {
+    "file": "20261119000300_realtime_storage.sql",
+    "sha256": "876429b3e8d8e5feb9baf0ffbe329634a33792d83a0c044c4936dd2ae1738263"
+  },
+  "success": true
+}

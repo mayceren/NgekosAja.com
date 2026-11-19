@@ -1,5 +1,7 @@
 # Entity Relationship Diagram
 
+Tambahan Phase 4 sudah applied dan terverifikasi schema Cloud: [ERD dan dictionary media](../storage/DATABASE_EXTENSION.md). Diagram baseline di bawah tetap merekam Phase 1 applied.
+
 Snapshot **12 migrasi applied** yang dicocokkan dengan Cloud pada 19 November 2026. Lihat [penutupan Phase 1](PHASE1_COMPLETION.md).
 
 Dihasilkan dari PK/FK dan kolom database aktual. `auth_users` mewakili tabel Supabase Auth eksternal; hanya ID yang ditampilkan. Hubungan audit entity_id sengaja tidak mempunyai FK.

@@ -23,7 +23,12 @@
     "test:frontend": "node tests/domain.cjs",
     "test:database-tooling": "node --test tests/database-tooling.test.mjs",
     "test:backend": "node --test tests/backend-core.test.mjs",
-    "backend:review": "node scripts/backend-remote-review.mjs"
+    "backend:review": "node scripts/backend-remote-review.mjs",
+    "phase4:review": "node scripts/phase4-review.mjs",
+    "phase4:verify-remote": "node scripts/verify-phase4-remote.mjs",
+    "phase4:plan": "node scripts/phase4-dry-run.mjs",
+    "test:phase4": "node --test tests/live-core.test.mjs",
+    "test:phase4-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --output=tests/phase4-upgrade-results.json"
   },
   "devDependencies": {
     "pg": "8.23.1",

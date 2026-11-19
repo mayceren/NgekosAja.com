@@ -1,0 +1,64 @@
+{
+  "engine": "PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit",
+  "mode": "native-postgresql-auth-contract-adapter",
+  "migrations": [
+    "20261118000100_foundation_identity.sql",
+    "20261118000200_properties_rooms.sql",
+    "20261118000300_tenants_agreements.sql",
+    "20261118000400_finance_promotions.sql",
+    "20261118000500_complaints.sql",
+    "20261118000600_messaging_personal_data.sql",
+    "20261118000700_atomic_business_operations.sql",
+    "20261118000800_complaint_chat_notifications.sql",
+    "20261118000900_public_catalogue_reports.sql",
+    "20261118001000_rls_and_audit.sql",
+    "20261118001100_integrity_hardening.sql",
+    "20261119000100_final_verification_fixes.sql",
+    "20261119000200_backend_integration.sql",
+    "20261119000300_realtime_storage.sql"
+  ],
+  "passed": [
+    "Phase 4: 34 application tables use RLS; five private MIME/size-limited buckets",
+    "Phase 4: upload staging rejects cross-owner, cross-tenant, invalid MIME/size/scope",
+    "Phase 4: object INSERT needs exact self-owned staging; UPDATE/upsert denied",
+    "Phase 4: unfinalized upload not publicly readable; property finalization atomic",
+    "Phase 4: draft/archived property removes anonymous access; retained owner access",
+    "Phase 4: finalized object cannot be removed or overwritten; arbitrary metadata cannot be inserted",
+    "Phase 4: room gallery scoped, maximum 4 and atomic rollback on invalid photo",
+    "Phase 4: avatar self RPC and storage isolation; direct profile avatar assignment denied",
+    "Phase 4: image-only chat finalizes metadata atomically and retry returns same message",
+    "Phase 4: non-member cannot send, read attachment, read staging or forge read cursor",
+    "Phase 4: concurrent retries on two connections create exactly one persisted message",
+    "Phase 4: uncertain commit cleanup sees in-use and cannot delete referenced messages",
+    "Phase 4: invalid uploaded metadata rolls back message and notifications, permits safe staged cleanup",
+    "Phase 4: complaint creation plus attachments is atomic and owner-scoped",
+    "Phase 4: private helpers inaccessible; no DELETE publication or replica identity FULL"
+  ],
+  "failed": [],
+  "limitations": [
+    "GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter.",
+    "Storage schema/objects and JWT claims are native SQL adapters; Cloud Storage upload/signing/WebSocket delivery are not verified."
+  ],
+  "phase4_catalogue": {
+    "foreign_keys": 58,
+    "rls_disabled": 0,
+    "public_policies": 48,
+    "unsafe_definers": 0,
+    "public_functions": 37,
+    "published_tables": [
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms"
+    ],
+    "storage_policies": 3,
+    "application_tables": 34
+  },
+  "executed_at": "2026-11-19T16:23:48.616Z"
+}

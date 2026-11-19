@@ -1,5 +1,7 @@
 # NgekosAja.com
 
+Phase 4 menambahkan Realtime dan Cloud Storage pada frontend existing. **Migration 14 telah diterapkan setelah persetujuan dan lulus postflight Cloud; pengujian realtime/upload antar-akun masih perlu diselesaikan.** Lihat [status](docs/phase4/PHASE4_COMPLETION.md), [setup](docs/phase4/SETUP_GUIDE.md), [pengujian](docs/phase4/TESTING.md), [Realtime](docs/realtime/REALTIME_ARCHITECTURE.md), dan [Storage](docs/storage/STORAGE_ARCHITECTURE.md). Tidak ada reset, perubahan akun/password atau git push.
+
 **Cari Kos, Bayar Sewa, Kelola Semua dalam Satu Tempat.**
 
 ## Product Overview
@@ -15,7 +17,7 @@ Produk menggabungkan **Property Marketplace**, **Integrated Rental Payment**, da
 | Area | Akun terhubung | Demo Produk |
 | --- | --- | --- |
 | Authentication | Supabase Auth, session persistence, profil, pemulihan password, role database, protected routes | Profil dan peran contoh tanpa password |
-| Marketplace | Katalog aman, filter/sort/range, grid/list, galeri, favorit, perbandingan dan recent searches; katalog Cloud saat review kosong | 16 listing ilustrasi, filter gabungan, sort, favorit, perbandingan dan galeri |
+| Marketplace | Katalog aman, filter/sort/range, grid/list, galeri, favorit, perbandingan dan recent searches; katalog published dari PostgreSQL | 16 listing ilustrasi, filter gabungan, sort, favorit, perbandingan dan galeri |
 | Property Management | UI/services/RPC tersedia dan migration Cloud diterapkan; uji bisnis multi-akun Cloud belum selesai | Properti/kamar, check-in/check-out, penghuni, tagihan, jadwal dan laporan |
 | Rental Payment | Payment gateway belum diintegrasikan | Checkout berhasil/gagal, admin Rp2.000, bukti cetak, reminder H-3, pencegahan pembayaran ganda |
 | Maintenance & Chat | Keluhan/timeline/analisis/notifikasi via API dan direktori chat sudah tersedia; QA Cloud bisnis belum dijalankan | Tracking keluhan, konfirmasi penghuni, analisis aturan teks, lampiran dan chat lokal |

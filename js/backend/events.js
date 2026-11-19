@@ -14,7 +14,7 @@
    if(action==='refresh'){reload();return;}
    if(action==='page'){const params=B.params();params.set('page',id);location.hash=location.hash.split('?')[0]+'?'+params;return;}
    if(action==='discovery'){const params=new URLSearchParams();if(id==='Putri')params.set('gender','female');else if(id==='budget')params.set('max','1500000');else if(['AC','Furnitur'].includes(id))params.set('facility',id);else params.set('query',id);N.navigate('marketplace?'+params);return;}
-   if(action==='image'){B.modal('Galeri kos',`<img class="b-modal-image" style="max-width:100%" src="${N.e(B.image(id))}" alt="Ilustrasi kamar">`);return;}
+   if(action==='image'){if(window.NP?.ref(id)){await window.NP.viewer(id);return;}B.modal('Galeri kos',`<img class="b-modal-image" style="max-width:100%" src="${N.e(B.image(id))}" alt="Ilustrasi kamar">`);return;}
    requireUser();
    if(action==='compare'||action==='uncompare'){
     let ids=B.selection||[];if(action==='uncompare')ids=ids.filter(i=>i!==id);else if(!ids.includes(id)){if(ids.length===3)throw B.fail('Pilih maksimal tiga kos untuk dibandingkan.');ids.push(id);}B.selection=ids;N.navigate('compare?ids='+ids.join(','));return;
@@ -41,7 +41,7 @@
    }else if(action==='delete-property-confirm'){await S.property.remove(id);N.closeModal();reload();N.toast('Properti dihapus.');}
    else if(action==='delete-room-confirm'){await S.room.remove(id);N.closeModal();reload();N.toast('Kamar dihapus.');}
    else if(action==='preview'){
-    const rows=await S.property.list({filters:{id}}),p=rows[0];if(!p)throw B.fail('Properti tidak tersedia.');B.modal('Preview properti',`<h2>${N.e(p.name)}</h2><p>${N.e(p.address)}</p><p class="b-preserve">${N.e(p.description)}</p><strong>${B.money(p.base_rent)}</strong>${B.badge(p.publication_status)}`);
+    const rows=await S.property.list({filters:{id},select:'*,property_images(image_path,alt_text,position)'}),p=rows[0];if(!p)throw B.fail('Properti tidak tersedia.');B.modal('Preview properti',`<h2>${N.e(p.name)}</h2><div class="p4-attachments">${(p.property_images||[]).sort((a,b)=>a.position-b.position).map(i=>window.NP?.thumb(i.image_path)||'').join('')}</div><p>${N.e(p.address)}</p><p class="b-preserve">${N.e(p.description)}</p><strong>${B.money(p.base_rent)}</strong>${B.badge(p.publication_status)}`);window.NP?.hydrate(document.getElementById('modal-root'));
    }else if(action==='checkout-tenant'){B.modal('Check-out penghuni',B.form('close-agreement',B.hidden('id',id)+B.input('date','Tanggal check-out',B.today(),'date','required')+'<p>Histori sewa dan tagihan tetap disimpan. Jadwal tagihan berulang akan dinonaktifkan.</p>','Konfirmasi check-out'));}
    else if(action==='review-offer'){
     const rows=await S.agreement.offers({filters:{id,tenant_id:A.user.id}}),o=rows[0];if(!o||o.status!=='pending')throw B.fail('Penawaran tidak tersedia.');
@@ -56,7 +56,7 @@
     await S.notification.read(id);let route=n.route.replace(/^#\//,'');if(route==='complaints')route=A.allowed('owner')?'owner/complaints':'tenant/complaints';if(route==='owner/bills')route='owner/payments';if(!/^(owner|tenant|chat|offers|notifications)(\/[^?#]*)?(\?[^#]*)?$/.test(route))route='notifications';N.navigate(route);reload();
    }else if(action==='read-all'){await S.notification.all();reload();}
    else if(action==='read-chat'){await S.chat.read(id);reload();}
-   else if(action==='quick-reply'){const input=document.querySelector('form[data-backend-form="message"] textarea');if(input){input.value=id;input.focus();}}
+   else if(action==='quick-reply'){const input=document.querySelector('form[data-backend-form="message"] textarea,form[data-p4-form="message"] textarea');if(input){input.value=id;input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}}
    else if(action==='save-analysis'){
     const c=B.currentComplaint,a=B.analysis;if(!c||c.id!==id||!a)throw B.fail('Buka kembali laporan untuk membaca analisis.');
     await S.complaint.analyze({complaint_id:id,rule_version:'local-keywords-v2',suggested_category:a.category,suggested_priority:{Rendah:'low',Sedang:'medium',Tinggi:'high',Mendesak:'urgent'}[a.priority],summary:a.summary,safe_action:a.action,emergency:a.emergency});N.toast('Rekomendasi tersimpan. Keputusan penanganan tetap pada pengelola.');
@@ -83,9 +83,11 @@
     document.querySelectorAll('[data-b-search-list] tbody tr').forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase('id').includes(d.query.toLocaleLowerCase('id')));return;
    }
    requireUser();
+   const mediaHandled=await window.NP?.beforeForm?.(kind,form,d);
+   if(mediaHandled){N.closeModal();reload();N.toast('Laporan dan lampiran tersimpan.');return;}
    if(kind==='property'){
     B.integer(d.base_rent);const lines=name=>d[name].split('\n').map(v=>v.trim()).filter(Boolean);
-    const images=lines('images').map(path=>{if(B.image(path)!==path)throw B.fail('Gunakan path aset ilustrasi lokal yang diizinkan.');return {path,alt:d.name};});
+    const images=lines('images').map(path=>{if(B.image(path)!==path&&!window.NP?.ref(path))throw B.fail('Gunakan foto unggahan atau ilustrasi yang diizinkan.');return {path,alt:d.name};});
     const landmarks=lines('landmarks').map(line=>{const [name,distance]=line.split('|').map(v=>v.trim());if(!name||!distance)throw B.fail('Area sekitar memakai format nama | jarak.');return {name,distance};});
     await S.property.save({...d,facilities:fd.getAll('facilities'),rules:lines('rules'),images,landmarks});
    }else if(kind==='room'){B.integer(d.rent);await S.room.save({...d,facilities:fd.getAll('facilities')});}

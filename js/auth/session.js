@@ -19,7 +19,7 @@ A.resolveIdentity=async(force=false)=>{
  resolving=task;try{return await task;}finally{if(resolving===task)resolving=null;}
 };
 A.dispose=()=>{subscription?.unsubscribe();subscription=null;A.client?.auth.stopAutoRefresh();A.client?.realtime.disconnect();A.client=null;A.clearIdentity();A.ready=true;A.catalogue=undefined;};
-A.refreshIdentity=async(force=true)=>{try{await A.resolveIdentity(force);}catch(e){A.clearIdentity();A.identityError=A.errorMessage(e);}window.NK?.render?.();};
+A.refreshIdentity=async(force=true)=>{const before=A.user?.id,rights=JSON.stringify(A.effectiveRoles);try{await A.resolveIdentity(force);}catch(e){A.clearIdentity();A.identityError=A.errorMessage(e);}if(window.NP?.enabled&&before===A.user?.id&&rights===JSON.stringify(A.effectiveRoles)&&window.NB?.managed(A.route()[0]))window.NP.refresh();else window.NK?.render?.();};
 A.start=async()=>{
  if(booting)return;booting=true;
  try{

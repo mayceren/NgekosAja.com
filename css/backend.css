@@ -4,3 +4,39 @@
 @media(max-width:450px){.b-filters{grid-template-columns:1fr}.b-stats{gap:10px}.b-summary{padding:16px;font-size:13px}.b-chat h2{font-size:22px}.nav-actions{gap:6px}.b-layout .b-actions .btn{font-size:11px}}
 .b-distribution-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.b-distribution>div{display:grid;grid-template-columns:1fr auto;gap:10px;margin:14px 0;font-size:12px}.b-distribution meter{grid-column:1/-1;width:100%;height:10px;accent-color:var(--primary)}@media(max-width:700px){.b-distribution-grid{grid-template-columns:1fr;gap:0}}
 @media print{body.b-printing>#app,body.b-printing>#modal-root,body.b-printing>#toast-root{display:none!important}.b-print{display:block;background:white;color:black;padding:30px}.b-print table{width:100%;border-collapse:collapse}.b-print td{padding:12px;border-bottom:1px solid #ddd}}
+/* Phase 4: media and live updates follow the existing component tokens. */
+.p4-hidden{display:none!important}
+.b-form .p4-upload,.p4-upload{display:block;border:1px solid var(--border,#e1e7e2);border-radius:16px;padding:18px;margin:16px 0;min-width:0}
+.p4-upload legend{font-weight:700;padding:0 8px}
+.p4-drop{display:flex;flex-direction:column;gap:10px;text-align:center;border:1px dashed #729b83;border-radius:12px;padding:20px;background:#f8f8f3;cursor:pointer}
+.p4-drop.dragging,.p4-drop:focus-visible{background:#e8f1ea;outline:2px solid #244f43}
+.p4-drop input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.p4-previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.p4-preview{min-width:0;border:1px solid #e1e7e2;border-radius:12px;padding:8px;display:grid;gap:6px}
+.p4-preview img{width:100%;height:110px;object-fit:cover;border-radius:8px}
+.p4-preview>div{display:flex;gap:4px;flex-wrap:wrap}
+.p4-preview button{border:1px solid #e1e7e2;border-radius:6px;background:white;min-width:30px;min-height:30px;cursor:pointer}
+.p4-current-avatar img{width:76px;height:76px;object-fit:cover;border-radius:50%}
+.p4-compare-photo{display:block;width:130px;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px}
+.p4-chat-avatar{width:36px;height:36px;object-fit:cover;border-radius:50%;vertical-align:middle;margin-right:10px}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.p4-attachments{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.p4-thumb{border:0;padding:0;border-radius:12px;overflow:hidden;background:#e8f1ea;cursor:zoom-in}
+.p4-thumb img{display:block;width:110px;height:100px;object-fit:cover}
+.p4-viewer{overflow:auto;max-height:75vh;text-align:center;background:#f8f8f3;border-radius:12px}
+.p4-viewer img{max-width:100%;max-height:72vh;object-fit:contain;cursor:zoom-in}
+.p4-viewer.zoomed img{max-width:none;max-height:none;cursor:zoom-out}
+.p4-notices{position:fixed;z-index:150;right:max(16px,calc((100vw - 1280px)/2));top:85px;width:min(420px,calc(100vw - 32px));max-height:75vh;overflow:auto;padding:20px;box-shadow:0 20px 60px #244f4326}
+.p4-notice{display:flex;flex-direction:column;gap:5px;text-align:left;width:100%;background:white;border:0;border-bottom:1px solid #e1e7e2;padding:14px 8px;color:#25312d;cursor:pointer}
+.p4-notice.b-unread{background:#e8f1ea}
+.p4-notice span,.p4-notice small{font-size:.8rem;color:#6b7771}
+.p4-chat .b-messages{height:420px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;overflow-anchor:none}
+.p4-timeline,.p4-pending{display:flex;flex-direction:column;gap:12px;min-width:0}
+.p4-chat .b-message{max-width:85%;align-self:flex-start;overflow-wrap:anywhere}
+.p4-chat .b-message.mine{align-self:flex-end}
+.p4-date{align-self:center;font-size:.75rem;color:#6b7771;background:#f8f8f3;padding:4px 12px;border-radius:20px;margin:8px 0}
+.p4-message-pending{opacity:.75;border:1px dashed #729b83}
+.p4-newest{display:flex;justify-content:center;margin:8px 0}
+[data-p4-connection]{font-size:.8rem;color:#6b7771}
+[data-p4-connection][data-connected=true]{color:#244f43}
+@media(max-width:650px){.p4-chat .b-messages{height:360px}.p4-notices{top:75px}.p4-upload{padding:12px}.p4-previews{grid-template-columns:repeat(2,minmax(0,1fr))}.p4-thumb img{width:85px;height:85px}}

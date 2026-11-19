@@ -1,7 +1,7 @@
 (function(A){
 'use strict';
 A.profileService={
- async load(uid){const {data,error}=await A.client.from('profiles').select('id,display_name,phone,created_at').eq('id',uid).single();if(error)throw error;if(data.id!==uid)throw A.fail('Identitas profil tidak cocok.');return data;},
+ async load(uid){const {data,error}=await A.client.from('profiles').select('*').eq('id',uid).single();if(error)throw error;if(data.id!==uid)throw A.fail('Identitas profil tidak cocok.');return data;},
  async update({name,phone}){
   const user=await A.authService.verifiedUser();
   if(!name?.trim()||name.trim().length>70)throw A.fail('Nama wajib diisi, maksimal 70 karakter.');

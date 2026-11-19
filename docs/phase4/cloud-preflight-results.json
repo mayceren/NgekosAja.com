@@ -1,0 +1,114 @@
+{
+  "checked_at": "2026-11-19T16:24:28.135Z",
+  "project": "ngekosaja-development",
+  "read_only": true,
+  "remote_mutations": false,
+  "manual_feedback": "User reports features worked during manual testing; no specific scenarios/results supplied.",
+  "application_tables": 32,
+  "buckets": [],
+  "development_accounts": [
+    {
+      "auth_present": true,
+      "label": "Administrator",
+      "profile_present": true,
+      "roles": [
+        "admin",
+        "prospect"
+      ]
+    },
+    {
+      "auth_present": true,
+      "label": "Owner A",
+      "profile_present": true,
+      "roles": [
+        "owner",
+        "prospect"
+      ]
+    },
+    {
+      "auth_present": true,
+      "label": "Owner B",
+      "profile_present": true,
+      "roles": [
+        "owner",
+        "prospect"
+      ]
+    },
+    {
+      "auth_present": true,
+      "label": "Prospect",
+      "profile_present": true,
+      "roles": [
+        "prospect"
+      ]
+    },
+    {
+      "auth_present": true,
+      "label": "Tenant A",
+      "profile_present": true,
+      "roles": [
+        "prospect",
+        "tenant"
+      ]
+    },
+    {
+      "auth_present": true,
+      "label": "Tenant B",
+      "profile_present": true,
+      "roles": [
+        "prospect",
+        "tenant"
+      ]
+    }
+  ],
+  "foreign_keys": 53,
+  "history": [
+    "20261118000100",
+    "20261118000200",
+    "20261118000300",
+    "20261118000400",
+    "20261118000500",
+    "20261118000600",
+    "20261118000700",
+    "20261118000800",
+    "20261118000900",
+    "20261118001000",
+    "20261118001100",
+    "20261119000100",
+    "20261119000200"
+  ],
+  "messages": 0,
+  "policies": 46,
+  "profiles": 7,
+  "properties": 3,
+  "public_functions": 30,
+  "publication": {
+    "puballtables": false,
+    "pubdelete": true,
+    "pubinsert": true,
+    "pubname": "supabase_realtime",
+    "pubtruncate": true,
+    "pubupdate": true
+  },
+  "published_properties": 1,
+  "published_tables": [],
+  "rls_disabled": 0,
+  "storage_columns": [
+    "id",
+    "bucket_id",
+    "name",
+    "owner",
+    "created_at",
+    "updated_at",
+    "last_accessed_at",
+    "metadata",
+    "path_tokens",
+    "version",
+    "owner_id",
+    "user_metadata",
+    "archived_at",
+    "is_delete_marker",
+    "is_versioned"
+  ],
+  "storage_policies": []
+}

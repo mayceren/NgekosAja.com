@@ -1,0 +1,270 @@
+{
+  "checked_at": "2026-11-19T16:47:08.934Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "read_only": true,
+  "remote_mutations": false,
+  "migration": {
+    "file": "20261119000300_realtime_storage.sql",
+    "sha256": "876429b3e8d8e5feb9baf0ffbe329634a33792d83a0c044c4936dd2ae1738263"
+  },
+  "status": "verified",
+  "checks": {
+    "history": true,
+    "schema_counts": true,
+    "all_rls": true,
+    "safe_definers": true,
+    "no_public_execute": true,
+    "valid_constraints_indexes": true,
+    "publication": true,
+    "private_buckets": true,
+    "storage_policies": true,
+    "capability_grants": true,
+    "existing_rls_preserved": true,
+    "existing_views_preserved": true,
+    "existing_constraints_preserved": true,
+    "existing_indexes_preserved": true,
+    "existing_triggers_preserved": true,
+    "existing_counts_preserved": true,
+    "integrity": true,
+    "browser_direct_avatar_write_denied": true,
+    "browser_direct_images_write_denied": true,
+    "browser_direct_staging_write_denied": true,
+    "browser_direct_room_images_write_denied": true,
+    "browser_private_property_bypass_denied": true,
+    "browser_private_room_bypass_denied": true,
+    "anon_upload_denied": true,
+    "anon_send_media_denied": true,
+    "anon_avatar_directory_denied": true,
+    "browser_server_payment_denied": true,
+    "existing_other_functions_preserved": true,
+    "owner_implementations_preserved": true,
+    "capabilities_api": true,
+    "public_catalogue": true,
+    "anonymous_private_apis_denied": true,
+    "no_pending_migrations": true
+  },
+  "limitations": [
+    "Schema/API read-only verification does not prove authenticated multi-account Realtime/Storage E2E.",
+    "Before/after aggregate counts and schema preservation are verified. Full row-by-row digest preservation cannot be claimed because the initial before digests were not persisted. Approved migration contains no existing-business/auth row updates."
+  ],
+  "postflight": {
+    "anon_avatar_directory": false,
+    "anon_send_media": false,
+    "anon_upload": false,
+    "application_tables": 34,
+    "browser_direct_avatar_write": false,
+    "browser_direct_images_write": false,
+    "browser_direct_room_images_write": false,
+    "browser_direct_staging_write": false,
+    "browser_private_property_bypass": false,
+    "browser_private_room_bypass": false,
+    "browser_server_payment": false,
+    "buckets": [
+      {
+        "id": "avatars",
+        "limit": 512000,
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "chat-attachments",
+        "limit": 1048576,
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "complaint-attachments",
+        "limit": 1048576,
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "property-images",
+        "limit": 1048576,
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "room-images",
+        "limit": 1048576,
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      }
+    ],
+    "capabilities_anonymous": true,
+    "capabilities_authenticated": true,
+    "foreign_keys": 58,
+    "invalid_constraints": 0,
+    "invalid_indexes": 0,
+    "migrations": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300"
+    ],
+    "policies": 48,
+    "public_execute_grants": 0,
+    "public_functions": 37,
+    "publication": {
+      "all_tables": false,
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms"
+    ],
+    "rls_disabled": 0,
+    "storage_objects_rls": true,
+    "storage_policies": [
+      {
+        "cmd": "DELETE",
+        "name": "ngekosaja_media_delete",
+        "roles": [
+          "authenticated"
+        ]
+      },
+      {
+        "cmd": "INSERT",
+        "name": "ngekosaja_media_insert",
+        "roles": [
+          "authenticated"
+        ]
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ngekosaja_media_read",
+        "roles": [
+          "anon",
+          "authenticated"
+        ]
+      }
+    ],
+    "unsafe_definers": 0
+  },
+  "aggregate_counts": {
+    "before": {
+      "agreements": 2,
+      "auth_users": 7,
+      "facilities": 7,
+      "invoices": 1,
+      "profiles": 7,
+      "properties": 3,
+      "rooms": 3,
+      "tenants": 2,
+      "transactions": 0
+    },
+    "after": {
+      "agreements": 2,
+      "auth_users": 7,
+      "facilities": 7,
+      "invoices": 1,
+      "profiles": 7,
+      "properties": 3,
+      "rooms": 3,
+      "tenants": 2,
+      "transactions": 0
+    }
+  },
+  "integrity": {
+    "active_recurring_on_closed_agreement": 0,
+    "active_room_duplicates": 0,
+    "active_tenant_duplicates": 0,
+    "closed_without_date": 0,
+    "paid_without_successful_payment": 0,
+    "pending_with_successful_payment": 0,
+    "successful_payment_duplicates": 0
+  },
+  "row_digest_comparison": "unavailable: initial apply process did not persist its in-memory before digests before postflight failed",
+  "capabilities_api": {
+    "status": 200,
+    "flags": {
+      "typing": false,
+      "storage": true,
+      "version": 4,
+      "presence": false,
+      "realtime": true
+    }
+  },
+  "public_catalogue": {
+    "status": 200,
+    "published_listings": 1
+  },
+  "anonymous_denials": [
+    {
+      "resource": "/rest/v1/media_uploads",
+      "status": 401,
+      "code": "42501",
+      "denied": true
+    },
+    {
+      "resource": "/rest/v1/room_images",
+      "status": 401,
+      "code": "42501",
+      "denied": true
+    },
+    {
+      "resource": "/rest/v1/rpc/conversation_avatars",
+      "status": 401,
+      "code": "42501",
+      "denied": true
+    },
+    {
+      "resource": "/rest/v1/rpc/begin_media_upload",
+      "status": 401,
+      "code": "42501",
+      "denied": true
+    },
+    {
+      "resource": "/rest/v1/rpc/send_message_media",
+      "status": 401,
+      "code": "42501",
+      "denied": true
+    }
+  ],
+  "pending_migrations": [],
+  "finished_at": "2026-11-19T16:47:34.856Z"
+}

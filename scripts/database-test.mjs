@@ -8,7 +8,9 @@ import { runContracts } from '../supabase/tests/contracts.mjs';
 const native=process.argv.includes('--native');
 const option=name=>process.argv.find(arg=>arg.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const through=option('through');
-const backendFresh=process.argv.includes('--backend-fresh');
+const phase4Fresh=process.argv.includes('--phase4-fresh');
+const backendFresh=process.argv.includes('--backend-fresh')||phase4Fresh;
+const phase4=process.argv.includes('--phase4');
 const backend=process.argv.includes('--backend')||(!backendFresh&&(!through||through>='20261119000200')&&readdirSync('supabase/migrations').includes('20261119000200_backend_integration.sql'));
 if(through&&!/^\d{14}$/.test(through))throw new Error('Invalid migration boundary.');
 const output=option('output')||'tests/database-results.json';
@@ -24,7 +26,7 @@ try {
  client=await connect(dbConfig);
  results.engine=(await client.query('select version() as version')).rows[0].version;
  await client.query(readFileSync('supabase/tests/bootstrap_native.sql','utf8'));
- for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(!through||f.slice(0,14)<=through)&&(!backend||f.slice(0,14)<='20261119000100')).sort()) {
+ for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f.slice(0,14)<='20261119000200'&&(!through||f.slice(0,14)<=through)&&(!backend||f.slice(0,14)<='20261119000100')).sort()) {
   try { await client.query(readFileSync(`supabase/migrations/${file}`,'utf8'));results.migrations.push(file);console.log(`Migration OK: ${file}`); }
   catch(error) { throw new Error(`${file}: ${safeError(error)}`); }
  }
@@ -55,7 +57,7 @@ try {
   results.postflight=postflight;console.log('PASS postflight verification SQL against locally migrated database');
  }
  if(process.argv.includes('--docs')) { const {generateDatabaseDocs}=await import('./database-docs.mjs');await generateDatabaseDocs(client); }
- if(backend || backendFresh){
+ if((backend || backendFresh)&&!phase4Fresh){
   if(backend){
    const before=(await client.query('select count(*)::int n from public.rental_agreements')).rows[0].n;
    const file='20261119000200_backend_integration.sql';await client.query(readFileSync('supabase/migrations/'+file,'utf8'));results.migrations.push(file);
@@ -63,6 +65,12 @@ try {
    results.passed.push('Phase 3 additive upgrade preserves existing agreements');
   }
   const {runBackendContracts}=await import('../supabase/tests/backend-contracts.mjs');await runBackendContracts(client,dbConfig,results);
+ }
+ if(phase4){
+  await client.query(readFileSync('supabase/tests/bootstrap_storage_native.sql','utf8'));
+  const file='20261119000300_realtime_storage.sql';const sql=readFileSync('supabase/migrations/'+file,'utf8');try{await client.query(sql);}catch(e){console.error('Phase4 SQL position:',e.position,'line:',sql.slice(0,Number(e.position)).split('\n').length);throw e;}results.migrations.push(file);
+  const {runPhase4Contracts}=await import('../supabase/tests/phase4-contracts.mjs');await runPhase4Contracts(client,results,dbConfig);
+  results.limitations.push('Storage schema/objects and JWT claims are native SQL adapters; Cloud Storage upload/signing/WebSocket delivery are not verified.');
  }
 } catch(error) { results.failed.push(safeError(error));console.error(safeError(error));process.exitCode=1; }
 finally {
