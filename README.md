@@ -84,7 +84,9 @@ Confirm Email dinonaktifkan pada environment development sesuai hasil pemeriksaa
 
 Login menuju home; pengaturan profil memiliki menu terpisah. Logout berada paling bawah menu akun dan meminta konfirmasi. Recovery tetap memerlukan email Supabase serta callback/session pemulihan yang valid; kuota email tetap berlaku. Menonaktifkan Confirm Email bukan bukti kepemilikan inbox atau konfigurasi siap production.
 
-[Role management](docs/auth/ROLE_MANAGEMENT.md) dan [Development Test Accounts](docs/auth/DEVELOPMENT_ACCOUNTS.md). Provisioning akun development menggunakan Admin API hanya melalui script server administratif. Perintah default membuat plan read-only; pembuatan remote memerlukan persetujuan dan password pribadi melalui terminal tersembunyi. Tidak ada akun remote baru yang dibuat oleh cleanup konten ini.
+[Role management](docs/auth/ROLE_MANAGEMENT.md) dan [Development Test Accounts](docs/auth/DEVELOPMENT_ACCOUNTS.md). Provisioning akun development menggunakan Admin API hanya melalui script server administratif. Perintah default membuat plan read-only; pembuatan remote memerlukan persetujuan dan password pribadi melalui terminal tersembunyi. Enam akun development kemudian dibuat setelah persetujuan dan lulus verifikasi Cloud; gunakan akun yang sudah tersedia tanpa apply ulang.
+
+[Finalisasi Phase 2](docs/auth/PHASE2_FINALIZATION.md) mencatat kondisi Cloud terbaru serta syarat lanjut Phase 3. Keenam akun telah lulus login, profil, role, isolasi, pemulihan session SDK dan logout melalui Supabase Cloud. Fondasi development siap untuk Phase 3; akun pribadi dan password/role existing tidak diubah.
 
 ## Security
 
@@ -99,7 +101,7 @@ Login menuju home; pengaturan profil memiliki menu terpisah. Logout berada palin
 ## Development Roadmap
 
 1. Fondasi PostgreSQL, constraint, RLS, laporan dan histori migrasi: tersedia dengan bukti pemeriksaan.
-2. Authentication, profil, role dan katalog publik: tersedia; validasi akun development Cloud lanjutan memerlukan provisioning yang disetujui.
+2. Authentication, profil, role dan katalog publik: tersedia; enam akun development telah diprovisikan setelah persetujuan dan lulus verifikasi Cloud.
 3. Integrasi workspace bisnis terhubung: properti, penghuni, tagihan, keluhan, chat dan promosi.
 4. Integrasi pembayaran, pengiriman notifikasi, Storage dan scheduler setelah rancangan operasional serta keamanan ditinjau.
 5. Kesiapan production: pengujian environment target, pengiriman email, pemantauan, backup/restore dan evaluasi keamanan.

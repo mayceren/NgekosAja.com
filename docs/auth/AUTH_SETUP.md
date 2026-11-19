@@ -55,7 +55,7 @@ Lupa kata sandi tetap memerlukan email resmi dan callback/recovery session yang 
 
 ## Akun development dan histori insiden
 
-Enam akun testing baru dan relasi owner/tenant disiapkan melalui [DEVELOPMENT_ACCOUNTS.md](DEVELOPMENT_ACCOUNTS.md). Plan default hanya membaca remote. **Pembuatan akun remote belum dilakukan dan menunggu persetujuan**; password dimasukkan sendiri melalui terminal tersembunyi. Tidak ada perubahan akun existing pada pekerjaan ini.
+Enam akun testing dan relasi owner/tenant telah dibuat setelah persetujuan, lalu lulus login, profil, role, isolasi, pemulihan session SDK dan logout di Supabase Cloud. Password dimasukkan pengguna melalui terminal tersembunyi. Akun pribadi serta password/role existing tidak diubah. Lihat [hasil finalisasi Phase 2](PHASE2_FINALIZATION.md) dan [panduan akun development](DEVELOPMENT_ACCOUNTS.md). Plan default tetap read-only; jangan menjalankan apply ulang pada akun yang sudah tersedia.
 
 Paragraf pemulihan berikut merupakan histori insiden QA sebelumnya, bukan langkah setup normal. Utilitas perbaikan tersebut tidak dijalankan oleh penyederhanaan Auth ini. Jangan mengulang Cloud QA pada alamat pribadi.
 

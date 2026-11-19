@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-19T07:23:31.303Z",
+  "checked_at": "2026-11-19T08:29:40.933Z",
   "manifest": {
     "project": "ngekosaja-development",
     "ref": "wfmhsbdfdcugxblqsaob",
@@ -54,14 +54,95 @@
   },
   "fingerprint": "7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
   "remote_read_only": true,
+  "remote_sql_read_only": true,
+  "auth_session_activity": false,
   "remote_applied": false,
   "confirm_email_enabled": false,
   "configuration_changed": false,
   "production_ready": false,
   "preflight": {
-    "auth_users": 1,
-    "existing_target_accounts": 0,
-    "fixture_id_collisions": 0,
+    "accounts": [
+      {
+        "email": "dev-admin@ngekosaja.test",
+        "exists": true,
+        "expected_role": "admin",
+        "fixture_owned": true,
+        "id": "c334a3b9-0dd8-4599-b6bd-c0dd5fc5880b",
+        "key": "admin",
+        "profile_exists": true,
+        "roles": [
+          "admin",
+          "prospect"
+        ]
+      },
+      {
+        "email": "dev-owner-a@ngekosaja.test",
+        "exists": true,
+        "expected_role": "owner",
+        "fixture_owned": true,
+        "id": "c7a8beb7-b8ed-4259-b0d8-de4ef14fffee",
+        "key": "owner-a",
+        "profile_exists": true,
+        "roles": [
+          "owner",
+          "prospect"
+        ]
+      },
+      {
+        "email": "dev-owner-b@ngekosaja.test",
+        "exists": true,
+        "expected_role": "owner",
+        "fixture_owned": true,
+        "id": "e7092f72-c814-4c1c-ba4d-65f7cd5ea8b6",
+        "key": "owner-b",
+        "profile_exists": true,
+        "roles": [
+          "owner",
+          "prospect"
+        ]
+      },
+      {
+        "email": "dev-prospect@ngekosaja.test",
+        "exists": true,
+        "expected_role": "prospect",
+        "fixture_owned": true,
+        "id": "9b37b9d6-1df5-4e1d-9ca5-a3c2e0bf0612",
+        "key": "prospect",
+        "profile_exists": true,
+        "roles": [
+          "prospect"
+        ]
+      },
+      {
+        "email": "dev-tenant-a@ngekosaja.test",
+        "exists": true,
+        "expected_role": "tenant",
+        "fixture_owned": true,
+        "id": "2030f457-0150-4da5-bf26-8aa66d51ae0f",
+        "key": "tenant-a",
+        "profile_exists": true,
+        "roles": [
+          "prospect",
+          "tenant"
+        ]
+      },
+      {
+        "email": "dev-tenant-b@ngekosaja.test",
+        "exists": true,
+        "expected_role": "tenant",
+        "fixture_owned": true,
+        "id": "939dad29-4833-4c45-b25b-4530e0e29cae",
+        "key": "tenant-b",
+        "profile_exists": true,
+        "roles": [
+          "prospect",
+          "tenant"
+        ]
+      }
+    ],
+    "auth_users": 7,
+    "existing_target_accounts": 6,
+    "fixture_id_collisions": 6,
     "profile_trigger_present": true,
     "rls_tables": 31
   },
@@ -76,6 +157,7 @@
   },
   "protected_existing_accounts": true,
   "password_delivery": "User enters six private passwords in interactive terminal; no password is logged, saved, or shared with the agent.",
-  "apply_command": "npm run auth:provision-development -- --apply --approve-remote=7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
-  "status": "awaiting-explicit-remote-approval"
+  "apply_command": null,
+  "verify_command": "npm run auth:provision-development -- --verify",
+  "status": "existing-accounts-do-not-reprovision"
 }

@@ -1,0 +1,310 @@
+{
+  "checked_at": "2026-11-19T08:25:38.051Z",
+  "manifest": {
+    "project": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob",
+    "fixture": "ngekosaja-development-auth-v1",
+    "accounts": [
+      {
+        "key": "prospect",
+        "role": "prospect",
+        "name": "Development Calon Penghuni",
+        "email": "dev-prospect@ngekosaja.test"
+      },
+      {
+        "key": "tenant-a",
+        "role": "tenant",
+        "name": "Development Penghuni A",
+        "email": "dev-tenant-a@ngekosaja.test"
+      },
+      {
+        "key": "tenant-b",
+        "role": "tenant",
+        "name": "Development Penghuni B",
+        "email": "dev-tenant-b@ngekosaja.test"
+      },
+      {
+        "key": "owner-a",
+        "role": "owner",
+        "name": "Development Pemilik A",
+        "email": "dev-owner-a@ngekosaja.test"
+      },
+      {
+        "key": "owner-b",
+        "role": "owner",
+        "name": "Development Pemilik B",
+        "email": "dev-owner-b@ngekosaja.test"
+      },
+      {
+        "key": "admin",
+        "role": "admin",
+        "name": "Development Administrator",
+        "email": "dev-admin@ngekosaja.test"
+      }
+    ],
+    "resources": {
+      "property-a": "b40c09a6-d832-40fe-af7b-aae0952a3302",
+      "property-b": "7e50aeea-7d65-413d-a98d-18fb01340ecb",
+      "room-a": "224ba9c4-f757-4d1d-aa94-2519cbf9e7be",
+      "room-b": "bf2c4319-4e6c-440b-ad87-1c316e0c8555",
+      "agreement-a": "2231cc5d-625d-40e6-a641-91d44b5b5eb5",
+      "agreement-b": "ddca09d1-7f2c-4354-ab73-c84c02590332"
+    },
+    "final_publication_status": "draft"
+  },
+  "fingerprint": "7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
+  "remote_read_only": false,
+  "remote_sql_read_only": false,
+  "auth_session_activity": false,
+  "remote_applied": true,
+  "confirm_email_enabled": false,
+  "configuration_changed": false,
+  "production_ready": false,
+  "preflight": {
+    "accounts": [
+      {
+        "email": "dev-admin@ngekosaja.test",
+        "exists": false,
+        "expected_role": "admin",
+        "fixture_owned": false,
+        "id": null,
+        "key": "admin",
+        "profile_exists": false,
+        "roles": []
+      },
+      {
+        "email": "dev-owner-a@ngekosaja.test",
+        "exists": false,
+        "expected_role": "owner",
+        "fixture_owned": false,
+        "id": null,
+        "key": "owner-a",
+        "profile_exists": false,
+        "roles": []
+      },
+      {
+        "email": "dev-owner-b@ngekosaja.test",
+        "exists": false,
+        "expected_role": "owner",
+        "fixture_owned": false,
+        "id": null,
+        "key": "owner-b",
+        "profile_exists": false,
+        "roles": []
+      },
+      {
+        "email": "dev-prospect@ngekosaja.test",
+        "exists": false,
+        "expected_role": "prospect",
+        "fixture_owned": false,
+        "id": null,
+        "key": "prospect",
+        "profile_exists": false,
+        "roles": []
+      },
+      {
+        "email": "dev-tenant-a@ngekosaja.test",
+        "exists": false,
+        "expected_role": "tenant",
+        "fixture_owned": false,
+        "id": null,
+        "key": "tenant-a",
+        "profile_exists": false,
+        "roles": []
+      },
+      {
+        "email": "dev-tenant-b@ngekosaja.test",
+        "exists": false,
+        "expected_role": "tenant",
+        "fixture_owned": false,
+        "id": null,
+        "key": "tenant-b",
+        "profile_exists": false,
+        "roles": []
+      }
+    ],
+    "auth_users": 1,
+    "existing_target_accounts": 0,
+    "fixture_id_collisions": 0,
+    "profile_trigger_present": true,
+    "rls_tables": 31
+  },
+  "changes": {
+    "auth_users": 6,
+    "profiles_from_trigger": 6,
+    "additional_role_grants": 5,
+    "properties_draft": 2,
+    "rooms": 2,
+    "tenants": 2,
+    "active_agreements": 2
+  },
+  "protected_existing_accounts": true,
+  "password_delivery": "User enters six private passwords in interactive terminal; no password is logged, saved, or shared with the agent.",
+  "apply_command": "npm run auth:provision-development -- --apply --approve-remote=7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
+  "verify_command": "npm run auth:provision-development -- --verify",
+  "status": "created-and-verified",
+  "accounts_created": 6,
+  "checks": [
+    {
+      "account": "prospect",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "prospect"
+        ],
+        "role_users": [
+          "prospect"
+        ],
+        "resources": [],
+        "tenants": []
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "tenant-a",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "tenant-a"
+        ],
+        "role_users": [
+          "tenant-a"
+        ],
+        "resources": [
+          "a"
+        ],
+        "tenants": [
+          "tenant-a"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "tenant-b",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "tenant-b"
+        ],
+        "role_users": [
+          "tenant-b"
+        ],
+        "resources": [
+          "b"
+        ],
+        "tenants": [
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "owner-a",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "owner-a",
+          "tenant-a"
+        ],
+        "role_users": [
+          "owner-a"
+        ],
+        "resources": [
+          "a"
+        ],
+        "tenants": [
+          "tenant-a"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "owner-b",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "owner-b",
+          "tenant-b"
+        ],
+        "role_users": [
+          "owner-b"
+        ],
+        "resources": [
+          "b"
+        ],
+        "tenants": [
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "admin",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "prospect",
+          "tenant-a",
+          "tenant-b",
+          "owner-a",
+          "owner-b",
+          "admin"
+        ],
+        "role_users": [
+          "prospect",
+          "tenant-a",
+          "tenant-b",
+          "owner-a",
+          "owner-b",
+          "admin"
+        ],
+        "resources": [
+          "a",
+          "b"
+        ],
+        "tenants": [
+          "tenant-a",
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    }
+  ],
+  "finished_at": "2026-11-19T08:27:56.997Z"
+}

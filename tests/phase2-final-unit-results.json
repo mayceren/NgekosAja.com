@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-11-19T08:35:52.570Z",
+  "mode": "mocked-offline",
+  "files": [
+    "tests/development-provision.test.mjs",
+    "tests/development-verification.test.mjs",
+    "tests/auth-repair.test.mjs",
+    "tests/database-tooling.test.mjs"
+  ],
+  "passed": 39,
+  "failed": 0,
+  "cloud_mutations": 0,
+  "emails_requested": 0
+}

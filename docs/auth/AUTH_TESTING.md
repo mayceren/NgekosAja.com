@@ -1,5 +1,7 @@
 # Hasil pemeriksaan Authentication Development
 
+Keenam akun development sekarang telah dibuat dan lulus login, profil, role, isolasi, session restoration dan logout melalui Supabase Cloud. Hasil finalisasi tercatat di [PHASE2_FINALIZATION.md](PHASE2_FINALIZATION.md). Tabel mencantumkan bukti terbaru beserta hasil sesi sebelumnya; cakupan mock/lokal/Cloud dibedakan pada masing-masing baris.
+
 Pemeriksaan 19 November 2026 tidak membuat/mengubah akun Cloud, tidak mengirim email, tidak mengubah schema/RLS atau konfigurasi hosted, dan tidak mereset remote. UI existing dipertahankan. Konfigurasi ini khusus environment development, **belum siap production**.
 
 ## Hasil aktual perubahan ini
@@ -14,7 +16,9 @@ Pemeriksaan 19 November 2026 tidak membuat/mengubah akun Cloud, tidak mengirim e
 | Domain demo | **30 skenario lulus** | [domain.cjs](../../tests/domain.cjs) |
 | Guard QA Cloud | **3 lulus**, koneksi dicegat, 0 email/mutasi remote | [auth-cloud-safety-results.json](../../tests/auth-cloud-safety-results.json) |
 | Cloud audit read-only | **Verified**, 12 migrasi cocok, 31 tabel RLS, 45 policy, 0 temuan pola credential | [security-audit-results.json](security-audit-results.json) |
-| Plan provisioning Cloud read-only | Project/ref cocok, Confirm Email **false**, 1 akun existing, 0 target existing, 0 collision | [development-account-plan.json](development-account-plan.json) |
+| Provisioning dan JWT Cloud terbaru | **6 akun lulus** login, getUser, profil, role, isolasi, session restoration dan logout; password tidak disimpan | [development-account-apply-results.json](development-account-apply-results.json) |
+| Plan setelah provisioning, read-only | Project/ref cocok, Confirm Email **false**, 7 akun Auth, keenam target lengkap, enam ID resource sesuai fixture; apply ulang dinonaktifkan | [development-account-plan.json](development-account-plan.json) |
+| Audit Cloud sesudah provisioning | Schema/RLS tetap cocok; dua properti draft dan dua relasi Owner-Tenant benar | [phase2-post-provision-verification.json](phase2-post-provision-verification.json) |
 | Artefak lokal | **55 file syntax-check**, 51 link lokal valid, 3 guard approval lulus, lockfile cocok, path privat diabaikan Git, 0 database sementara tersisa | [pemeriksaan artefak sebelumnya](uas-final-quality-results.json) |
 
 ## Cakupan browser
@@ -33,7 +37,7 @@ Unit provisioning menguji pembuatan hanya akun baru, password tersembunyi tidak 
 
 ## Batas bukti
 
-**Signup publik Cloud dengan Confirm Email OFF, login enam akun development nyata, dan isolasi enam JWT Cloud belum dijalankan.** Akun remote belum diprovisikan karena menunggu persetujuan. Script siap memeriksa login/profil/role/isolation sesudah pembuatan yang disetujui; hasilnya belum boleh diklaim lulus. [Panduan dan plan](DEVELOPMENT_ACCOUNTS.md).
+**Signup publik Cloud dengan Confirm Email OFF belum diuji ulang.** Login, profil, role, isolasi, session restoration dan logout enam akun development telah lulus setelah provisioning yang disetujui. Bukti aktual ada pada laporan finalisasi; hasil tersebut tidak menguji penerimaan inbox. [Panduan dan plan](DEVELOPMENT_ACCOUNTS.md).
 
 Browser menggunakan SDK nyata dengan mock HTTP, bukan GoTrue Cloud. SQL native memakai adapter UUID/claim dan PostgreSQL 16.3, bukan GoTrue/JWT/PostgREST atau stack Cloud PostgreSQL 17.12. Audit Cloud hanya membaca katalog/count. Secret scan berbasis pola bukan jaminan seluruh Git history bebas secret.
 

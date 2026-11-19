@@ -1,0 +1,309 @@
+{
+  "checked_at": "2026-11-19T08:34:49.410755+00:00",
+  "project": "ngekosaja-development",
+  "ref": "wfmhsbdfdcugxblqsaob",
+  "status": "complete",
+  "ready_for_phase3": true,
+  "production_ready": false,
+  "remote_account_changes": 6,
+  "remote_schema_changes": false,
+  "remote_configuration_changes": false,
+  "emails_requested": 0,
+  "cloud_fixture_logins_run": true,
+  "cloud_fixture_isolation_verified": true,
+  "existing_auth_users": 7,
+  "target_accounts_available": 6,
+  "target_accounts": [
+    {
+      "key": "admin",
+      "email": "dev-admin@ngekosaja.test",
+      "exists": true,
+      "profile_exists": true,
+      "roles": [
+        "admin",
+        "prospect"
+      ]
+    },
+    {
+      "key": "owner-a",
+      "email": "dev-owner-a@ngekosaja.test",
+      "exists": true,
+      "profile_exists": true,
+      "roles": [
+        "owner",
+        "prospect"
+      ]
+    },
+    {
+      "key": "owner-b",
+      "email": "dev-owner-b@ngekosaja.test",
+      "exists": true,
+      "profile_exists": true,
+      "roles": [
+        "owner",
+        "prospect"
+      ]
+    },
+    {
+      "key": "prospect",
+      "email": "dev-prospect@ngekosaja.test",
+      "exists": true,
+      "profile_exists": true,
+      "roles": [
+        "prospect"
+      ]
+    },
+    {
+      "key": "tenant-a",
+      "email": "dev-tenant-a@ngekosaja.test",
+      "exists": true,
+      "profile_exists": true,
+      "roles": [
+        "prospect",
+        "tenant"
+      ]
+    },
+    {
+      "key": "tenant-b",
+      "email": "dev-tenant-b@ngekosaja.test",
+      "exists": true,
+      "profile_exists": true,
+      "roles": [
+        "prospect",
+        "tenant"
+      ]
+    }
+  ],
+  "fixture_id_collisions": 6,
+  "confirm_email_enabled": false,
+  "cloud_audit_verified": true,
+  "migration_count": 12,
+  "rls_tables": 31,
+  "policies": 45,
+  "fingerprint": "7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
+  "local_tests": {
+    "unit_passed": 39,
+    "unit_failed": 0,
+    "unit_scope": "mocked/offline",
+    "sql_passed": 66,
+    "sql_failed": 0,
+    "sql_scope": "native local PostgreSQL Auth adapter",
+    "approval_guards_passed": 4,
+    "syntax_files": 58,
+    "private_paths_ignored": true,
+    "temporary_databases_remaining": 0,
+    "credential_files_scanned": 166,
+    "credential_findings": 0,
+    "documentation_links_checked": 58,
+    "apply_evidence_preserved": true,
+    "frontend_and_schema_files_unchanged": true
+  },
+  "pending": [],
+  "approval": {
+    "received_at": "2026-11-19T08:25:25.719082+00:00",
+    "source": "Explicit user approval in conversation: setuju",
+    "fingerprint": "7cb4429ebd53f2791ac4ad7c2613b086d3d1c38ffcc7bce9d937c532b3cad57d",
+    "scope": {
+      "auth_users": 6,
+      "profiles_from_trigger": 6,
+      "additional_role_grants": 5,
+      "properties_draft": 2,
+      "rooms": 2,
+      "tenants": 2,
+      "active_agreements": 2
+    },
+    "allows_existing_personal_account_changes": false
+  },
+  "completed_at": "2026-11-19T08:27:56.997Z",
+  "remote_accounts_created": 6,
+  "existing_account_updates": 0,
+  "auth_users_before": 1,
+  "auth_users_after": 7,
+  "fixture_resource_state": "Six expected resource IDs now belong to the approved development fixtures; do not reprovision.",
+  "cloud_account_checks": [
+    {
+      "account": "prospect",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "prospect"
+        ],
+        "role_users": [
+          "prospect"
+        ],
+        "resources": [],
+        "tenants": []
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "tenant-a",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "tenant-a"
+        ],
+        "role_users": [
+          "tenant-a"
+        ],
+        "resources": [
+          "a"
+        ],
+        "tenants": [
+          "tenant-a"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "tenant-b",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "tenant-b"
+        ],
+        "role_users": [
+          "tenant-b"
+        ],
+        "resources": [
+          "b"
+        ],
+        "tenants": [
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "owner-a",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "owner-a",
+          "tenant-a"
+        ],
+        "role_users": [
+          "owner-a"
+        ],
+        "resources": [
+          "a"
+        ],
+        "tenants": [
+          "tenant-a"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "owner-b",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "owner-b",
+          "tenant-b"
+        ],
+        "role_users": [
+          "owner-b"
+        ],
+        "resources": [
+          "b"
+        ],
+        "tenants": [
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "admin",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "prospect",
+          "tenant-a",
+          "tenant-b",
+          "owner-a",
+          "owner-b",
+          "admin"
+        ],
+        "role_users": [
+          "prospect",
+          "tenant-a",
+          "tenant-b",
+          "owner-a",
+          "owner-b",
+          "admin"
+        ],
+        "resources": [
+          "a",
+          "b"
+        ],
+        "tenants": [
+          "tenant-a",
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    }
+  ],
+  "remote_counts": {
+    "agreements": 2,
+    "auth_users": 7,
+    "facilities": 7,
+    "invoices": 0,
+    "profiles": 7,
+    "properties": 2,
+    "rooms": 2,
+    "tenants": 2,
+    "transactions": 0
+  },
+  "pair_bindings": {
+    "pair_bindings_valid": true,
+    "published_fixture_properties": 0,
+    "settings": 6
+  },
+  "evidence": {
+    "apply": "docs/auth/development-account-apply-results.json",
+    "read_only_postflight": "docs/auth/phase2-post-provision-audit-results.json",
+    "post_provision_verification": "docs/auth/phase2-post-provision-verification.json",
+    "apply_sha256": "1e8fd9ac7aa47060239b8f88b1cc6e979ddbdc94a219df6a77a7612fc85fd08c"
+  },
+  "unit_test_evidence": "tests/phase2-final-unit-results.json",
+  "final_artifact_check_at": "2026-11-19T08:35:55.555Z"
+}

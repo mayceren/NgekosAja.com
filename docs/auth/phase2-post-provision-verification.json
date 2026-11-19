@@ -1,0 +1,244 @@
+{
+  "checked_at": "2026-11-19T08:33:18.244Z",
+  "project": "ngekosaja-development",
+  "remote_read_only": true,
+  "provisioning_rerun": false,
+  "apply_report_sha256": "1e8fd9ac7aa47060239b8f88b1cc6e979ddbdc94a219df6a77a7612fc85fd08c",
+  "cloud_account_checks": [
+    {
+      "account": "prospect",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "prospect"
+        ],
+        "role_users": [
+          "prospect"
+        ],
+        "resources": [],
+        "tenants": []
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "tenant-a",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "tenant-a"
+        ],
+        "role_users": [
+          "tenant-a"
+        ],
+        "resources": [
+          "a"
+        ],
+        "tenants": [
+          "tenant-a"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "tenant-b",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "tenant-b"
+        ],
+        "role_users": [
+          "tenant-b"
+        ],
+        "resources": [
+          "b"
+        ],
+        "tenants": [
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "owner-a",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "owner-a",
+          "tenant-a"
+        ],
+        "role_users": [
+          "owner-a"
+        ],
+        "resources": [
+          "a"
+        ],
+        "tenants": [
+          "tenant-a"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "owner-b",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "owner-b",
+          "tenant-b"
+        ],
+        "role_users": [
+          "owner-b"
+        ],
+        "resources": [
+          "b"
+        ],
+        "tenants": [
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    },
+    {
+      "account": "admin",
+      "login": true,
+      "get_user": true,
+      "profile": true,
+      "role": true,
+      "isolation": true,
+      "visibility": {
+        "profiles": [
+          "prospect",
+          "tenant-a",
+          "tenant-b",
+          "owner-a",
+          "owner-b",
+          "admin"
+        ],
+        "role_users": [
+          "prospect",
+          "tenant-a",
+          "tenant-b",
+          "owner-a",
+          "owner-b",
+          "admin"
+        ],
+        "resources": [
+          "a",
+          "b"
+        ],
+        "tenants": [
+          "tenant-a",
+          "tenant-b"
+        ]
+      },
+      "session_restoration": true,
+      "logout": true,
+      "private_data_writes": 0
+    }
+  ],
+  "relationships": {
+    "agreements": 2,
+    "draft_properties": 2,
+    "profiles": 6,
+    "roles": [
+      {
+        "role": "prospect",
+        "user_id": "9b37b9d6-1df5-4e1d-9ca5-a3c2e0bf0612"
+      },
+      {
+        "role": "prospect",
+        "user_id": "2030f457-0150-4da5-bf26-8aa66d51ae0f"
+      },
+      {
+        "role": "prospect",
+        "user_id": "939dad29-4833-4c45-b25b-4530e0e29cae"
+      },
+      {
+        "role": "prospect",
+        "user_id": "c7a8beb7-b8ed-4259-b0d8-de4ef14fffee"
+      },
+      {
+        "role": "prospect",
+        "user_id": "e7092f72-c814-4c1c-ba4d-65f7cd5ea8b6"
+      },
+      {
+        "role": "prospect",
+        "user_id": "c334a3b9-0dd8-4599-b6bd-c0dd5fc5880b"
+      },
+      {
+        "role": "tenant",
+        "user_id": "2030f457-0150-4da5-bf26-8aa66d51ae0f"
+      },
+      {
+        "role": "tenant",
+        "user_id": "939dad29-4833-4c45-b25b-4530e0e29cae"
+      },
+      {
+        "role": "owner",
+        "user_id": "c7a8beb7-b8ed-4259-b0d8-de4ef14fffee"
+      },
+      {
+        "role": "owner",
+        "user_id": "e7092f72-c814-4c1c-ba4d-65f7cd5ea8b6"
+      },
+      {
+        "role": "admin",
+        "user_id": "c334a3b9-0dd8-4599-b6bd-c0dd5fc5880b"
+      }
+    ]
+  },
+  "pair_bindings": {
+    "pair_bindings_valid": true,
+    "published_fixture_properties": 0,
+    "settings": 6
+  },
+  "audit_verified": true,
+  "counts": {
+    "agreements": 2,
+    "auth_users": 7,
+    "facilities": 7,
+    "invoices": 0,
+    "profiles": 7,
+    "properties": 2,
+    "rooms": 2,
+    "tenants": 2,
+    "transactions": 0
+  },
+  "emails_requested": 0,
+  "passwords_obtained_by_agent": false,
+  "passwords_saved": false,
+  "ready_for_phase3": true,
+  "production_ready": false,
+  "reporting_note": "Initial apply report auth_session_activity=false is an initial mode flag error; all six explicit login/getUser/session restoration/logout checks are true. Original apply evidence is preserved.",
+  "inspection_limit": "Read-only observer cannot execute public_listings. Published status checked via base tables; public listing exclusion was verified with all six real JWTs during apply."
+}

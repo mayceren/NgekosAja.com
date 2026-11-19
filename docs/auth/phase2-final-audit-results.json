@@ -1,0 +1,435 @@
+{
+  "checked_at": "2026-11-19T08:06:22.180Z",
+  "project": "ngekosaja-development",
+  "remote_sql_read_only": true,
+  "schema_changes_applied": false,
+  "postflight": {
+    "anon_table_grants": [
+      {
+        "privilege": "SELECT",
+        "table": "facilities"
+      }
+    ],
+    "browser_can_grant_roles": false,
+    "browser_can_record_boost": false,
+    "browser_can_record_rent": false,
+    "dangerous_api_table_privileges": [],
+    "foreign_key_count": 48,
+    "inspection_bypass_rls": true,
+    "inspection_role": "supabase_read_only_user",
+    "invoice_view_security_invoker": true,
+    "master_facility_codes": [
+      "ac",
+      "furniture",
+      "laundry",
+      "parking",
+      "private_bathroom",
+      "shared_kitchen",
+      "wifi"
+    ],
+    "master_facility_count": 7,
+    "policy_count": 45,
+    "public_execute_grants": 0,
+    "public_function_count": 24,
+    "public_listings_accessible_to_anon": true,
+    "rls_disabled_table_count": 0,
+    "server_version": "17.12",
+    "table_count": 31,
+    "tables": [
+      {
+        "name": "activity_logs",
+        "rls": true
+      },
+      {
+        "name": "boost_campaigns",
+        "rls": true
+      },
+      {
+        "name": "complaint_analyses",
+        "rls": true
+      },
+      {
+        "name": "complaint_attachments",
+        "rls": true
+      },
+      {
+        "name": "complaint_histories",
+        "rls": true
+      },
+      {
+        "name": "complaint_notes",
+        "rls": true
+      },
+      {
+        "name": "complaints",
+        "rls": true
+      },
+      {
+        "name": "conversation_members",
+        "rls": true
+      },
+      {
+        "name": "conversations",
+        "rls": true
+      },
+      {
+        "name": "facilities",
+        "rls": true
+      },
+      {
+        "name": "favorites",
+        "rls": true
+      },
+      {
+        "name": "invoices",
+        "rls": true
+      },
+      {
+        "name": "listing_analytics",
+        "rls": true
+      },
+      {
+        "name": "message_attachments",
+        "rls": true
+      },
+      {
+        "name": "messages",
+        "rls": true
+      },
+      {
+        "name": "notifications",
+        "rls": true
+      },
+      {
+        "name": "profiles",
+        "rls": true
+      },
+      {
+        "name": "properties",
+        "rls": true
+      },
+      {
+        "name": "property_facilities",
+        "rls": true
+      },
+      {
+        "name": "property_images",
+        "rls": true
+      },
+      {
+        "name": "property_landmarks",
+        "rls": true
+      },
+      {
+        "name": "property_rules",
+        "rls": true
+      },
+      {
+        "name": "recent_searches",
+        "rls": true
+      },
+      {
+        "name": "recurring_invoices",
+        "rls": true
+      },
+      {
+        "name": "rental_agreements",
+        "rls": true
+      },
+      {
+        "name": "room_facilities",
+        "rls": true
+      },
+      {
+        "name": "rooms",
+        "rls": true
+      },
+      {
+        "name": "tenants",
+        "rls": true
+      },
+      {
+        "name": "transactions",
+        "rls": true
+      },
+      {
+        "name": "user_roles",
+        "rls": true
+      },
+      {
+        "name": "user_settings",
+        "rls": true
+      }
+    ],
+    "unsafe_definer_search_paths": 0
+  },
+  "history": [
+    {
+      "name": "foundation_identity",
+      "version": "20261118000100"
+    },
+    {
+      "name": "properties_rooms",
+      "version": "20261118000200"
+    },
+    {
+      "name": "tenants_agreements",
+      "version": "20261118000300"
+    },
+    {
+      "name": "finance_promotions",
+      "version": "20261118000400"
+    },
+    {
+      "name": "complaints",
+      "version": "20261118000500"
+    },
+    {
+      "name": "messaging_personal_data",
+      "version": "20261118000600"
+    },
+    {
+      "name": "atomic_business_operations",
+      "version": "20261118000700"
+    },
+    {
+      "name": "complaint_chat_notifications",
+      "version": "20261118000800"
+    },
+    {
+      "name": "public_catalogue_reports",
+      "version": "20261118000900"
+    },
+    {
+      "name": "rls_and_audit",
+      "version": "20261118001000"
+    },
+    {
+      "name": "integrity_hardening",
+      "version": "20261118001100"
+    },
+    {
+      "name": "final_verification_fixes",
+      "version": "20261119000100"
+    }
+  ],
+  "counts": {
+    "agreements": 0,
+    "auth_users": 1,
+    "facilities": 7,
+    "invoices": 0,
+    "profiles": 1,
+    "properties": 0,
+    "rooms": 0,
+    "tenants": 0,
+    "transactions": 0
+  },
+  "integrity": {
+    "active_recurring_on_closed_agreement": 0,
+    "active_room_duplicates": 0,
+    "active_tenant_duplicates": 0,
+    "closed_without_date": 0,
+    "paid_without_successful_payment": 0,
+    "pending_with_successful_payment": 0,
+    "successful_payment_duplicates": 0
+  },
+  "unchanged": {
+    "tables": true,
+    "columns": true,
+    "constraints": true,
+    "indexes": true,
+    "policies": true,
+    "functions": true,
+    "triggers": true,
+    "views": true,
+    "api_privileges": true,
+    "api_roles": true,
+    "schema_access": true
+  },
+  "applied_migrations_unchanged": true,
+  "audited_rls": [
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "complaints_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "complaints",
+      "using": "private.can_read_agreement(agreement_id)"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "conversations_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "conversations",
+      "using": "(private.is_member(id) OR private.is_admin())"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "invoices_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "invoices",
+      "using": "private.can_read_agreement(agreement_id)"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "messages_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "messages",
+      "using": "(private.is_member(conversation_id) OR private.is_admin())"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "notifications_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "notifications",
+      "using": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "check": "(user_id = ( SELECT auth.uid() AS uid))",
+      "command": "UPDATE",
+      "name": "notifications_update",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "notifications",
+      "using": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "profiles_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "profiles",
+      "using": "((id = ( SELECT auth.uid() AS uid)) OR private.related_tenant(id) OR private.is_admin())"
+    },
+    {
+      "check": "(id = ( SELECT auth.uid() AS uid))",
+      "command": "UPDATE",
+      "name": "profiles_update_self",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "profiles",
+      "using": "(id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "check": null,
+      "command": "DELETE",
+      "name": "properties_delete",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "properties",
+      "using": "private.owns_property(id)"
+    },
+    {
+      "check": "((owner_id = ( SELECT auth.uid() AS uid)) AND private.has_role('owner'::text))",
+      "command": "INSERT",
+      "name": "properties_insert",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "properties",
+      "using": null
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "properties_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "properties",
+      "using": "private.property_party(id)"
+    },
+    {
+      "check": "(owner_id = ( SELECT auth.uid() AS uid))",
+      "command": "UPDATE",
+      "name": "properties_update",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "properties",
+      "using": "private.owns_property(id)"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "agreements_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "rental_agreements",
+      "using": "private.can_read_agreement(id)"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "tenants_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "tenants",
+      "using": "((id = ( SELECT auth.uid() AS uid)) OR private.related_tenant(id) OR private.is_admin())"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "transactions_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "transactions",
+      "using": "(((kind = 'rent'::text) AND (EXISTS ( SELECT 1\n   FROM invoices i\n  WHERE ((i.id = transactions.invoice_id) AND private.can_read_agreement(i.agreement_id))))) OR ((kind = 'boost'::text) AND private.owns_property(property_id)) OR private.is_admin())"
+    },
+    {
+      "check": null,
+      "command": "SELECT",
+      "name": "roles_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "user_roles",
+      "using": "((user_id = ( SELECT auth.uid() AS uid)) OR private.is_admin())"
+    }
+  ],
+  "credential_scan": {
+    "scope": "Tracked and non-ignored working-tree text; server secrets are never expected in browser files.",
+    "findings": [],
+    "files": 157
+  },
+  "private_paths_ignored": true,
+  "verified": true
+}

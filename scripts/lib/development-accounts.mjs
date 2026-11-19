@@ -24,8 +24,9 @@ export async function requireNewAccounts(admin) {
   }
 }
 
-export async function provisionNewAccounts({admin,prompt,persistReceipt,writeRelations,verifyAccounts=async()=>{}}) {
+export async function provisionNewAccounts({admin,prompt,persistReceipt,writeRelations,verifyAccounts=async()=>{},onStage=async()=>{}}) {
   await requireNewAccounts(admin);
+  await onStage('awaiting-private-password-entry');
   const passwords = new Map(), identities = {}, run = randomBytes(16).toString('hex');
   try {
     // Collect every private password before creating anything. Cancel/mismatch is safe.
@@ -35,6 +36,7 @@ export async function provisionNewAccounts({admin,prompt,persistReceipt,writeRel
       validateRepairPassword(password,confirmation);
       passwords.set(account.key,password);
     }
+    await onStage('creating-new-development-identities');
     const receipt={fixture:fixtureTag,run,created:[],relations_committed:false};
     await persistReceipt(receipt);
     for(const account of accounts) {
@@ -48,9 +50,11 @@ export async function provisionNewAccounts({admin,prompt,persistReceipt,writeRel
       receipt.created.push({key:account.key,id:user.id});
       await persistReceipt(receipt);
     }
+    await onStage('creating-new-fixture-relations');
     await writeRelations(relationSQL(identities,run));
     receipt.relations_committed=true;
     await persistReceipt(receipt);
+    await onStage('verifying-new-cloud-identities');
     await verifyAccounts(identities,passwords);
     return {identities,created:accounts.length,relations_committed:true};
   } finally {passwords.clear();}
@@ -60,6 +64,9 @@ export function preflightSQL() {
   const emails=accounts.map(account=>`'${account.email}'`).join(',');
   const ids=Object.values(resourceIds).map(uuid).join(',');
   return `select json_build_object(
+    'accounts',(select json_agg(json_build_object('key',target.key,'email',target.email,'expected_role',target.expected_role,'exists',u.id is not null,'id',u.id,'fixture_owned',coalesce(u.raw_app_meta_data->>'development_fixture'='${fixtureTag}',false),'profile_exists',p.id is not null,'roles',(select coalesce(json_agg(role order by role),'[]') from public.user_roles where user_id=u.id)) order by target.key)
+      from (values ${accounts.map(account=>`('${account.key}','${account.email}','${account.role}')`).join(',')}) target(key,email,expected_role)
+      left join auth.users u on lower(u.email)=target.email left join public.profiles p on p.id=u.id),
     'existing_target_accounts',(select count(*) from auth.users where lower(email) in (${emails})),
     'fixture_id_collisions',(select count(*) from (select id from public.properties union all select id from public.rooms union all select id from public.rental_agreements) resources where id in (${ids})),
     'profile_trigger_present',exists(select 1 from pg_trigger where tgname='on_auth_user_created' and not tgisinternal),

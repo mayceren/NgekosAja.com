@@ -10,7 +10,7 @@
     "dev": "node scripts/serve-auth.mjs",
     "auth:configure": "node scripts/configure-auth.mjs",
     "auth:provision-development": "node scripts/provision-development-accounts.mjs",
-    "test:auth-provision": "node --test tests/development-provision.test.mjs",
+    "test:auth-provision": "node --test tests/development-provision.test.mjs tests/development-verification.test.mjs",
     "auth:repair-test-account": "node scripts/repair-test-account.mjs",
     "test:auth-repair": "node --test tests/auth-repair.test.mjs",
     "db:start": "supabase start",

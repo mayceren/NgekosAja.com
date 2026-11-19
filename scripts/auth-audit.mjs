@@ -3,6 +3,8 @@ import {execFileSync} from 'node:child_process';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 const ref='wfmhsbdfdcugxblqsaob',cli=resolve('node_modules/supabase/dist/supabase.js');
+const args=process.argv.slice(2), output=args.find(arg=>arg.startsWith('--output='))?.slice(9)||'docs/auth/security-audit-results.json';
+if(args.some(arg=>!arg.startsWith('--output='))||!/^docs\/auth\/[a-z0-9-]+\.json$/.test(output))throw new Error('Invalid local audit report path.');
 const run=args=>JSON.parse(execFileSync(process.execPath,[cli,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:55000}));
 const objects=v=>Array.isArray(v)?v.flatMap(objects):v&&typeof v==='object'?[v,...Object.values(v).filter(x=>x&&typeof x==='object').flatMap(objects)]:[];
 const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
@@ -25,7 +27,7 @@ try{
  const ignored=execFileSync('git',['check-ignore','--no-index','--stdin'],{input:'.local-db/auth-qa-identity.json\n.env.local\n.database-test/auth-callback-config/supabase/config.toml\n',encoding:'utf8'}).trim().split(/\r?\n/);
  report.private_paths_ignored=ignored.length===3;
  report.verified=Object.values(report.unchanged).every(Boolean)&&report.applied_migrations_unchanged&&report.history.length===12&&Object.values(report.integrity).every(v=>v===0)&&report.credential_scan.findings.length===0&&report.private_paths_ignored;
- writeFileSync('docs/auth/security-audit-results.json',JSON.stringify(report,null,2)+'\n');
+ writeFileSync(output,JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify({verified:report.verified,migrations:report.history.length,all_31_tables_rls:report.postflight.rls_disabled_table_count===0,policies:report.postflight.policy_count,auth_users:report.counts.auth_users,credential_findings:report.credential_scan.findings.length}));
  if(!report.verified)process.exitCode=1;
 }catch{console.error('Auth audit incomplete. No raw CLI output or credential printed.');process.exitCode=1;}
