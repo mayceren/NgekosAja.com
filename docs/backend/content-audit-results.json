@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-11-19T15:33:33.759Z",
+  "active_text_files": 162,
+  "academic_findings": [],
+  "local_links_checked": 173,
+  "broken_links": [],
+  "syntax_files": 67,
+  "protected_files": 92,
+  "protected_changes": [],
+  "archives_verified": [
+    {
+      "archive": "docs/archive/README-2026-11-19.md",
+      "archive_checksum_valid": true
+    },
+    {
+      "archive": "docs/archive/auth/development-account-plan-2026-11-19.json",
+      "archive_checksum_valid": true
+    }
+  ],
+  "credential_findings": [],
+  "remote_changes": false,
+  "lockfile_consistent": true,
+  "comparison": "Text is normalized from CRLF to LF to match Git; binary files are compared byte for byte.",
+  "passed": true
+}

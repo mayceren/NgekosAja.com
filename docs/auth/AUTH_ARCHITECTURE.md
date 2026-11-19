@@ -61,6 +61,8 @@ Mode demo tidak mengirim request backend dari interaksi normal. Penyimpanan demo
 
 ## Batas Phase 2
 
+Kelanjutan implementasi lokal Phase 3 didokumentasikan pada [arsitektur backend](../backend/BACKEND_ARCHITECTURE.md) dan [status rollout](../backend/PHASE3_COMPLETION.md). Batas di bawah mencatat cakupan historis Phase 2; migration Cloud Phase 3 sudah diterapkan setelah persetujuan, sementara QA bisnis multi-akun masih memerlukan verifikasi tersendiri.
+
 Email/password Auth, verifikasi, recovery, profil, role/guard dan empty states sudah diimplementasikan. Owner onboarding masih administratif; tidak ada self-grant owner/admin. Form perubahan email mengikuti konfirmasi Auth, bukan UPDATE email pada profil. Penggantian password profil memeriksa password lama melalui Auth; ini adalah UX reautentikasi, sedangkan kewenangan update akun ditegakkan oleh session Auth.
 
 Belum ada integrasi bisnis penuh, realtime, Storage/avatar, gateway pembayaran, scheduler, deployment production, UI enrollment/challenge MFA, atau admin role editor. Konfigurasi TOTP Cloud dipertahankan; kebijakan AAL/MFA end-to-end perlu dikaji sebelum akses produksi. Phase 3 dapat melanjutkan adapter bisnis tanpa memakai demo sebagai sumber data akun sungguhan.

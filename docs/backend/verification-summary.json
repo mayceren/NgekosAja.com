@@ -1,0 +1,102 @@
+{
+  "recorded_at": "2026-11-19T15:20:10.126Z",
+  "sql_fresh": {
+    "passed": 16,
+    "failed": 0
+  },
+  "sql_upgrade": {
+    "passed": 83,
+    "failed": 0
+  },
+  "connected_mock_browser": {
+    "passed": 30,
+    "javascript_errors": 0
+  },
+  "auth_mock_browser": {
+    "passed": 51,
+    "javascript_errors": 0
+  },
+  "demo_browser": {
+    "passed": 11,
+    "javascript_errors": 0
+  },
+  "core_unit": {
+    "passed": 10,
+    "evidence": "Terminal TAP output; tests/backend-core.test.mjs"
+  },
+  "existing_unit": {
+    "passed": 39,
+    "evidence": "Terminal TAP output; provisioning, verification, repair, database tooling"
+  },
+  "demo_domain": {
+    "passed": 30,
+    "evidence": "Terminal output; tests/domain.cjs"
+  },
+  "content_audit_passed": true,
+  "local_backend_structure": {
+    "tables": 32,
+    "policies": 46,
+    "foreign_keys": 53,
+    "rls_disabled": 0,
+    "public_functions": 30
+  },
+  "cloud": {
+    "project": "ngekosaja-development",
+    "applied_migrations": 13,
+    "pending_migrations": [],
+    "migration_sha256": "ccee330228bf97b26138c4a486b01a0e24284ae076985ef7376ad8957ace9e49",
+    "schema_changed": true,
+    "business_mutations_tested": false,
+    "phase3_complete": false,
+    "migration_applied_after_approval": true,
+    "apply_verified": true,
+    "existing_application_data_preserved": true,
+    "structure": {
+      "anonymous_base_properties": false,
+      "anonymous_catalogue": true,
+      "anonymous_property_save": false,
+      "browser_direct_offer_write": false,
+      "browser_private_checkin": false,
+      "browser_role_grant": false,
+      "browser_server_boost": false,
+      "browser_server_payment": false,
+      "foreign_keys": 53,
+      "offer_read_policy": 1,
+      "offer_rows": 0,
+      "policies": 46,
+      "public_execute_grants": 0,
+      "public_functions": 30,
+      "rls_disabled": 0,
+      "tables": 32,
+      "unsafe_definer_paths": 0
+    },
+    "anonymous_access_rejections": [
+      {
+        "resource": "properties",
+        "status": 401,
+        "code": "42501"
+      },
+      {
+        "resource": "rental_offers",
+        "status": 401,
+        "code": "42501"
+      },
+      {
+        "resource": "rpc/operational_summary",
+        "status": 401,
+        "code": "42501"
+      },
+      {
+        "resource": "rpc/conversation_directory",
+        "status": 401,
+        "code": "42501"
+      }
+    ],
+    "verified_at": "2026-11-19T15:29:17.304Z"
+  },
+  "limitations": [
+    "Native SQL uses Auth claim adapter, not live GoTrue/PostgREST.",
+    "Connected/Auth browser tests mock HTTP.",
+    "Cloud migration/postflight passed; multi-account business E2E still requires private password entry and a separately approved fixture plan."
+  ]
+}

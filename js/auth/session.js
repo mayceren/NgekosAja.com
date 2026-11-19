@@ -2,7 +2,7 @@
 'use strict';
 let generation=0,subscription,booting=false,resolving;
 A.ready=false;A.user=null;A.roles=[];A.effectiveRoles=[];A.profile=null;A.recoveryUid=null;
-A.clearIdentity=()=>{generation++;resolving=null;A.user=null;A.profile=null;A.roles=[];A.effectiveRoles=[];A.hasAgreement=false;};
+A.clearIdentity=()=>{generation++;resolving=null;window.NB?.clear();A.user=null;A.profile=null;A.roles=[];A.effectiveRoles=[];A.hasAgreement=false;};
 A.resolveIdentity=async(force=false)=>{
  if(force){generation++;resolving=null;}
  if(resolving)return resolving;
@@ -12,6 +12,7 @@ A.resolveIdentity=async(force=false)=>{
    const user=await A.authService.verifiedUser();
    const [profile,rights]=await Promise.all([A.profileService.load(user.id),A.roleService.load(user.id)]);
    if(ticket!==generation||A.mode!=='connected')return false;
+   if(A.user&&(A.user.id!==user.id||JSON.stringify(A.effectiveRoles)!==JSON.stringify(rights.effectiveRoles)||A.profile?.display_name!==profile.display_name))window.NB?.clear();
    A.user=user;A.profile=profile;Object.assign(A,rights);A.identityError='';A.lastVerified=Date.now();return true;
   }catch(error){if(ticket!==generation)return false;A.clearIdentity();throw error;}
  })();

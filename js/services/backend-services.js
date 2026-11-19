@@ -1,0 +1,32 @@
+(function(B,A){
+ 'use strict';
+ const S=B.services, read=(table,options,signal)=>B.read(table,options,signal);
+ S.catalogue={list:(options={},signal)=>{
+  let q=B.client().rpc('public_listings').range((options.page||0)*12,(options.page||0)*12+11);
+  if(options.id)q=q.eq('id',options.id);if(options.ids)q=q.in('id',options.ids);
+  const search=(options.query||'').replace(/[(),.*\\"]/g,' ').trim().slice(0,80);
+  if(search)q=q.or('name.ilike.*'+search+'*,location.ilike.*'+search+'*');
+  if(options.min)q=q.gte('base_rent',options.min);if(options.max)q=q.lte('base_rent',options.max);
+  if(options.gender)q=q.eq('gender_policy',options.gender);if(options.facility)q=q.contains('facilities',[options.facility]);
+  if(options.available)q=q.gt('available_rooms',0);
+  q=options.sort==='asc'||options.sort==='desc'?q.order('base_rent',{ascending:options.sort==='asc'}):q.order('promoted',{ascending:false});
+  q=q.order('id',{ascending:true});return B.unwrap(signal?q.abortSignal(signal):q);
+ }};
+ S.property={list:(options,signal)=>read('properties',options,signal),save:payload=>B.write(c=>c.rpc('owner_save_property',{payload})),remove:id=>B.write(c=>c.rpc('owner_delete_property',{target_property:id})),facilities:signal=>read('facilities',{order:'name',asc:true,size:100},signal)};
+ S.room={list:(options,signal)=>read('rooms',options,signal),save:payload=>B.write(c=>c.rpc('owner_save_room',{payload})),remove:id=>B.write(c=>c.from('rooms').delete().eq('id',id))};
+ S.agreement={list:(options,signal)=>read('rental_agreements',{select:'*, rooms(number,property_id,properties(name,owner_id)), tenants(profiles(display_name,phone))',...options},signal),offers:(options,signal)=>read('rental_offers',options,signal),propose:payload=>B.write(c=>c.rpc('owner_propose_rental',{payload})),respond:(id,accept)=>B.write(c=>c.rpc('tenant_respond_rental',{target_offer:id,accept})),checkin:o=>B.write(c=>c.rpc('owner_check_in',{target_tenant:o.tenant_id,target_room:o.room_id,starts:o.start_date,ends:o.end_date,monthly_rent:String(o.rent),due_day:o.payment_day})),close:(id,date)=>B.write(c=>c.rpc('owner_close_agreement',{target_agreement:id,close_date:date,reason:'checked_out'})),transfer:args=>B.write(c=>c.rpc('owner_transfer_agreement',args))};
+ S.invoice={list:(options,signal)=>read('invoice_statuses',options,signal),create:args=>B.write(c=>c.rpc('owner_create_invoice',args)),bulk:args=>B.write(c=>c.rpc('owner_create_invoices_bulk',args)),update:args=>B.write(c=>c.rpc('owner_update_invoice',args)),recurring:(options,signal)=>read('recurring_invoices',options,signal),schedule:args=>B.write(c=>c.rpc('owner_set_recurring',args)),generate:month=>B.write(c=>c.rpc('owner_generate_recurring',{billing_month:month})),remind:id=>B.write(c=>c.rpc('owner_send_reminder',{target_invoice:id}))};
+ S.transaction={list:(options,signal)=>read('transactions',options,signal)};
+ S.finance={owner:(args,signal)=>B.rpc('owner_financial_report',args,signal),monthly:(args,signal)=>B.rpc('owner_monthly_revenue',args,signal),platform:signal=>B.rpc('platform_financial_report',{},signal)};
+ S.finance.operations=(platform_scope=false,target_property=null,signal)=>B.rpc('operational_summary',{platform_scope,target_property},signal);
+ S.complaint={list:(options,signal)=>read('complaints',options,signal),create:args=>B.write(c=>c.rpc('tenant_create_complaint',args)),transition:args=>B.write(c=>c.rpc('transition_complaint',args)),history:(id,signal)=>read('complaint_histories',{filters:{complaint_id:id},order:'created_at',asc:true,size:100},signal),notes:(id,signal)=>read('complaint_notes',{filters:{complaint_id:id},size:100},signal),analyses:(id,signal)=>read('complaint_analyses',{filters:{complaint_id:id}},signal),attachments:(id,signal)=>read('complaint_attachments',{filters:{complaint_id:id}},signal),analyze:data=>B.write(c=>c.from('complaint_analyses').insert({...data,accepted_by:A.user.id}))};
+ S.chat={list:signal=>B.rpc('conversation_directory',{},signal),open:id=>B.write(c=>c.rpc('open_conversation',{target_property:id})),messages:(id,page,signal)=>read('messages',{filters:{conversation_id:id},page,size:30},signal),send:(id,body)=>B.write(c=>c.rpc('send_message',{target_conversation:id,message_body:body})),read:id=>B.write(c=>c.rpc('mark_conversation_read',{target_conversation:id}))};
+ S.notification={list:(options,signal)=>read('notifications',options,signal),read:id=>B.write(c=>c.from('notifications').update({read_at:new Date().toISOString()}).eq('id',id).eq('user_id',A.user.id)),all:()=>B.write(c=>c.from('notifications').update({read_at:new Date().toISOString()}).eq('user_id',A.user.id).is('read_at',null)),generate:()=>B.write(c=>c.rpc('generate_payment_reminders'))};
+ S.favorite={list:signal=>read('favorites',{size:100},signal),add:id=>B.write(c=>c.from('favorites').upsert({user_id:A.user.id,property_id:id},{onConflict:'user_id,property_id',ignoreDuplicates:true})),remove:id=>B.write(c=>c.from('favorites').delete().eq('user_id',A.user.id).eq('property_id',id))};
+ S.search={list:signal=>read('recent_searches',{size:10},signal),save:query=>B.write(c=>c.from('recent_searches').upsert({user_id:A.user.id,query},{onConflict:'user_id,query'})),remove:id=>B.write(c=>c.from('recent_searches').delete().eq('user_id',A.user.id).eq('id',id))};
+ S.boost={list:(options,signal)=>read('boost_campaigns',options,signal)};
+ S.analytics={list:(options,signal)=>read('listing_analytics',options,signal),record:(id,kind,session)=>B.rpc('record_listing_event',{target_property:id,event_kind:kind,event_session:session})};
+ S.activity={list:(options,signal)=>read('activity_logs',options,signal)};
+ S.settings={load:signal=>read('user_settings',{filters:{user_id:A.user.id}},signal),save:data=>B.write(c=>c.from('user_settings').update(data).eq('user_id',A.user.id))};
+ S.admin={profiles:(options,signal)=>read('profiles',{select:'id,display_name,created_at,user_roles(role)',...options},signal),roles:(options,signal)=>read('user_roles',options,signal)};
+})(window.NB,window.NA);

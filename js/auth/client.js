@@ -31,7 +31,7 @@ A.createClient=()=>{
  if(A.mode!=='connected')throw A.fail('Keluar dari demo untuk menggunakan layanan akun sungguhan.');
  if(A.client)return A.client;
  const error=A.configError();if(error)throw A.fail(error);
- A.client=window.supabase.createClient(A.config.supabaseUrl,A.config.publishableKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:!A.initialCallback.code,storage:A.authStorage,storageKey:key},global:{headers:{'X-Client-Info':'ngekosaja-phase2'}}});
+ A.client=window.supabase.createClient(A.config.supabaseUrl,A.config.publishableKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:!A.initialCallback.code,storage:A.authStorage,storageKey:key},global:{fetch:window.NB?.fetch,headers:{'X-Client-Info':'ngekosaja-phase3'}}});
  return A.client;
 };
 A.clearStoredSession=()=>{for(const s of [localStorage,sessionStorage])for(const suffix of ['','-user'])A.safeWrite(s,key+suffix,null);removeVerifier();};

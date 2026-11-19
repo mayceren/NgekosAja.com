@@ -6,6 +6,8 @@ import {dirname,resolve} from 'node:path';
 // Policy definitions are test inputs, not product copy. Evidence remains immutable.
 const git=args=>execFileSync('git',args,{maxBuffer:32*1024*1024,stdio:['ignore','pipe','pipe']});
 const files=[...new Set(git(['ls-files','--cached','--others','--exclude-standard','-z']).toString('utf8').split('\0'))].filter(file=>file&&existsSync(file));
+const output=process.argv.find(arg=>arg.startsWith('--output='))?.slice(9)||'docs/content-audit-results.json';
+if(!/^docs\/(?:content-audit-results\.json|backend\/[a-z0-9-]+\.json)$/.test(output))throw new Error('Invalid audit output path.');
 const hash=buffer=>createHash('sha256').update(buffer).digest('hex');
 const normalizedHash=(file,buffer)=>hash(/\.(?:json|md|css|sql|toml|js|txt)$/.test(file)?buffer.toString('utf8').replaceAll('\r\n','\n'):buffer);
 const academic=/\b(?:UAS|UTS|Technopreneurship|BMLC|milestone|dosen)\b|uas_|tugas\s+(?:kuliah|kelompok)|project\s+akademik|perkuliahan|anggaran\s+Rp\s*0|zero.cost\s+project|prototype\s+(?:pendidikan|untuk\s+tugas)/i;
@@ -44,5 +46,5 @@ const pkg=JSON.parse(readFileSync('package.json','utf8')),lock=JSON.parse(readFi
 report.lockfile_consistent=JSON.stringify(pkg.dependencies)===JSON.stringify(lock.dependencies)&&JSON.stringify(pkg.devDependencies)===JSON.stringify(lock.devDependencies);
 report.comparison='Text is normalized from CRLF to LF to match Git; binary files are compared byte for byte.';
 report.passed=!report.academic_findings.length&&!report.broken_links.length&&!report.protected_changes.length&&!report.credential_findings.length&&report.archives_verified.every(item=>item.archive_checksum_valid)&&report.lockfile_consistent;
-writeFileSync('docs/content-audit-results.json',JSON.stringify(report,null,2)+'\n');
+writeFileSync(output,JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report));if(!report.passed)process.exitCode=1;

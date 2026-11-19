@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-11-19T15:10:58.418Z",
+  "project": "ngekosaja-development",
+  "cli_version": "3.2.0",
+  "command": "supabase db push --remote=wfmhsbdfdcugxblqsaob --dry-run --skip-vault",
+  "remote_schema_changed": false,
+  "remote_data_changed": false,
+  "applied_migrations": 12,
+  "pending_migrations": [
+    "20261119000200_backend_integration.sql"
+  ],
+  "pending_filename_detected": true,
+  "migration_sha256": "ccee330228bf97b26138c4a486b01a0e24284ae076985ef7376ad8957ace9e49",
+  "public_catalogue": {
+    "anonymous_rpc_verified": true,
+    "published_listings": 0,
+    "forbidden_fields_absent": true
+  },
+  "limitation": "Read-only/anonymous checks do not replace per-user Cloud JWT business mutation tests."
+}

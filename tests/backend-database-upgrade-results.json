@@ -1,0 +1,311 @@
+{
+  "engine": "PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit",
+  "mode": "native-postgresql-auth-contract-adapter",
+  "migrations": [
+    "20261118000100_foundation_identity.sql",
+    "20261118000200_properties_rooms.sql",
+    "20261118000300_tenants_agreements.sql",
+    "20261118000400_finance_promotions.sql",
+    "20261118000500_complaints.sql",
+    "20261118000600_messaging_personal_data.sql",
+    "20261118000700_atomic_business_operations.sql",
+    "20261118000800_complaint_chat_notifications.sql",
+    "20261118000900_public_catalogue_reports.sql",
+    "20261118001000_rls_and_audit.sql",
+    "20261118001100_integrity_hardening.sql",
+    "20261119000100_final_verification_fixes.sql",
+    "20261119000200_backend_integration.sql"
+  ],
+  "passed": [
+    "Auth trigger ignores malicious admin registration metadata",
+    "All migrations and coherent 3-owner / 16-property / 31-tenant fixtures load",
+    "RLS enabled on every exposed application table",
+    "SECURITY DEFINER functions fix search_path and revoke PUBLIC execute",
+    "Master and Auth-bound development fixture replay does not duplicate rows",
+    "Profile FK rejects nonexistent Auth UUID",
+    "Negative rental nominal rejected",
+    "Unique room number per property enforced",
+    "Duplicate agreement-month invoice rejected",
+    "Invalid invoice amount and boost/admin money constraints rejected",
+    "Bulk invoice fails atomically on cross-owner agreement; valid batch uses lease rent",
+    "Double room assignment and historical date overlap rejected",
+    "Occupied room cannot enter maintenance",
+    "Owner A cannot select or update Owner B property",
+    "Owner cannot hijack owner_id, even for own property",
+    "Owner cannot inject a property under another owner",
+    "Revoking owner role immediately removes property write/read authority",
+    "Tenant A cannot access Tenant B profile/invoices/private room",
+    "Owner may read related tenant but not an unrelated account",
+    "Prospect cannot self-grant admin or invoke server role grant",
+    "Tenant, owner and admin JWT cannot write payments or mark paid directly",
+    "Anonymous sees safe published catalogue only; no base properties or PII",
+    "Archived listing absent from public catalogue without deleting history",
+    "Financial reports enforce owner scope and disallow tenant/admin impersonation",
+    "Security-invoker invoice status view cannot leak another tenant",
+    "Private children, recurring, notifications, wishlist and settings do not cross identities",
+    "Report formula separates GMV, fees, boost and uses inclusive Jakarta dates",
+    "Chat membership prevents unrelated reads, messages and membership forgery",
+    "Complaint privacy and owner/tenant confirmation transitions enforced",
+    "Wishlist belongs to identity; cannot create a different user favorite",
+    "H-3/manual reminders are dynamically dated and deduplicated",
+    "Failed rent attempt earns nothing; success atomically pays invoice and preserves snapshots",
+    "Successful payment retry is idempotent; conflicting payload and second payment rejected",
+    "Historical transaction and invoices with failed attempts cannot be rewritten",
+    "Boost has exact 30000 price, 30 day interval, and no revenue for free grant",
+    "Analytics deduplicates event per property/actor/session/Jakarta date",
+    "Prospect check-in preserves user ID, favorites and existing chat; checkout preserves history",
+    "Recurring generation is scoped, deduplicated, monotonic and stops on checkout",
+    "Same-day transfer keeps both agreements and moves occupancy atomically",
+    "Blank messages rejected; attachment-only message allowed only in a trusted atomic transaction",
+    "Concurrent room check-ins serialize: exactly one tenant gets the room",
+    "Concurrent successful payments serialize: exactly one succeeds",
+    "Audit scoped to owner, timestamps are timestamptz, Jakarta business dates stable",
+    "Checkout RPC rejects a NULL date without closing an active agreement",
+    "Checkout constraint rejects NULL closure even for trusted direct SQL",
+    "Checkout RPC rejects a NULL reason explicitly",
+    "Service role can evaluate overdue invoice status through the invoker view",
+    "Anonymous remains unable to execute the private business-date helper",
+    "NULL checkout fails atomically: agreement and recurring schedule remain active",
+    "Tenant cannot close even their own rental agreement",
+    "Checkout rejects future dates and dates before the lease starts",
+    "Valid checkout sets the exclusive date and stops recurring billing",
+    "Development provisioning SQL creates six trigger profiles, eleven base/assigned roles and two coherent draft-property leases",
+    "Phase 2 Cloud verifier expectations match real SQL RLS for prospect, including private administrator settings",
+    "Phase 2 Cloud verifier expectations match real SQL RLS for tenant-a, including private administrator settings",
+    "Phase 2 Cloud verifier expectations match real SQL RLS for tenant-b, including private administrator settings",
+    "Phase 2 Cloud verifier expectations match real SQL RLS for owner-a, including private administrator settings",
+    "Phase 2 Cloud verifier expectations match real SQL RLS for owner-b, including private administrator settings",
+    "Phase 2 Cloud verifier expectations match real SQL RLS for admin, including private administrator settings",
+    "Development owner-a reads own fixture and cannot read the other user's fixture",
+    "Development owner-b reads own fixture and cannot read the other user's fixture",
+    "Development tenant-a reads own fixture and cannot read the other user's fixture",
+    "Development tenant-b reads own fixture and cannot read the other user's fixture",
+    "Development prospect cannot see draft owner fixtures or grant itself administrator access",
+    "Development platform administrator reads both test properties through existing policies",
+    "Replaying Development provisioning refuses existing assigned identities without altering their leases",
+    "Phase 3 additive upgrade preserves existing agreements",
+    "Backend: property multi-table creation is atomic and catalogue-safe",
+    "Backend: cross-owner property edits and client ownership spoofing rejected",
+    "Backend: room facilities save atomically; identity cannot cross property",
+    "Backend: invalid child replacement rolls back property header and old images",
+    "Backend: operational summary rejects tenant/admin impersonation and scopes ownership",
+    "Backend: conversation directory exposes participant names only to members",
+    "Backend: check-in without explicit consent is denied despite valid conversation",
+    "Backend: offer may originate only from the owner of the conversation property",
+    "Backend: only the actual tenant may accept; owner cannot forge consent",
+    "Backend: changed rental terms invalidate consent; private bypass cannot execute",
+    "Backend: expired accepted offers cannot be consumed and cannot silently extend",
+    "Backend: concurrent consumption produces exactly one agreement and no double occupancy",
+    "Backend: invoice visible only to scoped parties; recurring deduplication and server-only ledger",
+    "Backend: complaint timeline and tenant-only final confirmation are enforced",
+    "Backend: new API functions have safe search paths, no anonymous execute or direct writes",
+    "Backend: postflight schema, RLS and privilege metadata assertions"
+  ],
+  "failed": [],
+  "limitations": [
+    "GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter."
+  ],
+  "fixture_counts": {
+    "properties": 16,
+    "rooms": 101,
+    "profiles": 36,
+    "tenants": 31,
+    "rental_agreements": 31,
+    "invoices": 172,
+    "transactions": 162,
+    "complaints": 4,
+    "conversations": 2,
+    "messages": 4,
+    "notifications": 342,
+    "favorites": 2,
+    "boost_campaigns": 2,
+    "facilities": 7
+  },
+  "postflight": {
+    "tables": [
+      {
+        "rls": true,
+        "name": "activity_logs"
+      },
+      {
+        "rls": true,
+        "name": "boost_campaigns"
+      },
+      {
+        "rls": true,
+        "name": "complaint_analyses"
+      },
+      {
+        "rls": true,
+        "name": "complaint_attachments"
+      },
+      {
+        "rls": true,
+        "name": "complaint_histories"
+      },
+      {
+        "rls": true,
+        "name": "complaint_notes"
+      },
+      {
+        "rls": true,
+        "name": "complaints"
+      },
+      {
+        "rls": true,
+        "name": "conversation_members"
+      },
+      {
+        "rls": true,
+        "name": "conversations"
+      },
+      {
+        "rls": true,
+        "name": "facilities"
+      },
+      {
+        "rls": true,
+        "name": "favorites"
+      },
+      {
+        "rls": true,
+        "name": "invoices"
+      },
+      {
+        "rls": true,
+        "name": "listing_analytics"
+      },
+      {
+        "rls": true,
+        "name": "message_attachments"
+      },
+      {
+        "rls": true,
+        "name": "messages"
+      },
+      {
+        "rls": true,
+        "name": "notifications"
+      },
+      {
+        "rls": true,
+        "name": "profiles"
+      },
+      {
+        "rls": true,
+        "name": "properties"
+      },
+      {
+        "rls": true,
+        "name": "property_facilities"
+      },
+      {
+        "rls": true,
+        "name": "property_images"
+      },
+      {
+        "rls": true,
+        "name": "property_landmarks"
+      },
+      {
+        "rls": true,
+        "name": "property_rules"
+      },
+      {
+        "rls": true,
+        "name": "recent_searches"
+      },
+      {
+        "rls": true,
+        "name": "recurring_invoices"
+      },
+      {
+        "rls": true,
+        "name": "rental_agreements"
+      },
+      {
+        "rls": true,
+        "name": "room_facilities"
+      },
+      {
+        "rls": true,
+        "name": "rooms"
+      },
+      {
+        "rls": true,
+        "name": "tenants"
+      },
+      {
+        "rls": true,
+        "name": "transactions"
+      },
+      {
+        "rls": true,
+        "name": "user_roles"
+      },
+      {
+        "rls": true,
+        "name": "user_settings"
+      }
+    ],
+    "table_count": 31,
+    "policy_count": 45,
+    "server_version": "16.3",
+    "inspection_role": "ngekosaja_test",
+    "anon_table_grants": [
+      {
+        "table": "facilities",
+        "privilege": "SELECT"
+      }
+    ],
+    "foreign_key_count": 48,
+    "inspection_bypass_rls": true,
+    "master_facility_codes": [
+      "ac",
+      "furniture",
+      "laundry",
+      "parking",
+      "private_bathroom",
+      "shared_kitchen",
+      "wifi"
+    ],
+    "master_facility_count": 7,
+    "public_execute_grants": 0,
+    "public_function_count": 24,
+    "browser_can_grant_roles": false,
+    "browser_can_record_rent": false,
+    "browser_can_record_boost": false,
+    "rls_disabled_table_count": 0,
+    "unsafe_definer_search_paths": 0,
+    "invoice_view_security_invoker": true,
+    "dangerous_api_table_privileges": [],
+    "public_listings_accessible_to_anon": true
+  },
+  "backend_structure": {
+    "tables": 32,
+    "policies": 46,
+    "foreign_keys": 53,
+    "rls_disabled": 0,
+    "public_functions": 30
+  },
+  "backend_postflight": {
+    "tables": 32,
+    "policies": 46,
+    "offer_rows": 1,
+    "foreign_keys": 53,
+    "rls_disabled": 0,
+    "public_functions": 30,
+    "offer_read_policy": 1,
+    "browser_role_grant": false,
+    "anonymous_catalogue": true,
+    "browser_server_boost": false,
+    "unsafe_definer_paths": 0,
+    "public_execute_grants": 0,
+    "browser_server_payment": false,
+    "anonymous_property_save": false,
+    "browser_private_checkin": false,
+    "anonymous_base_properties": false,
+    "browser_direct_offer_write": false
+  },
+  "executed_at": "2026-11-19T15:11:37.475Z"
+}

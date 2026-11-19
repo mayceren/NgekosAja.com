@@ -41,8 +41,11 @@ def handle(route):
   if req.method=='PATCH':profile.update(body)
   data=profile
  elif '/rest/v1/user_roles' in url:data=[{'role':r} for r in rights]
- elif '/rest/v1/rental_agreements' in url:data=[{'id':'lease-qa'}] if 'tenant' in rights else []
+ elif '/rest/v1/rental_agreements' in url:data=[{'id':'lease-qa','rent':1500000,'start_date':'2026-11-01','end_date':'2027-10-31','payment_day':5,'status':'active','rooms':{'number':'A01','properties':{'name':'Kos QA'}}}] if 'tenant' in rights else []
  elif '/rest/v1/rpc/public_listings' in url:data=[]
+ elif '/rest/v1/rpc/owner_financial_report' in url or '/rest/v1/rpc/platform_financial_report' in url:data=[{}]
+ elif '/rest/v1/rpc/operational_summary' in url:data={}
+ elif '/rest/v1/' in url:data=[]
  else:status=404;data={}
  route.fulfill(status=status,headers=headers,body=json.dumps(data))
 with sync_playwright() as p:
@@ -104,10 +107,10 @@ with sync_playwright() as p:
  for route in ['login','register']:
   page.evaluate('(route)=>NK.navigate(route)',route);expect(page).to_have_url(ORIGIN+'/#/');expect(page.locator('.public-nav a[aria-current=page]')).to_have_text('Beranda')
  passed.append('An already signed-in user opening login or register returns to home')
- page.evaluate('NK.navigate("account/profile")');expect(page.locator('.sidebar nav a')).to_have_count(4)
- assert page.locator('.sidebar nav a').all_text_contents()==['Informasi Pribadi','Alamat Email','Kata Sandi','Hak Akses']
+ page.evaluate('NK.navigate("account/profile")');expect(page.locator('.sidebar nav a')).to_have_count(5)
+ assert page.locator('.sidebar nav a').all_text_contents()==['Informasi Pribadi','Alamat Email','Kata Sandi','Hak Akses','Preferensi']
  assert page.locator('.sidebar nav a[href="#/marketplace"],.sidebar nav a[href="#/workspace"]').count()==0
- passed.append('Account sidebar contains four distinct settings menus without Beranda or Cari Kos')
+ passed.append('Account sidebar retains identity/security menus and adds DB preferences without Beranda or Cari Kos')
  expect(page.locator('.public-header')).to_be_visible();expect(page.locator('.public-nav a')).to_have_count(4)
  page.locator('.public-nav a[href="#/"]').click();expect(page).to_have_url(ORIGIN+'/#/');page.locator('.connected-account-link').click();expect(page).to_have_url(ORIGIN+'/#/account/profile');expect(page.locator('#auth-profile-form')).to_be_visible()
  passed.append('Account retains the main navbar; Beranda and profile links navigate out and back')
@@ -138,7 +141,7 @@ with sync_playwright() as p:
  page.locator('.sidebar nav a[href="#/account/security"]').click()
  for field,value in [('current',WRONG),('password',UPDATED),('confirmation',UPDATED)]:page.locator('#auth-password-form [name='+field+']').fill(value)
  page.locator('#auth-password-form [type=submit]').click();expect(page.locator('#auth-password-form .auth-form-error')).to_contain_text('tidak cocok');page.locator('#auth-password-form [name=current]').fill(PW);page.locator('#auth-password-form [type=submit]').click();expect(page.locator('.notice').first).to_contain_text('berhasil diperbarui');passed.append('Profile password change revalidates current password and persists success state')
- page.evaluate('NK.navigate("owner")');rights[:]=['owner'];page.evaluate('NA.refreshIdentity()');page.wait_for_function('NA.effectiveRoles.includes("owner")');page.evaluate('NK.navigate("owner")');expect(page.locator('.connected-phase')).to_be_visible();expect(page.locator('.connected-phase')).to_contain_text('sedang dikembangkan');passed.append('Trusted owner role enables scoped workspace with explicit unintegrated state')
+ page.evaluate('NK.navigate("owner")');rights[:]=['owner'];page.evaluate('NA.refreshIdentity()');page.wait_for_function('NA.effectiveRoles.includes("owner")');page.evaluate('NK.navigate("owner")');expect(page.locator('.b-layout')).to_be_visible();expect(page.locator('#main')).to_contain_text('Pendapatan sewa');passed.append('Trusted owner role enables scoped backend dashboard without Phase 2 placeholder')
  assert page.evaluate('(()=>{try{NK.setRole("admin");return false}catch{return true}})()');passed.append('Connected mode blocks legacy demo mutation/role switching')
  page.evaluate('document.body.insertAdjacentHTML("beforeend",\'<button id="injected-demo" data-auth-action="demo">Injected demo</button>\')');page.locator('#injected-demo').dispatch_event('click');assert page.evaluate('NA.mode==="connected" && !!NA.user');page.locator('#injected-demo').evaluate('(el)=>el.remove()');passed.append('Signed-in demo mode switch is refused even if a stale action is triggered')
  page.evaluate('NK.navigate("account/security")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');assert page.evaluate('sessionStorage.getItem("ngekosaja.auth.v3")') is None;expect(page.locator('[data-auth-action=demo]')).not_to_have_count(0);passed.append('Logout clears authorization and makes Demo available again')
@@ -146,7 +149,7 @@ with sync_playwright() as p:
  expect(page.locator('.demo-mode-bar')).to_be_visible();page.locator('[data-auth-action=connected]').first.click();page.wait_for_function('NA.mode==="connected" && NA.ready');assert page.evaluate('NA.user===null');passed.append('Return from anonymous demo does not adopt a demo role or restore a logged-out identity')
  rights[:]=['prospect'];login(True,'account/security');assert page.evaluate('localStorage.getItem("ngekosaja.auth.v3")') is not None;passed.append('Login from a protected settings URL opens home and remembered session uses persistent storage')
  for role in ['owner','tenant','admin']:
-  page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');rights[:]=[role];login();assert page.evaluate('(role)=>NA.effectiveRoles.includes(role)',role);expect(page.locator('.public-nav a[href="#/'+role+'"]')).to_have_text('Dashboard');page.locator('.public-nav a[href="#/'+role+'"]').click();expect(page.locator('.connected-phase')).to_be_visible()
+  page.evaluate('NK.navigate("account")');page.locator('[data-auth-action=logout]').first.click();page.locator('[data-auth-action=logout-confirm]').click();page.wait_for_function('!NA.user');rights[:]=[role];login();assert page.evaluate('(role)=>NA.effectiveRoles.includes(role)',role);expect(page.locator('.public-nav a[href="#/'+role+'"]')).to_have_text('Dashboard');page.locator('.public-nav a[href="#/'+role+'"]').click();expect(page.locator('.b-layout')).to_be_visible()
  passed.append('Owner, tenant and admin all land on home after login and retain their authorized workspace access')
  for width in [390,768,1440]:
   page.set_viewport_size({'width':width,'height':900});page.evaluate('NK.navigate("account/profile")');page.wait_for_timeout(100);assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')

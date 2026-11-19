@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-11-19T15:34:18.737Z",
+  "method": "read-only local artifact and source inspection; no subprocess or Cloud call",
+  "apply_status": "verified",
+  "all_postflight_checks_passed": true,
+  "all_existing_application_rows_preserved": true,
+  "existing_tables_fingerprinted": 31,
+  "counts": {
+    "agreements": 2,
+    "auth_users": 7,
+    "facilities": 7,
+    "invoices": 0,
+    "profiles": 7,
+    "properties": 2,
+    "rooms": 2,
+    "tenants": 2,
+    "transactions": 0
+  },
+  "anonymous_denial_checks": 4,
+  "content_audit_passed": true,
+  "approved_migration_checksum_unchanged": true,
+  "static_rerun_guard_precedes_first_cli_operation": true,
+  "runtime_reapply_test": {
+    "executed": false,
+    "reason": "Automatic approval review rejected invoking an apply-capable script again because it could repeat a remote mutation if its guard failed. No retry or indirect execution performed."
+  }
+}

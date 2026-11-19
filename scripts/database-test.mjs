@@ -8,6 +8,8 @@ import { runContracts } from '../supabase/tests/contracts.mjs';
 const native=process.argv.includes('--native');
 const option=name=>process.argv.find(arg=>arg.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
 const through=option('through');
+const backendFresh=process.argv.includes('--backend-fresh');
+const backend=process.argv.includes('--backend')||(!backendFresh&&(!through||through>='20261119000200')&&readdirSync('supabase/migrations').includes('20261119000200_backend_integration.sql'));
 if(through&&!/^\d{14}$/.test(through))throw new Error('Invalid migration boundary.');
 const output=option('output')||'tests/database-results.json';
 if(!/^tests\/[a-z0-9-]+\.json$/.test(output))throw new Error('Results must be written to a JSON file in tests/.');
@@ -22,11 +24,11 @@ try {
  client=await connect(dbConfig);
  results.engine=(await client.query('select version() as version')).rows[0].version;
  await client.query(readFileSync('supabase/tests/bootstrap_native.sql','utf8'));
- for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(!through||f.slice(0,14)<=through)).sort()) {
+ for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(!through||f.slice(0,14)<=through)&&(!backend||f.slice(0,14)<='20261119000100')).sort()) {
   try { await client.query(readFileSync(`supabase/migrations/${file}`,'utf8'));results.migrations.push(file);console.log(`Migration OK: ${file}`); }
   catch(error) { throw new Error(`${file}: ${safeError(error)}`); }
  }
- await runContracts(client,dbConfig,results);
+ if(!backendFresh)await runContracts(client,dbConfig,results);
  if(process.argv.includes('--upgrade-check')) {
   if(through!=='20261118001100')throw new Error('Upgrade check must start from the applied 11-migration baseline.');
   const {verifyFinalUpgrade}=await import('../supabase/tests/final-upgrade.mjs');
@@ -53,6 +55,15 @@ try {
   results.postflight=postflight;console.log('PASS postflight verification SQL against locally migrated database');
  }
  if(process.argv.includes('--docs')) { const {generateDatabaseDocs}=await import('./database-docs.mjs');await generateDatabaseDocs(client); }
+ if(backend || backendFresh){
+  if(backend){
+   const before=(await client.query('select count(*)::int n from public.rental_agreements')).rows[0].n;
+   const file='20261119000200_backend_integration.sql';await client.query(readFileSync('supabase/migrations/'+file,'utf8'));results.migrations.push(file);
+   const after=(await client.query('select count(*)::int n from public.rental_agreements')).rows[0].n;if(before!==after)throw new Error('Upgrade changed agreement count.');
+   results.passed.push('Phase 3 additive upgrade preserves existing agreements');
+  }
+  const {runBackendContracts}=await import('../supabase/tests/backend-contracts.mjs');await runBackendContracts(client,dbConfig,results);
+ }
 } catch(error) { results.failed.push(safeError(error));console.error(safeError(error));process.exitCode=1; }
 finally {
  if(client)await client.end();

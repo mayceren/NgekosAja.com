@@ -6,17 +6,19 @@
 
 NgekosAja.com merupakan platform digital yang menghubungkan calon penghuni, penghuni, serta pemilik atau pengelola kos melalui layanan pencarian properti, pembayaran sewa, dan pengelolaan operasional dalam satu sistem yang terintegrasi.
 
-Produk menggabungkan **Property Marketplace**, **Integrated Rental Payment**, dan **Property Management**. Pengembangan saat ini mencakup fondasi database, autentikasi, katalog publik, dan Demo Produk untuk mengeksplorasi alur bisnis dengan data ilustrasi. Integrasi operasional untuk akun terhubung masih dalam pengembangan; pembayaran belum memproses uang sungguhan.
+Produk menggabungkan **Property Marketplace**, **Integrated Rental Payment**, dan **Property Management**. Phase 3 menambahkan service layer dan antarmuka bisnis terhubung untuk properti, kamar, sewa, tagihan, keluhan, pesan dan laporan. **Migration Phase 3 sudah diterapkan ke Cloud setelah persetujuan dan lulus postflight.** Uji bisnis multi-akun Cloud masih perlu dilakukan terpisah. Pembayaran Connected belum memproses uang sungguhan; Demo tetap terpisah.
+
+[Status dan feature matrix Phase 3](docs/backend/PHASE3_COMPLETION.md), [panduan integrasi](docs/backend/INTEGRATION_GUIDE.md), [kontrak API](docs/backend/API_CONTRACTS.md), dan [bukti pengujian](docs/backend/TESTING.md).
 
 ## Key Features
 
 | Area | Akun terhubung | Demo Produk |
 | --- | --- | --- |
 | Authentication | Supabase Auth, session persistence, profil, pemulihan password, role database, protected routes | Profil dan peran contoh tanpa password |
-| Marketplace | Pencarian nama/lokasi dan detail listing terpublikasi melalui katalog aman | 16 listing ilustrasi, filter gabungan, sort, favorit, perbandingan dan galeri |
-| Property Management | Schema, RLS dan fungsi transaksi tersedia; workspace operasional belum diintegrasikan | Properti/kamar, check-in/check-out, penghuni, tagihan, jadwal dan laporan |
+| Marketplace | Katalog aman, filter/sort/range, grid/list, galeri, favorit, perbandingan dan recent searches; katalog Cloud saat review kosong | 16 listing ilustrasi, filter gabungan, sort, favorit, perbandingan dan galeri |
+| Property Management | UI/services/RPC tersedia dan migration Cloud diterapkan; uji bisnis multi-akun Cloud belum selesai | Properti/kamar, check-in/check-out, penghuni, tagihan, jadwal dan laporan |
 | Rental Payment | Payment gateway belum diintegrasikan | Checkout berhasil/gagal, admin Rp2.000, bukti cetak, reminder H-3, pencegahan pembayaran ganda |
-| Maintenance & Chat | Integrasi antarmuka bisnis masih dalam pengembangan | Tracking keluhan, konfirmasi penghuni, analisis aturan teks, lampiran dan chat lokal |
+| Maintenance & Chat | Keluhan/timeline/analisis/notifikasi via API dan direktori chat sudah tersedia; QA Cloud bisnis belum dijalankan | Tracking keluhan, konfirmasi penghuni, analisis aturan teks, lampiran dan chat lokal |
 | Boost Listing | Pembelian promosi belum diintegrasikan | Simulasi Rp30.000/30 hari, badge Promosi, prioritas rekomendasi dan metrik interaksi lokal |
 
 Coba Demo tersedia sebelum login dan memakai penyimpanan terpisah. Pengguna dapat mencoba perspektif calon penghuni, penghuni, pemilik, dan administrator tanpa membuat akun Supabase. Jumlah listing, akun, transaksi dan pendapatan demo bukan klaim pelanggan atau performa bisnis nyata.
@@ -42,7 +44,9 @@ Browser menjalankan hash router dan dua environment yang terpisah:
 
 ## Database Architecture
 
-Fondasi database terdiri dari **12 migrasi, 31 tabel aplikasi dengan RLS, 48 foreign key, dan 45 policy**, sesuai pemeriksaan Cloud terdokumentasi. Model mencakup identitas/role, properti/kamar, perjanjian sewa, tagihan/ledger, keluhan, chat, notifikasi dan promosi. Constraint serta fungsi atomik melindungi relasi, histori, penempatan kamar dan pencatatan pembayaran.
+Database Cloud saat ini memiliki **13 migrasi, 32 tabel aplikasi dengan RLS, 53 foreign key, 46 policy, dan 30 fungsi publik**, sesuai postflight Phase 3. Fondasi Phase 1 sebelumnya memiliki 12 migrasi/31 tabel; dokumentasi historisnya tetap dipertahankan. Model mencakup identitas/role, properti/kamar, perjanjian sewa, tagihan/ledger, keluhan, chat, notifikasi dan promosi.
+
+Migration `20261119000200_backend_integration.sql` sudah diterapkan ke `ngekosaja-development` setelah persetujuan, menggunakan CLI 3.2.0 dan `--skip-vault`. Tidak ada migration pending. Data pada seluruh 31 tabel existing tetap sama berdasarkan perbandingan fingerprint sebelum/sesudah; tidak ada seed, reset atau perubahan akun. [Laporan penerapan](docs/backend/remote-apply-results.json), [pemeriksaan read-only terbaru](docs/backend/remote-post-apply-review-results.json), dan [dry-run sebelum persetujuan](docs/backend/remote-review-results.json).
 
 [Schema](docs/database/DATABASE_SCHEMA.md), [ERD](docs/database/ERD.md), [Data Dictionary](docs/database/DATA_DICTIONARY.md), [RLS policies](docs/database/RLS_POLICIES.md), [migration history](docs/database/MIGRATION_GUIDE.md), [verifikasi fondasi](docs/database/PHASE1_COMPLETION.md).
 
@@ -102,7 +106,7 @@ Login menuju home; pengaturan profil memiliki menu terpisah. Logout berada palin
 
 1. Fondasi PostgreSQL, constraint, RLS, laporan dan histori migrasi: tersedia dengan bukti pemeriksaan.
 2. Authentication, profil, role dan katalog publik: tersedia; enam akun development telah diprovisikan setelah persetujuan dan lulus verifikasi Cloud.
-3. Integrasi workspace bisnis terhubung: properti, penghuni, tagihan, keluhan, chat dan promosi.
+3. Integrasi workspace bisnis terhubung: implementasi lokal tersedia; migration tambahan telah diterapkan setelah persetujuan; verifikasi bisnis Cloud multi-akun masih pending.
 4. Integrasi pembayaran, pengiriman notifikasi, Storage dan scheduler setelah rancangan operasional serta keamanan ditinjau.
 5. Kesiapan production: pengujian environment target, pengiriman email, pemantauan, backup/restore dan evaluasi keamanan.
 
@@ -124,21 +128,21 @@ Tes browser membutuhkan Python, Playwright dan Chromium yang terpasang pada envi
 Dengan cluster PostgreSQL test loopback yang sudah aktif:
 
 ```powershell
-npm run db:test -- --native --postflight --development-accounts --output=tests/branding-database-results.json
+npm run db:test -- --native --postflight --development-accounts --backend --output=tests/backend-database-upgrade-results.json
 ```
 
 Runner membuat database acak baru, lalu membersihkannya. Jangan mereset remote. SQL adapter lokal tidak menguji GoTrue/JWT/PostgREST nyata; tes browser Auth menggunakan HTTP mock. Lihat [hasil Auth](docs/auth/AUTH_TESTING.md), [hasil database](docs/database/VERIFICATION.md), dan [audit konten](docs/CONTENT_AUDIT.md). Hasil historis tetap dipertahankan.
 
 ## Deployment
 
-Frontend dapat disajikan melalui HTTP static hosting; konfigurasi origin/callback dan akses file publik harus ditinjau untuk environment tujuan. Jangan menerbitkan .env, scripts, node_modules, supabase/.temp atau receipt administratif. Tidak ada deployment, konfigurasi remote atau git push yang dilakukan pada cleanup ini.
+Frontend dapat disajikan melalui HTTP static hosting; konfigurasi origin/callback dan akses file publik harus ditinjau untuk environment tujuan. Jangan menerbitkan .env, scripts, node_modules, supabase/.temp atau receipt administratif. Tidak ada deployment frontend atau git push. Migration database Phase 3 telah diterapkan setelah persetujuan; perubahan tersebut tercatat pada laporan backend.
 
 Produk masih dalam pengembangan dan **belum dinyatakan siap production**. Deployment production memerlukan pemeriksaan terpisah atas Auth/email, RLS, integrasi operasional, observability dan pengelolaan secret.
 
 ## Current Limitations
 
-- Pembayaran dan boost hanya simulasi; tidak ada koneksi bank, QRIS atau dompet digital.
-- Workspace bisnis akun terhubung belum mengelola data operasional; Demo Produk tidak dijadikan data akun nyata.
+- Pembayaran/boost Connected menunggu gateway; simulasi berhasil/gagal hanya pada Demo. Tidak ada koneksi bank, QRIS atau dompet digital.
+- Migration Phase 3 sudah diterapkan; QA bisnis Cloud multi-akun belum selesai. Tidak ada fallback ke data demo.
 - Chat, notifikasi, jadwal dan analytics demo bersifat lokal, tanpa realtime/scheduler lintas perangkat.
 - Analisis keluhan mencocokkan kata kunci teks; tidak menganalisis foto atau menggantikan diagnosis teknis/darurat.
 - Foto demo maksimal 1 MB; kapasitas LocalStorage bergantung browser. Simpan PDF memakai dialog cetak browser.

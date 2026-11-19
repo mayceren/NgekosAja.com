@@ -1,0 +1,68 @@
+{
+  "engine": "PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit",
+  "mode": "native-postgresql-auth-contract-adapter",
+  "migrations": [
+    "20261118000100_foundation_identity.sql",
+    "20261118000200_properties_rooms.sql",
+    "20261118000300_tenants_agreements.sql",
+    "20261118000400_finance_promotions.sql",
+    "20261118000500_complaints.sql",
+    "20261118000600_messaging_personal_data.sql",
+    "20261118000700_atomic_business_operations.sql",
+    "20261118000800_complaint_chat_notifications.sql",
+    "20261118000900_public_catalogue_reports.sql",
+    "20261118001000_rls_and_audit.sql",
+    "20261118001100_integrity_hardening.sql",
+    "20261119000100_final_verification_fixes.sql",
+    "20261119000200_backend_integration.sql"
+  ],
+  "passed": [
+    "Backend: property multi-table creation is atomic and catalogue-safe",
+    "Backend: cross-owner property edits and client ownership spoofing rejected",
+    "Backend: room facilities save atomically; identity cannot cross property",
+    "Backend: invalid child replacement rolls back property header and old images",
+    "Backend: operational summary rejects tenant/admin impersonation and scopes ownership",
+    "Backend: conversation directory exposes participant names only to members",
+    "Backend: check-in without explicit consent is denied despite valid conversation",
+    "Backend: offer may originate only from the owner of the conversation property",
+    "Backend: only the actual tenant may accept; owner cannot forge consent",
+    "Backend: changed rental terms invalidate consent; private bypass cannot execute",
+    "Backend: expired accepted offers cannot be consumed and cannot silently extend",
+    "Backend: concurrent consumption produces exactly one agreement and no double occupancy",
+    "Backend: invoice visible only to scoped parties; recurring deduplication and server-only ledger",
+    "Backend: complaint timeline and tenant-only final confirmation are enforced",
+    "Backend: new API functions have safe search paths, no anonymous execute or direct writes",
+    "Backend: postflight schema, RLS and privilege metadata assertions"
+  ],
+  "failed": [],
+  "limitations": [
+    "GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter."
+  ],
+  "backend_structure": {
+    "tables": 32,
+    "policies": 46,
+    "foreign_keys": 53,
+    "rls_disabled": 0,
+    "public_functions": 30
+  },
+  "backend_postflight": {
+    "tables": 32,
+    "policies": 46,
+    "offer_rows": 1,
+    "foreign_keys": 53,
+    "rls_disabled": 0,
+    "public_functions": 30,
+    "offer_read_policy": 1,
+    "browser_role_grant": false,
+    "anonymous_catalogue": true,
+    "browser_server_boost": false,
+    "unsafe_definer_paths": 0,
+    "public_execute_grants": 0,
+    "browser_server_payment": false,
+    "anonymous_property_save": false,
+    "browser_private_checkin": false,
+    "anonymous_base_properties": false,
+    "browser_direct_offer_write": false
+  },
+  "executed_at": "2026-11-19T15:11:34.336Z"
+}

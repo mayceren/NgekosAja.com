@@ -21,7 +21,9 @@
     "db:docs": "node scripts/database-docs.mjs",
     "test:content": "node scripts/content-audit.mjs",
     "test:frontend": "node tests/domain.cjs",
-    "test:database-tooling": "node --test tests/database-tooling.test.mjs"
+    "test:database-tooling": "node --test tests/database-tooling.test.mjs",
+    "test:backend": "node --test tests/backend-core.test.mjs",
+    "backend:review": "node scripts/backend-remote-review.mjs"
   },
   "devDependencies": {
     "pg": "8.23.1",

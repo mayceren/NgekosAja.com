@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-11-19T15:29:17.304Z",
+  "project": "ngekosaja-development",
+  "cli_version": "3.2.0",
+  "command": "supabase db push --remote=wfmhsbdfdcugxblqsaob --dry-run --skip-vault --output-format json",
+  "stage": "post-apply-read-only",
+  "remote_schema_changed": false,
+  "remote_data_changed": false,
+  "applied_migrations": 13,
+  "pending_migrations": [],
+  "migration_sha256": "ccee330228bf97b26138c4a486b01a0e24284ae076985ef7376ad8957ace9e49",
+  "postflight": {
+    "anonymous_base_properties": false,
+    "anonymous_catalogue": true,
+    "anonymous_property_save": false,
+    "browser_direct_offer_write": false,
+    "browser_private_checkin": false,
+    "browser_role_grant": false,
+    "browser_server_boost": false,
+    "browser_server_payment": false,
+    "foreign_keys": 53,
+    "offer_read_policy": 1,
+    "offer_rows": 0,
+    "policies": 46,
+    "public_execute_grants": 0,
+    "public_functions": 30,
+    "rls_disabled": 0,
+    "tables": 32,
+    "unsafe_definer_paths": 0
+  },
+  "public_catalogue": {
+    "anonymous_rpc_verified": true,
+    "published_listings": 0,
+    "forbidden_fields_absent": true
+  },
+  "anonymous_access_denied": [
+    {
+      "resource": "properties",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "resource": "rental_offers",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "resource": "rpc/operational_summary",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "resource": "rpc/conversation_directory",
+      "status": 401,
+      "code": "42501"
+    }
+  ],
+  "limitation": "Read-only/anonymous checks do not replace per-user Cloud JWT business mutation tests."
+}
