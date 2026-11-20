@@ -40,3 +40,15 @@
 [data-p4-connection]{font-size:.8rem;color:#6b7771}
 [data-p4-connection][data-connected=true]{color:#244f43}
 @media(max-width:650px){.p4-chat .b-messages{height:360px}.p4-notices{top:75px}.p4-upload{padding:12px}.p4-previews{grid-template-columns:repeat(2,minmax(0,1fr))}.p4-thumb img{width:85px;height:85px}}
+.pay-title{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0;color:#6b7771;font-size:.85rem}
+.pay-sandbox{display:inline-flex;align-items:center;background:#e8f1ea;color:#244f43;border:1px solid #729b83;border-radius:20px;padding:6px 12px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.pay-checkout{display:grid;grid-template-columns:1.15fr 1fr;gap:24px;margin:24px 0}
+.pay-total>strong{display:block;color:#244f43;font-size:2.2rem;line-height:1.3;padding-top:20px;border-top:1px solid #e1e7e2}
+.pay-total>[data-pay-action]{width:100%;margin-top:16px}
+.pay-total .field-help{margin-top:12px}
+.pay-status{display:inline-flex;border-radius:20px;padding:5px 10px;font-size:.75rem;background:#f5f0e5;color:#826536}
+.pay-succeeded{background:#e8f1ea;color:#244f43}.pay-failed,.pay-denied,.pay-expired,.pay-review{background:#faece8;color:#9b4b3e}
+.pay-feedback{color:#9b4b3e;font-size:.85rem;margin:12px 0;overflow-wrap:anywhere}
+.pay-accounting{display:grid;grid-template-columns:1fr 1fr;gap:24px}.pay-accounting>div{padding:20px;background:#f8f8f3;border-radius:12px}
+.pay-notice{line-height:1.7}
+@media(max-width:760px){.pay-checkout,.pay-accounting{grid-template-columns:1fr}.pay-title{align-items:flex-start;flex-direction:column}.pay-total>strong{font-size:1.8rem}}

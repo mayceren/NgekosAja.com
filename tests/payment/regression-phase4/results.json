@@ -1,0 +1,31 @@
+{
+  "scope": "real-browser-sdk-canvas-with-mock-http-and-realtime",
+  "passed": [
+    "One notification channel and one scoped route channel; repeated rendering does not duplicate them",
+    "Incoming event fetches persisted HTTP fixture, preserves composer node, focus and draft",
+    "Duplicate events do not duplicate messages",
+    "Quick replies work in the live composer",
+    "Failed send exposes retry and reuses the same idempotency key",
+    "Actual Canvas resizes/re-encodes PNG to WebP under 1 MB before SDK upload",
+    "Image-only send creates attachment metadata and opens zoomable signed-URL viewer",
+    "SVG rejected before decoding/upload",
+    "Oversized input and encoded pixel bomb rejected; avatar is square and under 500 KB",
+    "Unchanged-identity session refresh preserves the composer and draft",
+    "Reading old messages preserves scroll and offers a latest-message button",
+    "Property gallery uploads, previews and persists reordered cover through existing atomic RPC",
+    "Avatar uploader extends profile without removing navbar or logout confirmation",
+    "Live chat and uploader fit desktop, tablet and mobile",
+    "Dashboard invalidation preserves unsaved filter values",
+    "Notification dropdown and scoped mark-all-read work through SDK",
+    "Logout disposes every live channel and private in-memory state",
+    "No uncaught JavaScript exceptions"
+  ],
+  "errors": [],
+  "cloud_writes": false,
+  "emails_sent": false,
+  "limitations": [
+    "No Cloud WebSocket delivery/authorization or Storage service verified.",
+    "Cross-account RLS verified by separate native SQL adapter only."
+  ],
+  "executed_at": "2026-11-20T04:53:32Z"
+}

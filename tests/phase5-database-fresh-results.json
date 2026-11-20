@@ -1,0 +1,59 @@
+{
+  "engine": "PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit",
+  "mode": "native-postgresql-auth-contract-adapter",
+  "migrations": [
+    "20261118000100_foundation_identity.sql",
+    "20261118000200_properties_rooms.sql",
+    "20261118000300_tenants_agreements.sql",
+    "20261118000400_finance_promotions.sql",
+    "20261118000500_complaints.sql",
+    "20261118000600_messaging_personal_data.sql",
+    "20261118000700_atomic_business_operations.sql",
+    "20261118000800_complaint_chat_notifications.sql",
+    "20261118000900_public_catalogue_reports.sql",
+    "20261118001000_rls_and_audit.sql",
+    "20261118001100_integrity_hardening.sql",
+    "20261119000100_final_verification_fixes.sql",
+    "20261119000200_backend_integration.sql",
+    "20261119000300_realtime_storage.sql",
+    "20261120000100_sandbox_payments.sql"
+  ],
+  "passed": [
+    "Payment: server-only initiation and processing deny tenant/owner/admin/anonymous RPCs",
+    "Payment: resource ownership enforced and server derives 1,500,000+2,000 rupiah",
+    "Payment: two-tab concurrent initialization returns exactly the same order",
+    "Payment: attempt RLS scopes payer, related owner and admin; Snap tokens remain inaccessible",
+    "Payment: claim lease prevents duplicate Snap creation; secret token available only to payer server operation",
+    "Payment: active gateway attempt freezes invoice amount/cancellation; pending adds no financial transaction",
+    "Payment: amount mismatch and gateway ID swap cannot settle an invoice",
+    "Payment: duplicate/concurrent verified settlement records exactly one success and marks invoice paid",
+    "Payment: paid invoice blocks new attempt; out-of-order pending/expire cannot downgrade success",
+    "Payment: Boost is server-priced at Rp30,000, pending/capture does not activate a campaign",
+    "Payment: Boost settlement creates one exact 30-day campaign; duplicate purchase is blocked",
+    "Payment: final failure/expiry retained; retry creates a new unique order without income",
+    "Payment: late settlements from two attempts create one success and retain conflict for review",
+    "Payment: refund events never create new successes or rewrite immutable invoice/ledger",
+    "Payment: accounting separates Sandbox GMV, fees, Boost and historical nonsimulation; rejects foreign owner scope",
+    "Payment: financial receipt RLS and all payment tables remain protected; events immutable",
+    "Payment: actual Edge handler + real temporary SQL + mocked HTTP round-trip persists verified rent and rejects callback-only success",
+    "Payment: deny/cancel/failure each preserve failed history with zero successful revenue",
+    "Payment: card capture challenge waits; accepted capture succeeds; missing settlement fraud never settles a card"
+  ],
+  "failed": [],
+  "limitations": [
+    "GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter.",
+    "Storage schema/objects and JWT claims are native SQL adapters; Cloud Storage upload/signing/WebSocket delivery are not verified."
+  ],
+  "phase5_catalogue": {
+    "tables": 37,
+    "policies": 49,
+    "foreign_keys": 64,
+    "rls_disabled": 0,
+    "invalid_indexes": 0,
+    "unsafe_definers": 0,
+    "public_functions": 44,
+    "published_tables": 13,
+    "public_execute_grants": 0
+  },
+  "executed_at": "2026-11-20T05:00:11.723Z"
+}

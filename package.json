@@ -28,7 +28,11 @@
     "phase4:verify-remote": "node scripts/verify-phase4-remote.mjs",
     "phase4:plan": "node scripts/phase4-dry-run.mjs",
     "test:phase4": "node --test tests/live-core.test.mjs",
-    "test:phase4-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --output=tests/phase4-upgrade-results.json"
+    "test:phase4-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --output=tests/phase4-upgrade-results.json",
+    "payment:review": "node scripts/payment-review.mjs",
+    "test:payment": "node --test tests/payment-edge.test.mjs",
+    "test:payment-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --phase5 --output=tests/phase5-database-upgrade-results.json",
+    "test:payment-audit": "node scripts/payment-local-check.mjs"
   },
   "devDependencies": {
     "pg": "8.23.1",

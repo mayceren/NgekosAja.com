@@ -1,0 +1,13 @@
+# Keamanan webhook dan authorization
+
+Hanya midtrans-webhook memakai verify_jwt=false. Ketiga endpoint pengguna mempertahankan verify_jwt=true dan tetap memanggil Auth getUser. Query resource/status memakai client dengan JWT pengguna; penggunaan service role terbatas pada reserve/lease/finalization sesudah pemeriksaan tersebut. Actor berasal dari hasil verifikasi, bukan input browser. Platform administrator tidak boleh membayar invoice orang lain atau membeli Boost properti orang lain.
+
+Webhook eksternal tidak membawa JWT Supabase. Sebelum query sensitif, handler memvalidasi bentuk order/signature dan menghitung SHA512(order_id + status_code + gross_amount + Server Key) dari string asli payload. Signature 128 hex dibandingkan tanpa keluar lebih awal. Setelah signature valid, order harus sudah ada, nominal harus cocok, lalu handler meminta Get Transaction Status pada host Sandbox tetap. Respons tersebut, bukan body notification, menentukan status yang diterapkan. [Dokumentasi verifikasi Midtrans](https://docs.midtrans.com/docs/https-notification-webhooks) menjadi acuan.
+
+Normalisasi status memeriksa order, transaction ID, IDR, nominal rupiah utuh, metode, daftar status/fraud yang didukung dan merchant ID jika dikonfigurasi. Host API tidak dapat dipilih lewat request/env; redirect HTTP ditolak. Server/client key wajib berformat Sandbox dan MIDTRANS_IS_PRODUCTION harus persis false. Tidak ada switch ke Production atau mock handler pada deployment.
+
+Input JSON initiation/status maksimal 2 KB dan menolak extra fields seperti gross_amount/owner_id/payer_id. Webhook dibatasi 32 KB dan tidak menyimpan raw payload. Timeout gateway 12 detik. Error respons hanya kode dan pesan bahasa Indonesia; tidak ada raw exception, response gateway, stack, JWT atau credential di log. CORS allowlist membatasi browser origin; **CORS bukan authentication**. Webhook tetap memerlukan signature dan Get Status meskipun dipanggil tanpa Origin.
+
+Snap token adalah checkout bearer credential. Token hanya disimpan pada payment_sessions yang tidak dapat dibaca pengguna/owner/admin melalui Data API. Token dikirim Edge hanya kepada payer sesudah reserve yang sah. Endpoint status tidak pernah mengembalikan token. Client tidak menyimpan token pada browser storage; callback terlambat dari sesi lama ditolak dengan scope/epoch guard. Closing popup tidak membatalkan order dan tidak dianggap gagal.
+
+Refund/konflik dipertahankan sebagai review; tidak membuat ledger sukses kedua. Tidak ada browser RPC yang dapat menulis invoice paid, transaksi, campaign, events atau session. RLS lama tidak dinonaktifkan dan 14 migration applied tidak diedit. Test SQL native membuktikan policy/constraint pada adapter lokal; uji JWT Edge/Cloud sesungguhnya masih pending.

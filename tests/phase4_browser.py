@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1]
 fixture=(ROOT/'tests/backend_browser.py').read_text(encoding='utf-8').split('with sync_playwright() as p:')[0]
 exec(compile(fixture,str(ROOT/'tests/backend_browser.py'),'exec'))
-OUT=ROOT/'tests/phase4/browser';OUT.mkdir(parents=True,exist_ok=True)
+OUT=Path(os.environ.get('NGEKOSAJA_TEST_OUTPUT',str(ROOT/'tests/phase4/browser')));OUT.mkdir(parents=True,exist_ok=True)
 passed=[];errors=[];enabled=False;staged={};objects=set();fail_send=False;committed={};attempt_keys=[]
 original_handle=handle
 headers={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'GET,POST,PATCH,DELETE,OPTIONS','content-type':'application/json','content-range':'0-0/1'}

@@ -75,6 +75,11 @@
      if(route==='owner')active.push({table:'properties',filter:'owner_id=eq.'+id});
      if(route==='tenant')active.push({table:'rental_agreements',filter:'tenant_id=eq.'+id});
     }
+    if(window.NPay?.enabled&&['checkout','owner','tenant','admin'].includes(route)){
+     active.push({table:'payment_attempts',filter:'payer_id=eq.'+id});
+     if(route==='owner')active.push(filter('boost_campaigns','property_id',d.rooms.map(r=>r.property_id)),filter('payment_attempts','property_id',d.rooms.map(r=>r.property_id)));
+     if(route==='admin'&&A.allowed('admin'))active.push({table:'payment_attempts'},{table:'transactions'},{table:'boost_campaigns'});
+    }
     groups['route:'+hash]=active.filter(Boolean);
    }catch{/* Existing REST pages continue to work when scope discovery is offline. */}
   }

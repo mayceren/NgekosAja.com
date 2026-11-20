@@ -1,0 +1,21 @@
+{
+  "scope": "real-browser-sdk-with-mock-edge-postgrest-snap",
+  "passed": [
+    "Connected checkout shows authoritative rent/admin/total and clear Sandbox label without fake success buttons",
+    "Payment confirmation calls Edge with invoice ID only and loads pinned Snap Sandbox script",
+    "Forged popup success triggers reconciliation but cannot mark invoice paid",
+    "Only persisted server confirmation shows paid and enables labelled verified Sandbox receipt",
+    "Printed receipt includes order, invoice, exact total, server verification and Sandbox disclaimer",
+    "Checkout fits desktop, tablet and mobile without horizontal overflow",
+    "Boost uses property selection, Rp30,000 confirmation and resource-only Edge request",
+    "Financial dashboard clearly separates Sandbox ledger and nonsimulation history",
+    "Missing configuration reports Indonesian error without exposing secrets or inventing settlement",
+    "Logout clears private payment state",
+    "No client prices/owner/server key sent; no uncaught JavaScript exceptions"
+  ],
+  "errors": [],
+  "cloud_writes": false,
+  "midtrans_api_called": false,
+  "emails_sent": false,
+  "executed_at": "2026-11-20T05:01:41Z"
+}

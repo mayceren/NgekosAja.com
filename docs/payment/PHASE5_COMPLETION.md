@@ -1,0 +1,17 @@
+# Phase 5 — hasil implementasi
+
+**Implementasi lokal tersedia; integrasi Midtrans Sandbox Cloud belum terverifikasi.** Pengguna meminta mock lokal karena akun Midtrans belum tersedia. Tidak ada migration apply, deploy Edge, secrets/config Midtrans remote, reset, perubahan akun, email, pembayaran uang sungguhan atau git push pada Phase 5.
+
+Fitur: reserve attempt server dengan invoice/owner validation dan nominal DB; adapter Snap/Get Status Sandbox; empat Edge Functions; signature SHA512 plus mandatory status lookup; atomic invoice/ledger/campaign; idempotency/locks/concurrent attempts; pending/failed/review/refund history; checkout/Boost UI, receipt/print Sandbox, financial grouping, payment Realtime subscriptions, manual status fallback dan isolasi Demo.
+
+Migration lokal: `20261120000100_sandbox_payments.sql`. Menambah payment_attempts/payment_sessions/payment_events, constraints/indexes/RLS, tujuh RPC payment/capability/accounting dan tiga anggota publication. Token Snap server-only; tidak masuk publication. Empat belas migration applied dipertahankan. Review terbaru dan hash ada pada remote-review-results.json; jangan apply tanpa approval baru.
+
+Katalog database lokal setelah migration: **37 tabel, 64 FK, 49 policies, 44 public functions, 13 publication members**; zero RLS disabled, unsafe definer, invalid index atau PUBLIC execute grant. Cloud masih 14 migration dengan 34 tabel. Preflight read-only sesuai baseline; dry-run CLI **belum lulus** karena tiga percobaan timeout (55 detik, termasuk resolver HTTPS). Manifest lokal tidak boleh dianggap plan deployment terverifikasi. Tidak ada apply atau deployment yang dicoba.
+
+File utama: supabase/functions/{create-rent-payment,create-boost-payment,payment-status,midtrans-webhook}/index.ts dan _shared/{runtime.ts,midtrans.mjs,payment-handler.mjs}; js/services/payment-service.js; js/components/payment-components.js; integrasi index.html, css/backend.css dan js/core/realtime-manager.js. Tooling/tests: scripts/payment-review.mjs, payment-local-check.mjs, database-test.mjs; supabase/tests/payment-contracts.mjs; tests/payment-edge.test.mjs dan payment_browser.py. Template secrets lokal tidak berisi key asli.
+
+Lihat [arsitektur](PAYMENT_ARCHITECTURE.md), [lifecycle](PAYMENT_LIFECYCLE.md), [keamanan webhook](WEBHOOK_SECURITY.md), [setup](MIDTRANS_SETUP.md), dan [bukti pengujian](TESTING.md). Ringkasan angka aktual berada pada local-verification-results.json. Website tetap dijalankan dengan `npm run dev`/Live Server; tidak memerlukan instalasi backend baru untuk melihat UI dan Demo. Pengujian pembayaran terhubung memerlukan migration/functions/secrets yang belum diaktifkan.
+
+Batasan: tidak ada Production endpoint; refund tidak otomatis mengubah ledger/campaign historis dan memerlukan peninjauan; kehilangan token setelah create ber-outcome ambigu bisa memerlukan expiry/rekonsiliasi; session/popup bukan bukti lunas. Empat entry lolos Deno check dan lima tes Deno/SDK binding lolos dengan seluruh HTTP dicegat, tetapi gateway Supabase dan provider E2E belum diuji. UI tidak menyediakan simulasi sukses/gagal di Connected. Demo tetap memakai mekanisme lokal existing.
+
+Sebelum Phase 6: selesaikan pengujian gateway Edge dan Sandbox Cloud setelah akun/key tersedia serta deployment/fixture disetujui; verifikasi webhook asli, receipt, role isolation, reconnect dan accounting. Keterbatasan E2E Phase 4 juga tetap dicatat, bukan dianggap selesai oleh implementasi pembayaran. Project ini belum dinyatakan siap Production.

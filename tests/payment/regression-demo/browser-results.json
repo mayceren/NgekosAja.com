@@ -1,0 +1,18 @@
+{
+  "base_url": "http://127.0.0.1:5501",
+  "passed": [
+    "Editorial homepage, local assets, connected location/budget/type search",
+    "Composed filters, chips, empty state, explicit price sorting, grid/list, wishlist, bounded compare",
+    "Property detail, fullscreen gallery, sharing, guest-to-owner chat and quick reply",
+    "H-3 reminder, notification read state, failed/successful checkout, E-Wallet/QRIS, admin, reload, receipt/PDF and owner sync",
+    "Multi-owner isolation, individual/edit/cancel/bulk/recurring invoices, synchronized payment, filtered financial report and CSV",
+    "Rule-based analysis, user acceptance, photo upload, table/kanban, treatment/timeline, tenant confirmation and reopen",
+    "Tenant-owner messaging, image attachment and local unread tracking",
+    "Property create/edit/delete/archive, room repair/available, tenant check-in/edit/move/check-out and historical retention",
+    "Boost failure/success, 30-day campaign, recommendation priority and separate admin GMV/platform revenue",
+    "Register/login/recovery demo, per-account profile/preferences persistence, and role route guards",
+    "Browser v1 migration preserves source, confirmed reset, mobile menu and functional bottom-sheet filter"
+  ],
+  "javascript_errors": [],
+  "failed_resources": []
+}

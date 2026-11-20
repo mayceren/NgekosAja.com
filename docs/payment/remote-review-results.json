@@ -1,0 +1,235 @@
+{
+  "recorded_at": "2026-11-20T05:01:22.199Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "status": "preflight-verified-dry-run-incomplete",
+  "read_only": true,
+  "remote_mutations": false,
+  "functions_deployed": false,
+  "midtrans_connected": false,
+  "dry_run": {
+    "recorded_at": "2026-11-20T05:01:22.198Z",
+    "operation": [
+      "db",
+      "push",
+      "--remote=wfmhsbdfdcugxblqsaob",
+      "--dry-run",
+      "--skip-vault",
+      "--output-format",
+      "json"
+    ],
+    "attempts": 3,
+    "timeout_limit_ms": 55000,
+    "last_error": "CLI_TIMEOUT",
+    "last_attempt_used_https_dns": true,
+    "verified": false,
+    "remote_mutations": false,
+    "note": "Observed CLI timeout in this session, including HTTPS DNS retry. Underlying cause not established; no apply/deploy attempted."
+  },
+  "preflight": {
+    "auth_user_count": 7,
+    "browser_boost_writer": false,
+    "browser_rent_writer": false,
+    "buckets": [
+      {
+        "id": "avatars",
+        "limit": 512000,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "chat-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "complaint-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "property-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "room-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      }
+    ],
+    "campaigns": 0,
+    "foreign_keys": 58,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300"
+    ],
+    "invoices": 1,
+    "policies": 48,
+    "profiles": 7,
+    "public_functions": 37,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms"
+    ],
+    "rls_disabled": 0,
+    "tables": 34,
+    "transactions": 0
+  },
+  "expected_pending": [
+    {
+      "file": "20261120000100_sandbox_payments.sql",
+      "sha256": "89de42f311b00fe0ac95d20083ed11c9fbdee5987365494f8ea0e49232ec23da"
+    }
+  ],
+  "applied_files": [
+    {
+      "file": "20261118000100_foundation_identity.sql",
+      "sha256": "15c9d9bede183a46a2bc4e4e4a2cc7692a0814afe17673bb5835c11a51cc1367"
+    },
+    {
+      "file": "20261118000200_properties_rooms.sql",
+      "sha256": "974b1f81adae491fb2467839b0883a5b27189dc6e2f131091e3c2e7ac24ad13d"
+    },
+    {
+      "file": "20261118000300_tenants_agreements.sql",
+      "sha256": "7e50a9045ea0a0e5eaefb01a39abe3d0967e27857aa0debdf33363bc09187b3b"
+    },
+    {
+      "file": "20261118000400_finance_promotions.sql",
+      "sha256": "7ef60886be01e0ad6278bd88cc9859cb965a054f3bab88729b53243f91ba69a1"
+    },
+    {
+      "file": "20261118000500_complaints.sql",
+      "sha256": "69582a90035a2ca00c53fd1e72504f2cba913305b6fc83d9c9e4d004991328e1"
+    },
+    {
+      "file": "20261118000600_messaging_personal_data.sql",
+      "sha256": "2319aa3cca6718c9fe0a8e1015f0e77c9413325e80b5b29371612db1ebc59d23"
+    },
+    {
+      "file": "20261118000700_atomic_business_operations.sql",
+      "sha256": "0a496879f2d18eb347993fda0b98935027831cad9e54a29c1d4cb3c07d25c7c8"
+    },
+    {
+      "file": "20261118000800_complaint_chat_notifications.sql",
+      "sha256": "da2b90721527b43b774ad69c16c21d7e8698e5006902180e55ffb64f94dde1dc"
+    },
+    {
+      "file": "20261118000900_public_catalogue_reports.sql",
+      "sha256": "5a4c093efb23ff98f3767de393e44d296a9e9b9ef9fa80cee545353a5fea1cd0"
+    },
+    {
+      "file": "20261118001000_rls_and_audit.sql",
+      "sha256": "136299d7d5862d3cc84bd91df19d87505fb64a8378ba7bcf32ff3bfbdba1f1cd"
+    },
+    {
+      "file": "20261118001100_integrity_hardening.sql",
+      "sha256": "b6519d3fac122f4d2f82b2616448a56e2c037ac399a19d4779e1282f8570a724"
+    },
+    {
+      "file": "20261119000100_final_verification_fixes.sql",
+      "sha256": "638cc63d9cf37642d2424f856996af6abb26758d52f8a4d008922d0c3854cbe3"
+    },
+    {
+      "file": "20261119000200_backend_integration.sql",
+      "sha256": "ccee330228bf97b26138c4a486b01a0e24284ae076985ef7376ad8957ace9e49"
+    },
+    {
+      "file": "20261119000300_realtime_storage.sql",
+      "sha256": "876429b3e8d8e5feb9baf0ffbe329634a33792d83a0c044c4936dd2ae1738263"
+    }
+  ],
+  "functions": [
+    {
+      "name": "create-rent-payment",
+      "verify_jwt": true,
+      "sha256": "e44b849ebbdc6e62722075a5a5bae63179ed64f14e16256e591e86366a202885"
+    },
+    {
+      "name": "create-boost-payment",
+      "verify_jwt": true,
+      "sha256": "4d18491704a0ffe82b1914b089a63d27950dba8ebda67abecf9f51c76f4a5aa8"
+    },
+    {
+      "name": "payment-status",
+      "verify_jwt": true,
+      "sha256": "2d59d092af057f6747573bd1f220bc6899d89a6397da70dcf3a4b64217151d46"
+    },
+    {
+      "name": "midtrans-webhook",
+      "verify_jwt": false,
+      "sha256": "0c266b3ca1cba74bf15bc350419e12dde2e711a91ecc38d313dd5185a98e3254"
+    }
+  ],
+  "shared_files": [
+    {
+      "file": "midtrans.mjs",
+      "sha256": "7984ad8ba3225115fd67b5429ec7bd7bca45ec71c476cbc801e2df1e56f32a1d"
+    },
+    {
+      "file": "payment-handler.mjs",
+      "sha256": "40d1767d41e2dbb1d4115e32d5fe166b163c326c758ab51e0fa1f1b5b6ed8682"
+    },
+    {
+      "file": "runtime.ts",
+      "sha256": "a1bf8a125f180701ed7d59310e5396c74858f9d9922052f2a637ff8bfcada0f0"
+    }
+  ],
+  "limitations": [
+    "Manifest reflects current local files; the failed dry-run did not validate this migration plan.",
+    "A successful fresh CLI dry-run and approval are required before any Cloud apply/deploy."
+  ]
+}

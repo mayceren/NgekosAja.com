@@ -1,5 +1,7 @@
 # NgekosAja.com
 
+Phase 5 menambahkan pembayaran sewa dan Boost melalui adapter **Midtrans Snap Sandbox**, Edge Functions, payment attempts, verifikasi webhook, checkout dan receipt Sandbox. **Implementasi/pengujian saat ini lokal/mock; akun Midtrans belum tersedia dan migration/deployment Cloud belum dijalankan.** Lihat [status Phase 5](docs/payment/PHASE5_COMPLETION.md), [setup](docs/payment/MIDTRANS_SETUP.md) dan [pengujian](docs/payment/TESTING.md). Tidak ada uang sungguhan atau konfigurasi Production.
+
 Phase 4 menambahkan Realtime dan Cloud Storage pada frontend existing. **Migration 14 telah diterapkan setelah persetujuan dan lulus postflight Cloud; pengujian realtime/upload antar-akun masih perlu diselesaikan.** Lihat [status](docs/phase4/PHASE4_COMPLETION.md), [setup](docs/phase4/SETUP_GUIDE.md), [pengujian](docs/phase4/TESTING.md), [Realtime](docs/realtime/REALTIME_ARCHITECTURE.md), dan [Storage](docs/storage/STORAGE_ARCHITECTURE.md). Tidak ada reset, perubahan akun/password atau git push.
 
 **Cari Kos, Bayar Sewa, Kelola Semua dalam Satu Tempat.**

@@ -1,0 +1,19 @@
+{
+  "recorded_at": "2026-11-20T05:01:22.198Z",
+  "operation": [
+    "db",
+    "push",
+    "--remote=wfmhsbdfdcugxblqsaob",
+    "--dry-run",
+    "--skip-vault",
+    "--output-format",
+    "json"
+  ],
+  "attempts": 3,
+  "timeout_limit_ms": 55000,
+  "last_error": "CLI_TIMEOUT",
+  "last_attempt_used_https_dns": true,
+  "verified": false,
+  "remote_mutations": false,
+  "note": "Observed CLI timeout in this session, including HTTPS DNS retry. Underlying cause not established; no apply/deploy attempted."
+}
