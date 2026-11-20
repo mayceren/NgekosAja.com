@@ -422,15 +422,11 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 [experimental.pgdelta]
 enabled = true
 
-# Phase 5 local configuration only; Cloud deployment requires separate approval.
-[functions.create-rent-payment]
+# Phase 5: these two functions were deployed after approval; future deployments need review.
+[functions.simulate-rent-payment]
 verify_jwt = true
-[functions.create-boost-payment]
+[functions.simulate-boost-payment]
 verify_jwt = true
-[functions.payment-status]
-verify_jwt = true
-[functions.midtrans-webhook]
-verify_jwt = false
 # Directory under `supabase/` where declarative files are written.
 # declarative_schema_path = "./schemas"
 # JSON string passed through to pg-delta SQL formatting. When omitted, SQL is

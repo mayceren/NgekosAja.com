@@ -74,7 +74,7 @@ try {
   results.limitations.push('Storage schema/objects and JWT claims are native SQL adapters; Cloud Storage upload/signing/WebSocket delivery are not verified.');
  }
  if(phase5||phase5Fresh){
-  const file='20261120000100_sandbox_payments.sql',sql=readFileSync('supabase/migrations/'+file,'utf8');
+  const file='20261120000100_internal_payment_simulator.sql',sql=readFileSync('supabase/migrations/'+file,'utf8');
   try{await client.query(sql);}catch(e){console.error('Phase5 SQL line:',sql.slice(0,Number(e.position)).split('\n').length);throw e;}results.migrations.push(file);
   const {runPaymentContracts}=await import('../supabase/tests/payment-contracts.mjs');await runPaymentContracts(client,results,dbConfig);
  }

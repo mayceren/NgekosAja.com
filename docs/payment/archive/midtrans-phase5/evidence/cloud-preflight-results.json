@@ -1,0 +1,109 @@
+{
+  "checked_at": "2026-11-20T04:57:12.577Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "read_only": true,
+  "remote_mutations": false,
+  "preflight": {
+    "auth_user_count": 7,
+    "browser_boost_writer": false,
+    "browser_rent_writer": false,
+    "buckets": [
+      {
+        "id": "avatars",
+        "limit": 512000,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "chat-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "complaint-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "property-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "room-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      }
+    ],
+    "campaigns": 0,
+    "foreign_keys": 58,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300"
+    ],
+    "invoices": 1,
+    "policies": 48,
+    "profiles": 7,
+    "public_functions": 37,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms"
+    ],
+    "rls_disabled": 0,
+    "tables": 34,
+    "transactions": 0
+  }
+}

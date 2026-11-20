@@ -1,12 +1,12 @@
 {
-    "executed_at":  "2026-11-20T05:07:57.0270861Z",
-    "deno_version":  "2.9.6",
-    "supabase_sdk":  "2.99.3",
-    "entrypoints_checked":  4,
-    "passed":  5,
-    "failed":  0,
-    "network_permission":  false,
-    "remote_mutations":  false,
-    "real_credentials_used":  false,
-    "scope":  "Actual Deno and Supabase SDK with intercepted HTTP. No Cloud gateway, JWT cryptographic validation, or Midtrans API E2E."
+  "executed_at": "2026-11-20T07:06:55.257Z",
+  "scope": "Deno/SDK with intercepted HTTP; no real JWT/Cloud gateway verification",
+  "network_permission": false,
+  "remote_mutations": false,
+  "provider_calls": false,
+  "deno_version": "deno 2.9.6 (stable, release, x86_64-pc-windows-msvc)",
+  "entrypoints_checked": 2,
+  "passed": 7,
+  "failed": 0,
+  "success": true
 }

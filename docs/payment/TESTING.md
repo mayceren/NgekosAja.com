@@ -1,37 +1,30 @@
-# Pengujian Phase 5
+# Pengujian Internal Payment Simulator
 
-Status lokal dan Cloud harus dipisahkan. Akun Midtrans/key belum tersedia; tidak ada API Midtrans, deployment Edge, webhook Cloud atau simulator yang dijalankan. Phase 4 schema/API Cloud telah diperiksa read-only; real-JWT multi-account Realtime/Storage E2E tetap pending. Laporan Phase 4 historis dipertahankan.
+Bukti revisi dipisahkan dari pengujian Midtrans historis. Semua transaksi testing baru tetap berada pada database scratch/HTTP mock. Migration, dua fungsi dan konfigurasi Cloud sudah diterapkan setelah persetujuan; tidak ada transaksi Cloud baru, perubahan akun/password, email atau provider API.
 
-| Lapisan | Bukti |
+| Lapisan | Bukti aktual |
 | --- | --- |
-| Unit adapter + handler | tests/payment-edge.test.mjs: signature SHA512, nominal, pin Sandbox host, fraud/status, CORS/bounds, JWT/ownership boundary mock, timeout, duplicate create, forged settlement, reconciliation dan error redaction |
-| Fresh database | [Hasil](../../tests/phase5-database-fresh-results.json): seluruh migration sebelum fixture pembayaran, database scratch lokal |
-| Upgrade + Phase 1–5 | [Hasil](../../tests/phase5-database-upgrade-results.json): constraint, isolasi role, concurrency dua koneksi, duplicate/late settlement, campaign 30 hari, refund review, accounting dan receipt RLS |
-| Handler + PostgreSQL | Termasuk kontrak SQL: handler Edge asli + database sungguhan sementara + HTTP Midtrans mock; Auth claims memakai adapter, bukan JWT Cloud |
-| Browser pembayaran | [Hasil](../../tests/payment/browser/results.json): Chromium/SDK, mock Edge/PostgREST/Snap; popup success palsu tidak melunasi, server confirmation/receipt, Boost, error config dan responsive |
-| Regresi backend/Auth/Phase 4/Demo | Folder tests/payment/regression-*; hasil baru tidak menimpa bukti historis |
-| Read-only preflight | [Hasil](cloud-preflight-results.json): ngekosaja-development, 14 migration/34 tabel/58 FK/48 policy/37 fungsi, RLS aktif; tidak apply/deploy |
-| CLI dry-run | [Catatan](dry-run-attempts.json): tiga percobaan timeout pada batas 55 detik, termasuk retry resolver HTTPS; **belum terverifikasi**. [Manifest lokal](remote-review-results.json) mengharapkan migration 15, bukan bukti dry-run berhasil |
-| Deno + SDK binding | [Hasil](deno-verification-results.json): Deno 2.9.6 memeriksa empat entry TypeScript dan menjalankan lima tes binding SDK 2.99.3; getUser, user JWT/RLS header, service RPC, foreign invoice/status dan webhook. Semua HTTP dicegat; tes tanpa izin jaringan |
-| Supabase gateway/Cloud JWT | Belum diuji pada gateway Supabase atau memakai verifikasi JWT Cloud sungguhan |
-| Midtrans Sandbox API/Cloud webhook/manual E2E | **Belum dijalankan; menunggu akun/key, approval dan fixture** |
+| Unit handler | tests/payment-edge.test.mjs: 14 tes guard project/production/akun, metode, payload, CORS, error dan hasil tersimpan |
+| SQL fresh | [Hasil](../../tests/phase5-simulator-fresh-results.json): seluruh migration sebelum fixture simulator |
+| SQL upgrade / Phase 1–5 | [Hasil](../../tests/phase5-simulator-upgrade-results.json): constraints/RLS, dua tab, rollback setelah ledger, fee/harga, notifikasi, 30 hari, isolasi A/B, receipt dan pemisahan keuangan |
+| HTTP + PostgreSQL | Handler asli dengan SQL scratch, Auth adapter; tanpa provider |
+| Deno + SDK | [Hasil](deno-verification-results.json): dua entry TypeScript dan tujuh tes SDK dengan HTTP dicegat, tanpa izin jaringan untuk tes |
+| Browser custom checkout | [Hasil](../../tests/payment-simulator/browser/results.json): 21 tes DOM/SDK, responsive, keyboard, reduced motion, gagal/sukses, retry reload, duplikasi submit, receipt/print, guard UI dan scoped Realtime mock |
+| Regresi backend/Auth/Phase 4/Demo | tests/payment-simulator/regression-*; hasil baru disimpan terpisah |
+| Cloud sebelum apply | [Preflight](revision-preflight-results.json) dan [dry-run](revision-remote-review-results.json) historis: 14 applied, satu migration revisi pending, tanpa seed/role apply |
+| Cloud setelah aktivasi | [Hasil](cloud-activation-resume-results.json): 15 applied, schema/RLS/grants cocok, dua fungsi ACTIVE/JWT wajib, switch aktif, fingerprint data existing sama dan nol pending |
+| HTTP Cloud | Capability enabled 200; kedua fungsi tanpa autentikasi 401; origin asing 403; RPC writer anonim ditolak; CORS origin lokal 204 |
+| Akun development Cloud | Enam profil/role/marker diperiksa read-only; tidak login atau mengganti akun/password |
+| Cloud E2E | Transaksi dengan login/password existing belum dijalankan; fixture testing memerlukan persetujuan tersendiri atau dibuat pengguna lewat UI |
 
-Perintah lokal:
+Perintah: npm run test:payment, npm run test:payment-sql, npm run test:payment-runtime, npm run test:payment-audit; python tests/payment_browser.py. Fresh SQL: node scripts/database-test.mjs --native --phase5-fresh --output=tests/phase5-simulator-fresh-results.json. Website uji dijalankan dengan npm run dev (tes browser default 127.0.0.1:5501; NGEKOSAJA_TEST_ORIGIN dapat disesuaikan).
 
-```powershell
-node --test tests/payment-edge.test.mjs tests/live-core.test.mjs tests/backend-core.test.mjs tests/development-provision.test.mjs tests/development-verification.test.mjs tests/auth-repair.test.mjs tests/database-tooling.test.mjs
-node tests/domain.cjs
-node scripts/database-test.mjs --native --phase5-fresh --output=tests/phase5-database-fresh-results.json
-node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --phase5 --output=tests/phase5-database-upgrade-results.json
-python tests/payment_browser.py
-deno check --no-lock supabase/functions/create-rent-payment/index.ts supabase/functions/create-boost-payment/index.ts supabase/functions/payment-status/index.ts supabase/functions/midtrans-webhook/index.ts
-deno test --no-lock --allow-env tests/payment-runtime.test.ts
-```
+Tooling opsional Node >=20, pg, PostgreSQL loopback 55432, Python/Playwright, serta Deno 2.9.6 untuk tes binding. Runner Deno menerima NGEKOSAJA_DENO bila binary tidak ada di PATH. Seluruh scratch database dibuat acak dan hanya database milik runner yang dibuang; tidak mereset input database/remote.
 
-Node >=20, pg, PostgreSQL native loopback dan Python Playwright diperlukan hanya untuk tooling. Runner membuat database baru acak dan hanya membersihkan database scratch-nya sendiri. Tidak pernah mereset remote atau database existing. Untuk full stack lokal, gunakan Supabase CLI/Docker dan `supabase functions serve --env-file supabase/functions/.env.local`; tidak dijalankan bila tooling/credentials tidak tersedia. Mock diaktifkan hanya melalui dependency injection test, bukan konfigurasi deployed.
+SQL menguji is_simulation=true, nominal DB, invoice berubah paid, unique successes, key collision, distinct-key two-tab race, role/server-only, personal account/metadata forgery, environment guard dan rollback semua tabel setelah kegagalan. Kelompok nonsimulasi di SQL hanya control fixture lokal untuk membuktikan pemisahan; bukan transaksi uang asli.
 
-Screenshot aktual dari fixture mock: [checkout desktop](../../tests/payment/browser/checkout-desktop.png), [checkout mobile](../../tests/payment/browser/checkout-mobile.png). Bukan screenshot pembayaran Midtrans Cloud. Ringkasan final dan fingerprint audit disimpan pada local-verification-results.json.
+Browser menguji response gagal tidak menghasilkan sukses palsu, idempotency key bertahan reload, state bersih setelah logout, metode ilustratif dan ketiadaan request Midtrans. Realtime delivery memakai mock; publication/RLS dan subscriptions diuji terpisah. Tidak mengklaim delivery WebSocket/JWT Cloud sebagai lulus.
 
-Hasil akhir lokal: **80 unit**, **5 Deno/SDK runtime**, **30 domain Demo**, **19 SQL fresh**, **117 SQL upgrade/regression**, **11 browser pembayaran**, **30 backend**, **51 Auth**, **18 Phase 4**, dan **11 Demo** lolos. Audit memeriksa 14 migration applied tetap utuh, bukti historis, konfigurasi JWT, secrets frontend, asset dan link. Angka ini tidak mengubah status pending gateway Supabase/Cloud/provider E2E. Deno tersedia sementara lewat npm cache (`npm exec --yes --package=deno@2.9.6 -- deno ...`); tidak menjadi dependensi website. Tes runtime memakai nilai acak khusus mock yang tidak berlaku sebagai credential.
+Screenshot: [desktop](../../tests/payment-simulator/browser/checkout-desktop.png), [mobile](../../tests/payment-simulator/browser/checkout-mobile.png), [success](../../tests/payment-simulator/browser/success-desktop.png), [receipt](../../tests/payment-simulator/browser/receipt-desktop.png). Angka suite final yang dijalankan ulang tersedia pada local-verification-results.json.
 
-Kasus yang masih wajib diuji pada Sandbox Cloud: JWT dan signature asli; payer/owner lain tidak dapat membaca token atau status; dua tab, webhook duplikat/out-of-order; API timeout; nominal tidak cocok; late settlement konflik; invoice cancel/paid; Snap ditutup/token expired; realtime reconnect; receipt pemilik/penghuni; campaign aktif hanya setelah settlement; tidak ada email, uang sungguhan atau secret pada log. Refund ditangani sebagai review historis, bukan otomatisasi pengembalian uang.
+Hasil final revisi: 69 unit gabungan, 7 Deno/SDK, 30 domain Demo, 19 SQL fresh, 117 SQL upgrade, 21 browser pembayaran, 30 backend, 51 Auth, 18 Phase 4, 11 Demo; tidak ada kegagalan atau exception JavaScript pada hasil akhir.

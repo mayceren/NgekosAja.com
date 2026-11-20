@@ -108,7 +108,7 @@
     "submit",
     async (event) => {
       if (A.mode !== "connected") return;
-      if (event.target.matches('form[data-backend-form], form[data-p4-form]')) return;
+      if (event.target.matches('form[data-backend-form], form[data-p4-form], form[data-payment-form]')) return;
       event.preventDefault();
       event.stopImmediatePropagation();
       const f = event.target;

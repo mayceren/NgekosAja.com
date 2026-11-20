@@ -1,6 +1,6 @@
 # Entity Relationship Diagram
 
-Rancangan Phase 5 yang belum applied: [payment attempts/sessions/events](../payment/DATABASE_SCHEMA.md).
+Revisi Phase 5 sudah applied dan terverifikasi schema Cloud: [payment attempts dan simulator settings](../payment/DATABASE_SCHEMA.md). Snap sessions/events sudah diarsipkan dan tidak digunakan pada alur aktif.
 
 Tambahan Phase 4 sudah applied dan terverifikasi schema Cloud: [ERD dan dictionary media](../storage/DATABASE_EXTENSION.md). Diagram baseline di bawah tetap merekam Phase 1 applied.
 

@@ -31,7 +31,8 @@
     "test:phase4-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --output=tests/phase4-upgrade-results.json",
     "payment:review": "node scripts/payment-review.mjs",
     "test:payment": "node --test tests/payment-edge.test.mjs",
-    "test:payment-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --phase5 --output=tests/phase5-database-upgrade-results.json",
+    "test:payment-sql": "node scripts/database-test.mjs --native --extended --development-accounts --backend --phase4 --phase5 --output=tests/phase5-simulator-upgrade-results.json",
+    "test:payment-runtime": "node scripts/payment-runtime-check.mjs",
     "test:payment-audit": "node scripts/payment-local-check.mjs"
   },
   "devDependencies": {

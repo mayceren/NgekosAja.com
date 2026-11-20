@@ -8,8 +8,8 @@
   if(scopeTask?.key===key)return scopeTask.promise;
   const epoch=P.epoch;
   const promise=(async()=>{
-   const [rooms,agreements,conversations]=await Promise.all([B.read('rooms',{size:100,select:'id,property_id'}),B.read('rental_agreements',{size:100,select:'id,room_id,tenant_id'}),B.services.chat.list()]);
-   const data={key,until:Date.now()+30000,rooms,agreements,conversations};if(epoch===P.epoch&&key===B.scope())scopeData=data;return data;
+   const [rooms,agreements,conversations,invoices,properties]=await Promise.all([B.read('rooms',{size:100,select:'id,property_id'}),B.read('rental_agreements',{size:100,select:'id,room_id,tenant_id'}),B.services.chat.list(),B.services.invoice.list({size:100,select:'id'}),A.allowed('owner')?B.services.property.list({size:100,select:'id',filters:{owner_id:A.user.id}}):Promise.resolve([])]);
+   const data={key,until:Date.now()+30000,rooms,agreements,conversations,invoices,properties};if(epoch===P.epoch&&key===B.scope())scopeData=data;return data;
   })().finally(()=>{if(scopeTask?.promise===promise)scopeTask=null;});scopeTask={key,promise};return promise;
  };
  P.connection=status=>{P.lastConnection=status;document.querySelectorAll('[data-p4-connection]').forEach(node=>{node.textContent=status==='SUBSCRIBED'?'Terhubung':'Menyambungkan kembali…';node.dataset.connected=String(status==='SUBSCRIBED');});};
@@ -48,7 +48,7 @@
    // Notification routes cover unseen/new agreements and complaints outside current IDs.
    if(['owner','tenant','admin','offers','chat','notifications'].includes(A.route()[0])){scopeData=null;P.refresh();}
   }else{
-   if(['rental_agreements','rooms','properties'].includes(payload.table))scopeData=null;
+   if(['rental_agreements','rooms','properties','invoices'].includes(payload.table))scopeData=null;
    P.refresh();
   }
  };
@@ -77,7 +77,8 @@
     }
     if(window.NPay?.enabled&&['checkout','owner','tenant','admin'].includes(route)){
      active.push({table:'payment_attempts',filter:'payer_id=eq.'+id});
-     if(route==='owner')active.push(filter('boost_campaigns','property_id',d.rooms.map(r=>r.property_id)),filter('payment_attempts','property_id',d.rooms.map(r=>r.property_id)));
+     active.push(filter('transactions','invoice_id',d.invoices.map(i=>i.id)));
+     if(route==='owner'||route==='checkout'&&A.allowed('owner')){const props=[...d.rooms.map(r=>r.property_id),...d.properties.map(p=>p.id)];active.push(filter('boost_campaigns','property_id',props),filter('payment_attempts','property_id',props),filter('transactions','property_id',props));}
      if(route==='admin'&&A.allowed('admin'))active.push({table:'payment_attempts'},{table:'transactions'},{table:'boost_campaigns'});
     }
     groups['route:'+hash]=active.filter(Boolean);
@@ -91,6 +92,8 @@
   if(route==='chat'&&P.patchChat)return P.patchChat(result);
   const template=document.createElement('template');template.innerHTML=result.html;
   const current=root.querySelector('#main'),next=template.content.querySelector('#main');if(!current||!next)return false;
+  // Keep the active payment form/error target stable while its authorized request is pending.
+  if(current.querySelector('[data-payment-form][data-busy="true"]'))return true;
   const positions={x:scrollX,y:scrollY},focus=document.activeElement,focusName=focus?.name,selection=focus?.selectionStart,forms=[];
   for(const f of current.querySelectorAll('form'))forms.push({key:f.dataset.backendForm||f.dataset.authForm,values:[...f.elements].filter(el=>el.name&&!['password','file','hidden','submit'].includes(el.type)).map(el=>({name:el.name,value:el.value,checked:el.checked}))});
   current.replaceChildren(...next.childNodes);

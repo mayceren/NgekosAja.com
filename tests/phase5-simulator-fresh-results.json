@@ -1,0 +1,57 @@
+{
+  "engine": "PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit",
+  "mode": "native-postgresql-auth-contract-adapter",
+  "migrations": [
+    "20261118000100_foundation_identity.sql",
+    "20261118000200_properties_rooms.sql",
+    "20261118000300_tenants_agreements.sql",
+    "20261118000400_finance_promotions.sql",
+    "20261118000500_complaints.sql",
+    "20261118000600_messaging_personal_data.sql",
+    "20261118000700_atomic_business_operations.sql",
+    "20261118000800_complaint_chat_notifications.sql",
+    "20261118000900_public_catalogue_reports.sql",
+    "20261118001000_rls_and_audit.sql",
+    "20261118001100_integrity_hardening.sql",
+    "20261119000100_final_verification_fixes.sql",
+    "20261119000200_backend_integration.sql",
+    "20261119000300_realtime_storage.sql",
+    "20261120000100_internal_payment_simulator.sql"
+  ],
+  "passed": [
+    "Payment Simulator: disabled by default; private configuration and production settings denied",
+    "Payment Simulator: settlement writers remain inaccessible to anonymous, tenant, owner and admin JWT roles",
+    "Payment Simulator: personal/prospect/admin and wrong tenant/owner cannot settle another resource",
+    "Payment Simulator: trusted app metadata required; self-editable metadata never grants simulation",
+    "Payment Simulator: rent derives DB amount plus 2,000 and commits invoice, ledger and attempt together",
+    "Payment Simulator: same key retry returns saved transaction; payload/key collision is rejected",
+    "Payment Simulator: two tabs with distinct keys serialize one payment and one ledger entry",
+    "Payment Simulator: attempt/transaction/receipt RLS isolates both owners and tenants",
+    "Payment Simulator: cancelled invoice and invalid methods cannot create attempts or transactions",
+    "Payment Simulator: Boost atomic success creates one exact 30-day campaign; two tabs reuse active purchase",
+    "Payment Simulator: draft listing and existing unrelated campaign reject Boost",
+    "Payment Simulator: failure after ledger insert rolls back invoice, attempt, ledger and notifications",
+    "Payment Simulator: all illustrative methods use the same server mechanism and persist after new connection",
+    "Payment Simulator: notifications are simulation-labelled and private to the relevant tenant/owner",
+    "Payment Simulator: accounting separates simulated and nonsimulated totals and denies foreign owner scope",
+    "Payment Simulator: Tenant B and Owner B can settle their own resources without exposing records to A",
+    "Payment Simulator: actual HTTP handler and real PostgreSQL settle without a provider or optimistic UI",
+    "Payment Simulator: publication includes payment ledger/campaign/attempt with safe INSERT/UPDATE operations",
+    "Payment Simulator: all payment definers pin search_path and have no PUBLIC execution grants"
+  ],
+  "failed": [],
+  "limitations": [
+    "GoTrue/Auth Admin API, JWT verification, PostgREST, Supabase Docker startup and PostgreSQL 17 stack not exercised by SQL contract adapter.",
+    "Storage schema/objects and JWT claims are native SQL adapters; Cloud Storage upload/signing/WebSocket delivery are not verified."
+  ],
+  "phase5_catalogue": {
+    "tables": 35,
+    "policies": 49,
+    "foreign_keys": 62,
+    "rls_disabled": 0,
+    "invalid_indexes": 0,
+    "public_functions": 40,
+    "published_tables": 13
+  },
+  "executed_at": "2026-11-20T07:11:10.646Z"
+}

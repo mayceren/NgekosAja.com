@@ -1,0 +1,218 @@
+{
+  "checked_at": "2026-11-20T11:30:26.991Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "read_only": true,
+  "remote_mutations": false,
+  "functions_deployed": false,
+  "preflight": {
+    "auth_user_count": 7,
+    "browser_boost_writer": false,
+    "browser_rent_writer": false,
+    "buckets": [
+      {
+        "id": "avatars",
+        "limit": 512000,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "chat-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "complaint-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "property-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "room-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      }
+    ],
+    "campaigns": 0,
+    "foreign_keys": 58,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300"
+    ],
+    "invoices": 1,
+    "policies": 48,
+    "profiles": 7,
+    "public_functions": 37,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms"
+    ],
+    "rls_disabled": 0,
+    "tables": 34,
+    "transactions": 0
+  },
+  "phase5_applied": false,
+  "expected_pending": [
+    {
+      "file": "20261120000100_internal_payment_simulator.sql",
+      "sha256": "d2cd2c4e11dded89408a46ec86471c7f43663fc6270f4ed3f515f4396044f4b5"
+    }
+  ],
+  "functions": [
+    {
+      "name": "simulate-rent-payment",
+      "verify_jwt": true,
+      "sha256": "e44b849ebbdc6e62722075a5a5bae63179ed64f14e16256e591e86366a202885"
+    },
+    {
+      "name": "simulate-boost-payment",
+      "verify_jwt": true,
+      "sha256": "4d18491704a0ffe82b1914b089a63d27950dba8ebda67abecf9f51c76f4a5aa8"
+    }
+  ],
+  "shared_files": [
+    {
+      "file": "runtime.ts",
+      "sha256": "a623aacff02c5e91323d5faf063da957f685a33fffff0dcf49599c7db210f69e"
+    },
+    {
+      "file": "simulator.mjs",
+      "sha256": "0f72b44801e4992d69e3290265166744405ee427df93cf1750fb040d9386db30"
+    }
+  ],
+  "dry_run": {
+    "upToDate": false,
+    "dryRun": true,
+    "migrations": [
+      "20261120000100_internal_payment_simulator.sql"
+    ],
+    "seeds": [],
+    "roles": [],
+    "message": "Finished supabase db push.",
+    "target": {
+      "kind": "linked",
+      "project_ref": "wfmhsbdfdcugxblqsaob",
+      "project_name": "ngekosaja-development",
+      "environment": "production"
+    }
+  },
+  "success": true,
+  "local_migrations": [
+    {
+      "file": "20261118000100_foundation_identity.sql",
+      "sha256": "15c9d9bede183a46a2bc4e4e4a2cc7692a0814afe17673bb5835c11a51cc1367"
+    },
+    {
+      "file": "20261118000200_properties_rooms.sql",
+      "sha256": "974b1f81adae491fb2467839b0883a5b27189dc6e2f131091e3c2e7ac24ad13d"
+    },
+    {
+      "file": "20261118000300_tenants_agreements.sql",
+      "sha256": "7e50a9045ea0a0e5eaefb01a39abe3d0967e27857aa0debdf33363bc09187b3b"
+    },
+    {
+      "file": "20261118000400_finance_promotions.sql",
+      "sha256": "7ef60886be01e0ad6278bd88cc9859cb965a054f3bab88729b53243f91ba69a1"
+    },
+    {
+      "file": "20261118000500_complaints.sql",
+      "sha256": "69582a90035a2ca00c53fd1e72504f2cba913305b6fc83d9c9e4d004991328e1"
+    },
+    {
+      "file": "20261118000600_messaging_personal_data.sql",
+      "sha256": "2319aa3cca6718c9fe0a8e1015f0e77c9413325e80b5b29371612db1ebc59d23"
+    },
+    {
+      "file": "20261118000700_atomic_business_operations.sql",
+      "sha256": "0a496879f2d18eb347993fda0b98935027831cad9e54a29c1d4cb3c07d25c7c8"
+    },
+    {
+      "file": "20261118000800_complaint_chat_notifications.sql",
+      "sha256": "da2b90721527b43b774ad69c16c21d7e8698e5006902180e55ffb64f94dde1dc"
+    },
+    {
+      "file": "20261118000900_public_catalogue_reports.sql",
+      "sha256": "5a4c093efb23ff98f3767de393e44d296a9e9b9ef9fa80cee545353a5fea1cd0"
+    },
+    {
+      "file": "20261118001000_rls_and_audit.sql",
+      "sha256": "136299d7d5862d3cc84bd91df19d87505fb64a8378ba7bcf32ff3bfbdba1f1cd"
+    },
+    {
+      "file": "20261118001100_integrity_hardening.sql",
+      "sha256": "b6519d3fac122f4d2f82b2616448a56e2c037ac399a19d4779e1282f8570a724"
+    },
+    {
+      "file": "20261119000100_final_verification_fixes.sql",
+      "sha256": "638cc63d9cf37642d2424f856996af6abb26758d52f8a4d008922d0c3854cbe3"
+    },
+    {
+      "file": "20261119000200_backend_integration.sql",
+      "sha256": "ccee330228bf97b26138c4a486b01a0e24284ae076985ef7376ad8957ace9e49"
+    },
+    {
+      "file": "20261119000300_realtime_storage.sql",
+      "sha256": "876429b3e8d8e5feb9baf0ffbe329634a33792d83a0c044c4936dd2ae1738263"
+    },
+    {
+      "file": "20261120000100_internal_payment_simulator.sql",
+      "sha256": "d2cd2c4e11dded89408a46ec86471c7f43663fc6270f4ed3f515f4396044f4b5"
+    }
+  ]
+}

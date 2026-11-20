@@ -1,34 +1,29 @@
-# Model data pembayaran
+# Model data Internal Payment Simulator
 
-Migration 15 masih lokal. Hasil PostgreSQL sementara: 37 tabel publik, 64 FK, 49 policy, 44 fungsi publik, 13 publication members; tidak ada RLS disabled, invalid index, unsafe definer atau PUBLIC execute. Cloud masih baseline 14 migration; jangan menyamakan dua environment ini.
+Migration 20261120000100_internal_payment_simulator.sql sudah diterapkan ke ngekosaja-development pada 20 November 2026 setelah persetujuan. Pemeriksaan sebelum revisi memastikan versi ini belum applied sehingga file pending lama boleh direvisi/diganti namanya. Empat belas migration sebelumnya tetap utuh. File migration 15 sekarang historis/applied dan tidak boleh diedit. Tidak ada drop/alter destructive terhadap tabel existing.
+
+| Entitas | Relasi / akses |
+| --- | --- |
+| public.payment_attempts | Payer → profiles; invoice → invoices; property → properties; transaction → transactions |
+| private.payment_simulator_settings | Singleton development switch, default false; hanya pemilik DB |
+| transactions / invoices / boost_campaigns | Tabel existing; ditulis melalui server_record_rent_payment/server_record_boost yang tetap server-only |
 
 ```mermaid
 erDiagram
- PROFILES ||--o{ PAYMENT_ATTEMPTS : payer_id
- INVOICES o|--o{ PAYMENT_ATTEMPTS : invoice_id
- PROPERTIES ||--o{ PAYMENT_ATTEMPTS : property_id
- TRANSACTIONS o|--o| PAYMENT_ATTEMPTS : transaction_id
- PAYMENT_ATTEMPTS ||--|| PAYMENT_SESSIONS : id
- PAYMENT_ATTEMPTS ||--o{ PAYMENT_EVENTS : attempt_id
+  profiles ||--o{ payment_attempts : payer_id
+  properties ||--o{ payment_attempts : property_id
+  invoices |o--o| payment_attempts : invoice_id
+  transactions |o--o| payment_attempts : transaction_id
+  transactions |o--o| boost_campaigns : transaction_id
+  properties ||--o{ boost_campaigns : property_id
 ```
 
-| Tabel/kolom | Kontrak |
-| --- | --- |
-| attempts.id/order_id | UUID internal dan unique NK-SB-UUID; identitas order tidak dapat dipilih browser |
-| kind/invoice_id/property_id/payer_id | rent atau boost; invoice wajib untuk sewa, property/payer wajib; FK menjaga histori |
-| property_name_snapshot/payer_name_snapshot | Nama untuk receipt historis, dibaca server saat reserve |
-| amount/admin_fee/gross_amount | Integer rupiah, gross=amount+fee; rent fee=2000, boost amount=30000 dan fee=0 |
-| environment | CHECK hanya sandbox |
-| status | creating/pending/succeeded/denied/cancelled/expired/failed/review/refunded/partial_refund |
-| gateway_transaction_id | Unique jika tersedia; dicocokkan dengan order sebelum apply |
-| transaction_id | Unique FK ke ledger immutable; wajib untuk succeeded/refund states |
-| payment_method/verified_at | Berasal dari status gateway yang diverifikasi server |
-| expires_at/last_reconciled_at | Umur checkout dan throttle status; bukan pemicu settlement lokal |
-| sessions.snap_token/lease_id/lease_until/create_count | Checkout credential privat, lease 90 detik, maksimal lima klaim; hanya server |
-| events.event_key/gateway_status/outcome | SHA256 normalized status, unique attempt/key, append-only; tanpa raw payload/card data |
+payment_attempts: id UUID PK; reference unik NKA-SIM-UUID; payer_id, invoice_id nullable, property_id; kind rent/boost; property_name_snapshot dan payer_name_snapshot; amount, admin_fee, gross_amount bigint rupiah; payment_method qris/virtual_account/bank_transfer/e_wallet; status pending/succeeded; is_simulation wajib true; environment wajib development; idempotency_key UUID unik; transaction_id unik; created_at, completed_at, updated_at timestamptz.
 
-Partial unique index membatasi satu attempt creating/pending per invoice atau properti Boost. RPC memblokir resource yang membutuhkan review. Index lain mencakup payer, property, invoice, gateway ID, transaction FK dan event dedup. Pemrosesan reserve/apply memakai resource advisory lock lalu row lock yang konsisten; lease token menangani pembuatan Snap di luar transaksi database.
+Constraints memeriksa jumlah total, fee sewa 2000, harga Boost 30000 tanpa invoice/fee, relasi, dan kelengkapan transaction_id/completed_at saat succeeded. Partial unique index mencegah dua sukses untuk satu invoice, melengkapi unique ledger existing. Index payer/property mendukung scope RLS/Realtimes. Guard history mencegah perubahan identitas dan riwayat final.
 
-RLS SELECT attempt: payer, pemilik terkait atau administrator. Tidak ada authenticated write. Sessions/events tidak memiliki grant read/write browser dan tidak masuk publication. Reserve/claim/save/apply/reconcile hanya EXECUTE service_role dan tetap memakai private.require_server. Financial writers existing dipertahankan. payment_accounting memeriksa owner/admin dan scope property; capability RPC hanya versi/environment.
+RLS SELECT attempt: payer, owner properti yang terkait, atau administrator. Tidak ada browser INSERT/UPDATE/DELETE. Settlement RPC hanya service_role dan tetap memeriksa development account/role/resource. Semua SECURITY DEFINER menetapkan search_path kosong dan tidak memberikan EXECUTE kepada PUBLIC. Settings berada dalam schema private, tanpa grant ke anon/authenticated/service_role; RPC definer membacanya secara terbatas.
 
-Tidak ada data historis dihapus, ledger diubah, Auth account/password diperbarui atau RLS lama dinonaktifkan. Freeze trigger baru melindungi nominal/cancellation invoice dan publication properti selama payment belum selesai. [Postflight SQL](../../supabase/review/phase5-postflight.sql) sudah disiapkan untuk verifikasi metadata setelah deployment yang disetujui; belum dijalankan pada Cloud karena tabel baru belum diterapkan.
+Tiga tabel ditambahkan ke publication existing: payment_attempts, transactions, boost_campaigns. Publication hanya INSERT/UPDATE. Token Snap, gateway ID, payment_sessions dan payment_events tidak diperlukan; rancangan lamanya hanya tersimpan di arsip, tidak pernah diterapkan ke Cloud.
+
+Katalog lokal dan postflight Cloud cocok: 35 tabel public, 62 FK, 49 policies, 40 public functions dan 13 publication members. Seluruh RLS aktif, indexes/constraints valid dan tidak ada unsafe definer. Enam akun fixture memiliki profil, role dan marker administratif yang sesuai berdasarkan pemeriksaan read-only. Lihat [aktivasi aktual](CLOUD_VERIFICATION.md); laporan revision-preflight/revision-remote-review tetap merupakan bukti historis sebelum apply.

@@ -1,14 +1,15 @@
 {
-  "executed_at": "2026-11-20T05:08:43.315Z",
+  "executed_at": "2026-11-20T11:43:33.738Z",
+  "provider": "internal-simulator",
   "remote_mutations": false,
-  "midtrans_api_called": false,
+  "provider_calls": false,
   "checks": {
     "syntax": {
-      "files": 41,
+      "files": 42,
       "passed": true
     },
     "unit": {
-      "passed": 80,
+      "passed": 69,
       "failed": 0
     },
     "demo_domain": {
@@ -16,6 +17,10 @@
     },
     "applied_migrations": {
       "unchanged": 14
+    },
+    "cloud_applied_migration": {
+      "file": "20261120000100_internal_payment_simulator.sql",
+      "unchanged": true
     },
     "historical_evidence": {
       "unchanged": 5
@@ -27,9 +32,9 @@
       "ignored": 3
     },
     "function_jwt": {
-      "only_webhook_disabled": true
+      "both_simulators_require_jwt": true
     },
-    "production_endpoints": {
+    "gateway_dependencies": {
       "found": 0
     },
     "html_assets": {
@@ -39,65 +44,63 @@
       "passed": true
     },
     "deno_runtime": {
-      "passed": 5,
+      "passed": 7,
       "failed": 0,
       "evidence": "docs/payment/deno-verification-results.json"
     },
     "sql_fresh": {
       "passed": 19,
       "failed": 0,
-      "evidence": "tests/phase5-database-fresh-results.json"
+      "evidence": "tests/phase5-simulator-fresh-results.json"
     },
     "sql_upgrade": {
       "passed": 117,
       "failed": 0,
-      "evidence": "tests/phase5-database-upgrade-results.json"
+      "evidence": "tests/phase5-simulator-upgrade-results.json"
     },
     "payment_browser": {
-      "passed": 11,
+      "passed": 21,
       "failed": 0,
-      "evidence": "tests/payment/browser/results.json"
+      "evidence": "tests/payment-simulator/browser/results.json"
     },
     "backend_browser": {
       "passed": 30,
       "failed": 0,
-      "evidence": "tests/payment/regression-backend/results.json"
+      "evidence": "tests/payment-simulator/regression-backend/results.json"
     },
     "auth_browser": {
       "passed": 51,
       "failed": 0,
-      "evidence": "tests/payment/regression-auth/auth-browser-results.json"
+      "evidence": "tests/payment-simulator/regression-auth/auth-browser-results.json"
     },
     "phase4_browser": {
       "passed": 18,
       "failed": 0,
-      "evidence": "tests/payment/regression-phase4/results.json"
+      "evidence": "tests/payment-simulator/regression-phase4/results.json"
     },
     "demo_browser": {
       "passed": 11,
       "failed": 0,
-      "evidence": "tests/payment/regression-demo/browser-results.json"
+      "evidence": "tests/payment-simulator/regression-demo/browser-results.json"
     }
   },
   "limitations": [
     "Deno runtime tests use the actual Supabase SDK with intercepted HTTP, not the Supabase Cloud gateway or real JWT validation.",
-    "Native SQL uses Auth claims/Storage adapters; browser uses mock Edge/Snap.",
-    "Midtrans Sandbox API, Cloud webhook and real-JWT E2E not exercised."
+    "Native SQL uses Auth claims/Storage adapters; browser uses mocked internal Edge/PostgREST/Realtime.",
+    "Successful authenticated Cloud payments and real-JWT multi-device E2E are not exercised by this local audit; deployment verification is recorded separately."
   ],
   "migration": {
-    "file": "20261120000100_sandbox_payments.sql",
-    "sha256": "89de42f311b00fe0ac95d20083ed11c9fbdee5987365494f8ea0e49232ec23da"
+    "file": "20261120000100_internal_payment_simulator.sql",
+    "sha256": "d2cd2c4e11dded89408a46ec86471c7f43663fc6270f4ed3f515f4396044f4b5"
   },
   "local_schema": {
-    "tables": 37,
+    "tables": 35,
     "policies": 49,
-    "foreign_keys": 64,
+    "foreign_keys": 62,
     "rls_disabled": 0,
     "invalid_indexes": 0,
-    "unsafe_definers": 0,
-    "public_functions": 44,
-    "published_tables": 13,
-    "public_execute_grants": 0
+    "public_functions": 40,
+    "published_tables": 13
   },
   "success": true
 }

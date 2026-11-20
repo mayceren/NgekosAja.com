@@ -1,0 +1,30 @@
+{
+  "scope": "real-browser-sdk-mocked-internal-edge-and-postgrest",
+  "passed": [
+    "Custom checkout presents invoice, tenant, period, server-derived amount, 2,000 fee and four illustrative methods",
+    "Two-column desktop and single-column mobile/tablet have no horizontal overflow",
+    "Payment method cards support keyboard focus and selection",
+    "Backend failure preserves unpaid invoice and displays an honest error without false success",
+    "Double-submit sends one request; retry retains idempotency key across reload and shows persisted success",
+    "Success screen includes recorded reference, amount, method, time and simulation disclaimer",
+    "Success and transaction history survive reload from persisted server fixture",
+    "Success respects reduced-motion preference and fits mobile",
+    "Receipt and print include correct tenant, property, reference, amount and simulation mark",
+    "Tenant history and notification center reflect the recorded simulation",
+    "Custom Boost checkout records 30,000 simulation and activates one 30-day campaign",
+    "Boost history and promotion state are sourced from recorded campaign data",
+    "Financial view separates simulation from nonsimulation and replaces mixed monetary cards/chart/export",
+    "Payment Realtime uses scoped payer/invoice/property subscriptions with only two active channels",
+    "Duplicate ledger events refresh authoritative financial data once without subscriptions or render loops",
+    "Owner invoice list reflects tenant payment after navigation/reload",
+    "Personal account sees unavailable simulation and cannot use checkout confirmation",
+    "Disabled server capability leaves checkout unavailable",
+    "Realtime preserves an in-flight checkout form and its feedback target",
+    "Logout clears scoped payment keys and in-flight state",
+    "No gateway requests, client prices, owner IDs, secrets or uncaught JavaScript errors"
+  ],
+  "errors": [],
+  "cloud_writes": false,
+  "provider_calls": false,
+  "executed_at": "2026-11-20T07:14:23Z"
+}

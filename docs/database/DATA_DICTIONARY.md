@@ -1,6 +1,6 @@
 # Data Dictionary
 
-Rancangan Phase 5 yang belum applied: [dictionary pembayaran](../payment/DATABASE_SCHEMA.md).
+Revisi Phase 5 sudah applied dan terverifikasi schema Cloud: [dictionary pembayaran](../payment/DATABASE_SCHEMA.md). [Hasil aktivasi](../payment/CLOUD_VERIFICATION.md).
 
 Tambahan Phase 4 sudah applied dan terverifikasi schema Cloud: [room_images, media_uploads, avatar_path dan client_key](../storage/DATABASE_EXTENSION.md). Bagian Phase 1 di bawah tetap merupakan baseline historis.
 

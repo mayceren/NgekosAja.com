@@ -1,0 +1,531 @@
+{
+  "started_at": "2026-11-20T11:38:19.815Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "approval": "User approved migration, two functions and development activation with message ya",
+  "initial_report": "docs/payment/cloud-activation-results.json",
+  "migration_reapplied": false,
+  "functions_redeployed": false,
+  "secrets_rewritten": false,
+  "business_writes_requested": false,
+  "accounts_changed": false,
+  "emails_sent": false,
+  "steps": [
+    {
+      "stage": "preflight",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:21.506Z"
+    },
+    {
+      "stage": "preflight",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:23.591Z"
+    },
+    {
+      "stage": "configuration-verification",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:25.061Z"
+    },
+    {
+      "stage": "configuration-verification",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:26.468Z"
+    },
+    {
+      "stage": "development-account-read-only",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:28.819Z"
+    },
+    {
+      "stage": "enable-db-switch",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:36.715Z"
+    },
+    {
+      "stage": "final-postflight",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:39.237Z"
+    },
+    {
+      "stage": "final-postflight",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:42.331Z"
+    },
+    {
+      "stage": "final-dry-run",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:47.667Z"
+    },
+    {
+      "stage": "http-read-only-smoke",
+      "success": true,
+      "finished_at": "2026-11-20T11:38:53.485Z"
+    }
+  ],
+  "status": "verified-active-development-only",
+  "postflight_before_activation": {
+    "browser_attempt_write": false,
+    "browser_config_read": false,
+    "foreign_keys": 62,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300",
+      "20261120000100"
+    ],
+    "invalid_constraints": 0,
+    "invalid_indexes": 0,
+    "policies": 49,
+    "public_functions": 40,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "boost_campaigns",
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "payment_attempts",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms",
+      "transactions"
+    ],
+    "rls_disabled": 0,
+    "server_functions": [
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_record_boost",
+        "service": true
+      },
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_record_rent_payment",
+        "service": true
+      },
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_simulate_payment",
+        "service": true
+      }
+    ],
+    "simulator_enabled": false,
+    "tables": 35,
+    "unsafe_definers": 0
+  },
+  "configuration_checks": [
+    {
+      "name": "PAYMENT_SIMULATOR_ENABLED",
+      "present": true,
+      "digest_matches": true
+    },
+    {
+      "name": "PAYMENT_ENVIRONMENT",
+      "present": true,
+      "digest_matches": true
+    },
+    {
+      "name": "PAYMENT_ALLOWED_PROJECT_REF",
+      "present": true,
+      "digest_matches": true
+    },
+    {
+      "name": "PAYMENT_ALLOWED_ORIGINS",
+      "present": true,
+      "digest_matches": true
+    }
+  ],
+  "verifier_correction": "CLI 3.2.0 exposes SHA256 digests under value; initial verifier expected digest. All four existing configuration digests match, without rewriting them.",
+  "deployed_functions": [
+    {
+      "slug": "simulate-rent-payment",
+      "status": "ACTIVE",
+      "version": 2,
+      "verify_jwt": true
+    },
+    {
+      "slug": "simulate-boost-payment",
+      "status": "ACTIVE",
+      "version": 2,
+      "verify_jwt": true
+    }
+  ],
+  "account_access": [
+    {
+      "account": "Administrator",
+      "exists": true,
+      "fixture_marked": true,
+      "profile_exists": true,
+      "role_matches": true,
+      "settlement_allowed_by_account_type": false
+    },
+    {
+      "account": "Owner A",
+      "exists": true,
+      "fixture_marked": true,
+      "profile_exists": true,
+      "role_matches": true,
+      "settlement_allowed_by_account_type": true
+    },
+    {
+      "account": "Owner B",
+      "exists": true,
+      "fixture_marked": true,
+      "profile_exists": true,
+      "role_matches": true,
+      "settlement_allowed_by_account_type": true
+    },
+    {
+      "account": "Prospect",
+      "exists": true,
+      "fixture_marked": true,
+      "profile_exists": true,
+      "role_matches": true,
+      "settlement_allowed_by_account_type": false
+    },
+    {
+      "account": "Tenant A",
+      "exists": true,
+      "fixture_marked": true,
+      "profile_exists": true,
+      "role_matches": true,
+      "settlement_allowed_by_account_type": true
+    },
+    {
+      "account": "Tenant B",
+      "exists": true,
+      "fixture_marked": true,
+      "profile_exists": true,
+      "role_matches": true,
+      "settlement_allowed_by_account_type": true
+    }
+  ],
+  "runtime_checks": [
+    {
+      "function": "simulate-rent-payment",
+      "preflight_status": 204,
+      "allowed_origin": "http://127.0.0.1:5500"
+    },
+    {
+      "function": "simulate-boost-payment",
+      "preflight_status": 204,
+      "allowed_origin": "http://127.0.0.1:5500"
+    }
+  ],
+  "database_switch": {
+    "enabled": true,
+    "environment": "development",
+    "project_ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "database_enabled": true,
+  "postflight": {
+    "browser_attempt_write": false,
+    "browser_config_read": false,
+    "foreign_keys": 62,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300",
+      "20261120000100"
+    ],
+    "invalid_constraints": 0,
+    "invalid_indexes": 0,
+    "policies": 49,
+    "public_functions": 40,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "boost_campaigns",
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "payment_attempts",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms",
+      "transactions"
+    ],
+    "rls_disabled": 0,
+    "server_functions": [
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_record_boost",
+        "service": true
+      },
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_record_rent_payment",
+        "service": true
+      },
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_simulate_payment",
+        "service": true
+      }
+    ],
+    "simulator_enabled": true,
+    "tables": 35,
+    "unsafe_definers": 0
+  },
+  "all_existing_data_preserved": true,
+  "preservation": [
+    {
+      "table": "activity_logs",
+      "rows": "23",
+      "preserved": true
+    },
+    {
+      "table": "auth.users",
+      "rows": "7",
+      "preserved": true
+    },
+    {
+      "table": "boost_campaigns",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "complaint_analyses",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "complaint_attachments",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "complaint_histories",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "complaint_notes",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "complaints",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "conversation_members",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "conversations",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "facilities",
+      "rows": "7",
+      "preserved": true
+    },
+    {
+      "table": "favorites",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "invoices",
+      "rows": "1",
+      "preserved": true
+    },
+    {
+      "table": "listing_analytics",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "media_uploads",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "message_attachments",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "messages",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "notifications",
+      "rows": "1",
+      "preserved": true
+    },
+    {
+      "table": "profiles",
+      "rows": "7",
+      "preserved": true
+    },
+    {
+      "table": "properties",
+      "rows": "3",
+      "preserved": true
+    },
+    {
+      "table": "property_facilities",
+      "rows": "4",
+      "preserved": true
+    },
+    {
+      "table": "property_images",
+      "rows": "1",
+      "preserved": true
+    },
+    {
+      "table": "property_landmarks",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "property_rules",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "recent_searches",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "recurring_invoices",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "rental_agreements",
+      "rows": "2",
+      "preserved": true
+    },
+    {
+      "table": "rental_offers",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "room_facilities",
+      "rows": "2",
+      "preserved": true
+    },
+    {
+      "table": "room_images",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "rooms",
+      "rows": "3",
+      "preserved": true
+    },
+    {
+      "table": "storage.objects",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "tenants",
+      "rows": "2",
+      "preserved": true
+    },
+    {
+      "table": "transactions",
+      "rows": "0",
+      "preserved": true
+    },
+    {
+      "table": "user_roles",
+      "rows": "12",
+      "preserved": true
+    },
+    {
+      "table": "user_settings",
+      "rows": "7",
+      "preserved": true
+    }
+  ],
+  "no_pending_migrations": true,
+  "public_capability": {
+    "status": 200,
+    "enabled": true,
+    "version": 5,
+    "provider": "internal-simulator",
+    "environment": "development"
+  },
+  "http_denials": [
+    {
+      "function": "simulate-rent-payment",
+      "unauthenticated_status": 401
+    },
+    {
+      "function": "simulate-rent-payment",
+      "untrusted_origin_status": 403
+    },
+    {
+      "function": "simulate-boost-payment",
+      "unauthenticated_status": 401
+    },
+    {
+      "function": "simulate-boost-payment",
+      "untrusted_origin_status": 403
+    }
+  ],
+  "anonymous_writer_status": 401,
+  "existing_counts_unchanged": true,
+  "finished_at": "2026-11-20T11:38:53.486Z",
+  "limitations": [
+    "No successful authenticated Cloud payment, private password login, new invoice or campaign fixture was performed.",
+    "Real-JWT multi-account/Realtime and receipt E2E remain separate approved testing work."
+  ]
+}

@@ -1,0 +1,505 @@
+{
+  "started_at": "2026-11-20T11:33:51.663Z",
+  "project": {
+    "name": "ngekosaja-development",
+    "ref": "wfmhsbdfdcugxblqsaob"
+  },
+  "approval": {
+    "message": "ya",
+    "scope": "one migration, two Edge Functions, development-only server and DB activation",
+    "migration_sha256": "d2cd2c4e11dded89408a46ec86471c7f43663fc6270f4ed3f515f4396044f4b5"
+  },
+  "status": "stopped-inspect-before-any-retry",
+  "steps": [
+    {
+      "stage": "target",
+      "finished_at": "2026-11-20T11:33:52.936Z",
+      "success": true
+    },
+    {
+      "stage": "preflight",
+      "finished_at": "2026-11-20T11:33:54.865Z",
+      "success": true
+    },
+    {
+      "stage": "preflight",
+      "finished_at": "2026-11-20T11:33:58.044Z",
+      "success": true
+    },
+    {
+      "stage": "preflight",
+      "finished_at": "2026-11-20T11:34:00.185Z",
+      "success": true
+    },
+    {
+      "stage": "preflight",
+      "finished_at": "2026-11-20T11:34:01.420Z",
+      "success": true
+    },
+    {
+      "stage": "preflight",
+      "finished_at": "2026-11-20T11:34:02.687Z",
+      "success": true
+    },
+    {
+      "stage": "final-dry-run",
+      "finished_at": "2026-11-20T11:34:06.928Z",
+      "success": true
+    },
+    {
+      "stage": "migration-apply",
+      "finished_at": "2026-11-20T11:34:13.409Z",
+      "success": true
+    },
+    {
+      "stage": "postflight-disabled",
+      "finished_at": "2026-11-20T11:34:15.295Z",
+      "success": true
+    },
+    {
+      "stage": "postflight-disabled",
+      "finished_at": "2026-11-20T11:34:17.600Z",
+      "success": true
+    },
+    {
+      "stage": "postflight-disabled",
+      "finished_at": "2026-11-20T11:34:19.390Z",
+      "success": true
+    },
+    {
+      "stage": "deploy-two-functions",
+      "finished_at": "2026-11-20T11:34:25.296Z",
+      "success": true
+    },
+    {
+      "stage": "deploy-two-functions",
+      "finished_at": "2026-11-20T11:34:27.057Z",
+      "success": true
+    },
+    {
+      "stage": "configure-edge",
+      "finished_at": "2026-11-20T11:34:29.679Z",
+      "success": true
+    },
+    {
+      "stage": "configure-edge",
+      "finished_at": "2026-11-20T11:34:30.918Z",
+      "success": true
+    }
+  ],
+  "business_writes_requested": false,
+  "accounts_changed": false,
+  "emails_sent": false,
+  "reset": false,
+  "preflight": {
+    "auth_user_count": 7,
+    "browser_boost_writer": false,
+    "browser_rent_writer": false,
+    "buckets": [
+      {
+        "id": "avatars",
+        "limit": 512000,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "chat-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "complaint-attachments",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "property-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      },
+      {
+        "id": "room-images",
+        "limit": 1048576,
+        "mimes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "public": false
+      }
+    ],
+    "campaigns": 0,
+    "foreign_keys": 58,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300"
+    ],
+    "invoices": 1,
+    "policies": 48,
+    "profiles": 7,
+    "public_functions": 37,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms"
+    ],
+    "rls_disabled": 0,
+    "tables": 34,
+    "transactions": 0
+  },
+  "fingerprints_before": [
+    {
+      "digest": "354d9d76b484e4343d546e2b26e67d98",
+      "row_count": "23",
+      "table_name": "activity_logs"
+    },
+    {
+      "digest": "200cb3a3ccc77a88416c8b799fe52f20",
+      "row_count": "7",
+      "table_name": "auth.users"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "boost_campaigns"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "complaint_analyses"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "complaint_attachments"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "complaint_histories"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "complaint_notes"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "complaints"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "conversation_members"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "conversations"
+    },
+    {
+      "digest": "be97c492d7a0bd4576c406dba265e9a4",
+      "row_count": "7",
+      "table_name": "facilities"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "favorites"
+    },
+    {
+      "digest": "2ee0f3655f861a61be0cb6b1c4a5ae62",
+      "row_count": "1",
+      "table_name": "invoices"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "listing_analytics"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "media_uploads"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "message_attachments"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "messages"
+    },
+    {
+      "digest": "588fe4177cc1af17f8d58bfe27700042",
+      "row_count": "1",
+      "table_name": "notifications"
+    },
+    {
+      "digest": "a8954f68ca2b652dbb34ef0de03997c8",
+      "row_count": "7",
+      "table_name": "profiles"
+    },
+    {
+      "digest": "f67014333ee5173a12f5753c639d4fe5",
+      "row_count": "3",
+      "table_name": "properties"
+    },
+    {
+      "digest": "b66fd80d3db5a505b4d7c695bfdd972c",
+      "row_count": "4",
+      "table_name": "property_facilities"
+    },
+    {
+      "digest": "b17bfac53dab385aa0f0f3c21fa29835",
+      "row_count": "1",
+      "table_name": "property_images"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "property_landmarks"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "property_rules"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "recent_searches"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "recurring_invoices"
+    },
+    {
+      "digest": "e55733cdb2b76e5a53d1edf32e99b979",
+      "row_count": "2",
+      "table_name": "rental_agreements"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "rental_offers"
+    },
+    {
+      "digest": "36ff35e7bcc3f8ddfc73d5e644d1e250",
+      "row_count": "2",
+      "table_name": "room_facilities"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "room_images"
+    },
+    {
+      "digest": "1469880777a5f637dbf83c132d638146",
+      "row_count": "3",
+      "table_name": "rooms"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "storage.objects"
+    },
+    {
+      "digest": "1925d7054ce74a44301a540e3e4b1a33",
+      "row_count": "2",
+      "table_name": "tenants"
+    },
+    {
+      "digest": "d41d8cd98f00b204e9800998ecf8427e",
+      "row_count": "0",
+      "table_name": "transactions"
+    },
+    {
+      "digest": "56021db1ab6765ddbf9692ace355c3f0",
+      "row_count": "12",
+      "table_name": "user_roles"
+    },
+    {
+      "digest": "3232fe57ab0d6f48482fb2ea0bd3f59c",
+      "row_count": "7",
+      "table_name": "user_settings"
+    }
+  ],
+  "previous_functions": [],
+  "dry_run": {
+    "verified": true,
+    "target": {
+      "kind": "linked",
+      "project_ref": "wfmhsbdfdcugxblqsaob",
+      "project_name": "ngekosaja-development",
+      "environment": "production"
+    },
+    "migrations": [
+      "20261120000100_internal_payment_simulator.sql"
+    ],
+    "seeds": [],
+    "roles": []
+  },
+  "migration_applied": true,
+  "apply_result": {
+    "migrations": [
+      "20261120000100_internal_payment_simulator.sql"
+    ],
+    "target": {
+      "kind": "linked",
+      "project_ref": "wfmhsbdfdcugxblqsaob",
+      "project_name": "ngekosaja-development",
+      "environment": "production"
+    }
+  },
+  "postflight_before_activation": {
+    "browser_attempt_write": false,
+    "browser_config_read": false,
+    "foreign_keys": 62,
+    "history": [
+      "20261118000100",
+      "20261118000200",
+      "20261118000300",
+      "20261118000400",
+      "20261118000500",
+      "20261118000600",
+      "20261118000700",
+      "20261118000800",
+      "20261118000900",
+      "20261118001000",
+      "20261118001100",
+      "20261119000100",
+      "20261119000200",
+      "20261119000300",
+      "20261120000100"
+    ],
+    "invalid_constraints": 0,
+    "invalid_indexes": 0,
+    "policies": 49,
+    "public_functions": 40,
+    "publication": {
+      "delete": false,
+      "insert": true,
+      "truncate": false,
+      "update": true
+    },
+    "published_tables": [
+      "boost_campaigns",
+      "complaint_histories",
+      "complaints",
+      "conversation_members",
+      "invoices",
+      "messages",
+      "notifications",
+      "payment_attempts",
+      "properties",
+      "rental_agreements",
+      "rental_offers",
+      "rooms",
+      "transactions"
+    ],
+    "rls_disabled": 0,
+    "server_functions": [
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_record_boost",
+        "service": true
+      },
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_record_rent_payment",
+        "service": true
+      },
+      {
+        "anon": false,
+        "browser": false,
+        "name": "server_simulate_payment",
+        "service": true
+      }
+    ],
+    "simulator_enabled": false,
+    "tables": 35,
+    "unsafe_definers": 0
+  },
+  "previous_policies_preserved": true,
+  "previous_views_preserved": true,
+  "functions_deployed": true,
+  "deployed_functions": [
+    {
+      "slug": "simulate-boost-payment",
+      "id": "39165a7f-9c54-471c-870d-65c3741399ce",
+      "status": "ACTIVE",
+      "version": 1,
+      "verify_jwt": true
+    },
+    {
+      "slug": "simulate-rent-payment",
+      "id": "08e6711e-824c-475b-ba1b-805d5de47a2f",
+      "status": "ACTIVE",
+      "version": 1,
+      "verify_jwt": true
+    }
+  ],
+  "edge_environment_configured": true,
+  "configured_names": [
+    "PAYMENT_SIMULATOR_ENABLED",
+    "PAYMENT_ENVIRONMENT",
+    "PAYMENT_ALLOWED_PROJECT_REF",
+    "PAYMENT_ALLOWED_ORIGINS"
+  ],
+  "configuration_digests_match": false,
+  "unrelated_secrets_preserved": true,
+  "failed_stage": "configure-edge",
+  "error_code": "SERVER_CONFIGURATION_VERIFICATION_FAILED",
+  "finished_at": "2026-11-20T11:34:30.919Z"
+}

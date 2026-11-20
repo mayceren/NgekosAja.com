@@ -1,23 +1,19 @@
-# Lifecycle, idempotency, dan akuntansi
+# Lifecycle simulasi internal
 
-Order menggunakan `NK-SB-` ditambah UUID tanpa separator. Database mengunci resource sebelum reserve/apply. Partial unique index membatasi satu creating/pending per invoice atau properti Boost; status review memblokir reserve berikutnya melalui RPC. Dua tab mendapatkan order yang sama. Harga, payer, invoice/property dan environment ditentukan server.
+1. Checkout membaca invoice/agreement atau properti dengan akses pengguna.
+2. Pengguna memilih QRIS, Virtual Account, Transfer Bank atau E-Wallet ilustratif.
+3. Konfirmasi mengirim resource ID, metode enum dan UUID idempotency. Tidak mengirim nominal/owner/payer/status.
+4. Edge memverifikasi identitas, target development, marker administratif dan hak akses.
+5. RPC mengunci request key lalu resource. Nominal diambil dari DB; attempt pending, transaksi, invoice paid/campaign 30 hari, notifikasi dan attempt succeeded dicatat dalam satu transaksi PostgreSQL.
+6. Hanya setelah commit, respons berisi transaction_id dan completed_at. UI membaca data tersimpan untuk menampilkan “Pembayaran Simulasi Berhasil”.
+7. Receipt dan dashboard dapat dibuka kembali setelah reload.
 
-State utama: creating → pending → succeeded, denied, cancelled, expired atau failed. Review mencatat konflik, bukan settlement sukses. Refunded/partial_refund menandai transaksi historis untuk peninjauan. Semua attempt dipertahankan. Invoice yang paid/cancelled tidak menerima order baru; Boost aktif/terjadwal menolak pembelian baru.
+Tidak ada timer pemrosesan bank, OTP, webhook atau konfirmasi manual. Pending hanya merupakan tahap internal transaksi DB dan tidak terlihat sebagai settlement yang belum selesai setelah commit. Jika satu langkah gagal, seluruh pencatatan di-rollback. Kegagalan HTTP setelah commit mungkin ambigu; muat ulang checkout atau ulangi request dengan key yang sama untuk memperoleh transaksi existing.
 
-| Status gateway | Perlakuan |
-| --- | --- |
-| pending | Tidak mencatat success/failure ledger |
-| settlement | Sukses setelah semua kecocokan lolos; fraud selain accept masuk review |
-| capture | Sewa sukses hanya jika fraud_status=accept; deny menjadi ditolak, challenge menunggu; Boost tetap menunggu settlement |
-| deny/cancel/expire/failure | Final gagal, histori dipertahankan, tidak menghasilkan pendapatan |
-| refund/partial_refund | Tidak membuat pembayaran sukses baru; menandai review refund tanpa mengubah ledger immutable |
+Key idempotency memakai UUID acak. Frontend menyimpan hanya UUID retry scoped di sessionStorage; tidak menyimpan secret, token pembayaran, nominal atau hasil sukses. Logout menghapus key tersebut. Lock dan unique index tetap melindungi dua tab dengan key berbeda.
 
-Event hash mencakup order, gateway transaction ID, nominal, status, fraud, metode dan refund amount yang dinormalisasi dari respons Get Status. Pending dan settlement memiliki hash berbeda; tidak memakai satu key ledger untuk dua final payload berbeda. Duplicate webhook hanya mengembalikan hasil existing. Pending/expiry terlambat tidak menurunkan sukses. Dua settlement dari attempt berbeda menghasilkan satu success invoice; attempt yang berbenturan masuk review. Unique success invoice dan idempotency ledger existing tetap berlaku.
+Retry key sama harus mempunyai payer/kind/resource/metode yang sama; payload berbeda ditolak. Invoice yang sudah dibayar simulator mengembalikan transaksi existing kepada payer yang sama. Invoice paid dari sumber lain dan invoice cancelled tidak dapat dibayar. Boost existing dari simulator yang masih aktif mengembalikan pembelian existing; campaign lain yang aktif/terjadwal menolak pembelian. Perpanjangan setelah campaign berakhir menggunakan key baru.
 
-Lease Snap berdurasi 90 detik dengan maksimum lima klaim. Token existing dipakai ulang. API timeout/duplicate order tidak langsung dianggap gagal: server mencoba Get Status untuk order **yang sama**, mempertahankan attempt jika outcome tidak pasti. Jika order terbukti pending tetapi token hilang sebelum tersimpan, UI hanya dapat memeriksa status; jangan membuat order baru berdasarkan tebakan. Tunggu expiry yang dikonfirmasi gateway atau pemeriksaan administratif. Tidak ada auto-cancel/refund di Phase 5.
+Semua attempt dan transaksi simulator menggunakan is_simulation=true. Riwayat sukses tidak dapat diedit/dihapus. Fee sewa Rp2.000; Boost Rp30.000 dengan interval tepat 30 hari. Pembelian hanya untuk properti published milik owner yang sah.
 
-Expiry request ditetapkan 24 jam dari created_at, dengan zona waktu eksplisit. Deadline lokal hanya membatasi pembukaan token; tidak boleh otomatis melunasi, membuat final failed, atau membebaskan order yang outcome-nya belum diketahui. [Semantik expiry Snap](https://docs.midtrans.com/reference/expire-a-snap-session) membedakan umur halaman dan metode pembayaran; Get Status tetap menentukan status akhir.
-
-Invoice amount/due/status cancellation dibekukan selama creating/pending/review; publication properti Boost juga dibekukan saat payment aktif. Status paid hanya berubah melalui transaksi server. Notifikasi server, invoice dan publication memperbarui dashboard setelah commit. Manual Periksa status menjadi fallback ketika Realtime terputus; ada throttle server 15 detik.
-
-Semua pencatatan gateway ini memakai is_simulation=true. Laporan development existing diberi label bahwa angkanya merupakan gross ledger gabungan, bukan pendapatan produksi. Panel payment_accounting memisahkan Sandbox dan nonsimulasi historis: GMV sewa tidak mencakup biaya admin; platform revenue adalah fee sewa + Boost. Pending/failed tidak menambah pendapatan. Kasus refund ditampilkan terpisah sebagai review; angka gross bukan net cash setelah refund. Tidak ada otomatisasi koreksi/refund atau uang produksi.
+payment_accounting memisahkan simulation dan non_simulation: rent_gmv tidak termasuk fee; admin_fees dihitung terpisah; platform_revenue adalah fee sewa + Boost. UI mengganti kartu/grafik nominal gabungan dan ekspor lama dengan ringkasan kategori terpisah. Tidak ada klaim dana diterima atau pendapatan produksi. Perubahan invoice/occupancy tetap mengikuti aturan bisnis existing.
